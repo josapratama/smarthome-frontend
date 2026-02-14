@@ -32,6 +32,7 @@ function CreateRoomDialog({ homeId }: { homeId: number }) {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<RoomCreateRequest>({
     name: "",
+    homeId,
   });
 
   const queryClient = useQueryClient();
@@ -46,9 +47,9 @@ function CreateRoomDialog({ homeId }: { homeId: number }) {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: qk.homeRooms(homeId) });
+      queryClient.invalidateQueries({ queryKey: qk.homes.rooms(homeId) });
       setOpen(false);
-      setFormData({ name: "" });
+      setFormData({ name: "", homeId });
       toast({ title: "Room created successfully" });
     },
     onError: (error) => {
@@ -102,7 +103,7 @@ export function RoomsClient({ homeId }: { homeId: number }) {
   const [searchText, setSearchText] = useState("");
 
   const q = useQuery({
-    queryKey: qk.homeRooms(homeId),
+    queryKey: qk.homes.rooms(homeId),
     queryFn: async () => {
       const payload = await apiFetchBrowser<{ data: RoomDTO[] }>(
         `/api/homes/${homeId}/rooms`,

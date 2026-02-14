@@ -8,6 +8,7 @@ export interface RoomDTO {
   homeId: number;
   createdAt: string;
   updatedAt: string;
+  deletedAt?: string | null;
 }
 
 export interface RoomCreateRequest {
