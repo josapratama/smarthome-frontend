@@ -20,25 +20,27 @@ function fmtDateTime(v?: string | null) {
 
 function getStatusColor(status: string) {
   switch (status) {
-    case "COMPLETED":
+    case "APPLIED":
       return "bg-green-100 text-green-800";
     case "FAILED":
+    case "TIMEOUT":
       return "bg-red-100 text-red-800";
-    case "IN_PROGRESS":
+    case "DOWNLOADING":
+    case "SENT":
       return "bg-blue-100 text-blue-800";
-    case "CANCELLED":
-      return "bg-gray-100 text-gray-800";
-    default:
+    case "PENDING":
       return "bg-yellow-100 text-yellow-800";
+    default:
+      return "bg-gray-100 text-gray-800";
   }
 }
 
 export function OtaJobDetailClient({ jobId }: { jobId: number }) {
   const q = useQuery({
-    queryKey: qk.otaJob(jobId),
+    queryKey: ["ota", "job", jobId],
     queryFn: async () => {
       const payload = await apiFetchBrowser<{ data: OtaJobDTO }>(
-        `/api/ota/jobs/${jobId}`,
+        `/api/v1/ota/jobs/${jobId}`,
       );
       return payload.data;
     },
@@ -104,11 +106,11 @@ export function OtaJobDetailClient({ jobId }: { jobId: number }) {
                     <div className="flex-1 bg-gray-200 rounded-full h-2">
                       <div
                         className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${q.data.progress}%` }}
+                        style={{ width: `${q.data.progress ?? 0}%` }}
                       />
                     </div>
                     <span className="text-sm font-medium">
-                      {q.data.progress}%
+                      {q.data.progress ?? 0}%
                     </span>
                   </div>
                 </div>
@@ -135,7 +137,7 @@ export function OtaJobDetailClient({ jobId }: { jobId: number }) {
                   <div className="text-sm font-medium text-muted-foreground">
                     Started At
                   </div>
-                  <div className="text-sm">{fmtDateTime(q.data.startedAt)}</div>
+                  <div className="text-sm">{fmtDateTime(q.data.sentAt)}</div>
                 </div>
 
                 <div>
@@ -143,7 +145,7 @@ export function OtaJobDetailClient({ jobId }: { jobId: number }) {
                     Completed At
                   </div>
                   <div className="text-sm">
-                    {fmtDateTime(q.data.completedAt)}
+                    {fmtDateTime(q.data.appliedAt || q.data.failedAt)}
                   </div>
                 </div>
               </div>
@@ -155,13 +157,13 @@ export function OtaJobDetailClient({ jobId }: { jobId: number }) {
                 <div className="text-sm">{fmtDateTime(q.data.createdAt)}</div>
               </div>
 
-              {q.data.errorMessage && (
+              {q.data.lastError && (
                 <div>
                   <div className="text-sm font-medium text-muted-foreground">
                     Error Message
                   </div>
                   <div className="text-sm text-red-600 bg-red-50 p-2 rounded border">
-                    {q.data.errorMessage}
+                    {q.data.lastError}
                   </div>
                 </div>
               )}

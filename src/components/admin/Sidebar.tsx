@@ -40,11 +40,11 @@ export function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 border-r bg-card">
-      <div className="flex h-16 items-center border-b px-6">
+    <aside className="flex h-screen w-64 flex-col border-r bg-card">
+      <div className="flex h-16 shrink-0 items-center border-b px-6">
         <h1 className="text-xl font-bold">Smart Home Admin</h1>
       </div>
-      <nav className="space-y-1 p-4">
+      <nav className="flex-1 space-y-1 overflow-y-auto p-4">
         {navigation.map((item) => {
           const isActive =
             pathname === item.href || pathname.startsWith(item.href + "/");

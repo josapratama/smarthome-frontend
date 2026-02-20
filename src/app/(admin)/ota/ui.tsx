@@ -61,6 +61,16 @@ export default function OtaClientPage({
     refetchInterval: 5_000, // device status polling
   });
 
+  const releasesQ = useQuery({
+    queryKey: qk.firmware.releases(),
+    queryFn: async () => {
+      const payload = await apiFetchBrowser<{ data: any[] }>(
+        "/api/v1/firmware/releases",
+      );
+      return payload.data ?? [];
+    },
+  });
+
   const jobsQ = useQuery({
     queryKey: deviceId
       ? qk.ota.deviceJobs(deviceId)
@@ -68,7 +78,7 @@ export default function OtaClientPage({
     queryFn: async () => {
       if (!deviceId) return [];
       const payload = await apiFetchBrowser<{ data: OtaJobDTO[] }>(
-        `/api/v1/ota/jobs?deviceId=${deviceId}`,
+        `/api/v1/ota/devices/${deviceId}/jobs`,
       );
       return payload.data ?? [];
     },
@@ -80,9 +90,9 @@ export default function OtaClientPage({
     mutationFn: async () => {
       if (!deviceId || !releaseId)
         throw new Error("Device & release must be selected");
-      return apiFetchBrowser("/api/v1/ota/trigger", {
+      return apiFetchBrowser(`/api/v1/ota/devices/${deviceId}`, {
         method: "POST",
-        body: JSON.stringify({ deviceId, firmwareReleaseId: releaseId }),
+        body: JSON.stringify({ releaseId }),
       });
     },
     onSuccess: async () => {
@@ -149,23 +159,25 @@ export default function OtaClientPage({
 
           <div className="space-y-2">
             <div className="text-sm text-muted-foreground">Release</div>
-            {/* NOTE: kamu sudah punya firmware releases list di halaman firmware.
-               Di sini aku kasih input sederhana releaseId (angka). Kalau kamu sudah punya dropdown release,
-               ganti bagian ini supaya ambil releases dari endpoint firmware proxy kamu. */}
-            <input
-              className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-              placeholder="Enter releaseId (example: 12)"
-              value={releaseId ? String(releaseId) : ""}
-              onChange={(e) => {
-                const v = e.target.value.trim();
-                setReleaseId(v ? Number(v) : undefined);
-              }}
-              inputMode="numeric"
-            />
-            <p className="text-xs text-muted-foreground">
-              (Optional) Connect this to your firmware releases dropdown if
-              available.
-            </p>
+            {releasesQ.isLoading ? (
+              <Skeleton className="h-10 w-full" />
+            ) : (
+              <Select
+                value={releaseId ? String(releaseId) : ""}
+                onValueChange={(v) => setReleaseId(Number(v))}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select firmware" />
+                </SelectTrigger>
+                <SelectContent>
+                  {(releasesQ.data ?? []).map((r: any) => (
+                    <SelectItem key={r.id} value={String(r.id)}>
+                      {r.version} ({r.platform})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
 
           <div className="flex items-end">

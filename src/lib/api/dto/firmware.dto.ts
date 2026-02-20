@@ -4,11 +4,11 @@
 
 export interface FirmwareReleaseDTO {
   id: number;
+  platform: string;
   version: string;
-  description?: string;
-  fileUrl: string;
-  fileSize: number;
-  checksum: string;
-  isActive: boolean;
+  sha256: string;
+  sizeBytes: number;
+  filePath: string;
+  notes?: string | null;
   createdAt: string;
 }

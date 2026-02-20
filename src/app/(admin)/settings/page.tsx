@@ -74,6 +74,11 @@ export default function AdminSettingsPage() {
     }
   }, [preferences]);
 
+  // Sync with current theme from context
+  useEffect(() => {
+    setLocalPrefs((p) => ({ ...p, theme }));
+  }, [theme]);
+
   const handleThemeChange = (newTheme: Theme) => {
     setLocalPrefs((p) => ({ ...p, theme: newTheme }));
     setTheme(newTheme);

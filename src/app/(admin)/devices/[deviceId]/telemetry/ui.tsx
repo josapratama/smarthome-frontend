@@ -29,7 +29,7 @@ export function TelemetryClient({ deviceId }: { deviceId: number }) {
   const [dateTo, setDateTo] = useState("");
 
   const q = useQuery({
-    queryKey: qk.deviceTelemetry(deviceId, { from: dateFrom, to: dateTo }),
+    queryKey: qk.devices.telemetry(deviceId),
     queryFn: async () => {
       const params = new URLSearchParams();
       if (dateFrom) params.set("from", dateFrom);
@@ -37,8 +37,8 @@ export function TelemetryClient({ deviceId }: { deviceId: number }) {
       params.set("limit", "100");
 
       const url = params.toString()
-        ? `/api/devices/${deviceId}/telemetry?${params}`
-        : `/api/devices/${deviceId}/telemetry`;
+        ? `/api/v1/devices/${deviceId}/telemetry?${params}`
+        : `/api/v1/devices/${deviceId}/telemetry`;
 
       const payload = await apiFetchBrowser<{ data: TelemetryDTO[] }>(url);
       return payload.data ?? [];

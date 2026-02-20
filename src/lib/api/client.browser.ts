@@ -31,11 +31,14 @@ export async function apiFetchBrowser<T = any>(
     }
   }
 
+  // Don't set Content-Type for FormData (browser will set it with boundary)
+  const isFormData = fetchOptions.body instanceof FormData;
+
   const response = await fetch(url, {
     ...fetchOptions,
     credentials: "include", // Include cookies
     headers: {
-      "Content-Type": "application/json",
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...fetchOptions.headers,
     },
   });

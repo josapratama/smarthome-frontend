@@ -7,10 +7,19 @@ export interface OtaJobDTO {
   deviceId: number;
   firmwareReleaseId: number;
   status: string;
-  progress?: number;
+  progress?: number | null;
+  lastError?: string | null;
+  sentAt?: string | null;
+  downloadingAt?: string | null;
+  appliedAt?: string | null;
+  failedAt?: string | null;
+  commandId?: number | null;
+  createdAt: string;
+  updatedAt: string;
+  // Legacy fields for backward compatibility
   startedAt?: string;
   completedAt?: string;
-  createdAt: string;
+  errorMessage?: string;
 }
 
 export interface OtaTriggerRequest {
