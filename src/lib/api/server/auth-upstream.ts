@@ -42,8 +42,8 @@ export const authUpstream = {
     console.log("Calling backend login:", url);
     console.log("Request body:", { username, password: "***" });
 
-    // Validate backend URL
-    if (!BACKEND_URL || BACKEND_URL === "http://localhost:3000") {
+    // Validate backend URL - only check if it's completely missing
+    if (!BACKEND_URL) {
       console.error("BACKEND_BASE_URL not configured properly!");
       return {
         res: { ok: false, status: 500 } as Response,
