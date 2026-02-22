@@ -1,8 +1,52 @@
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, MailPlus, Users, Clock, CheckCircle } from "lucide-react";
+import { InviteDialog } from "@/components/invites/invite-dialog";
+import { InviteList } from "@/components/invites/invite-list";
+import { apiFetchBrowser } from "@/lib/api/client.browser";
+
+interface Home {
+  id: number;
+  name: string;
+  ownerUserId: number;
+}
+
+interface InviteStats {
+  totalInvites: number;
+  pendingInvites: number;
+  acceptedInvites: number;
+  activeMembers: number;
+}
 
 export default function InvitesPage() {
+  const { data: homes = [] } = useQuery({
+    queryKey: ["homes-for-invite"],
+    queryFn: async () => {
+      const response = await apiFetchBrowser<{ data: Home[] }>("/api/v1/homes");
+      return response.data || [];
+    },
+  });
+
+  const { data: stats } = useQuery({
+    queryKey: ["invite-stats"],
+    queryFn: async () => {
+      const response = await apiFetchBrowser<{ data: InviteStats }>(
+        "/api/v1/admin/invite-stats",
+      );
+      return (
+        response.data || {
+          totalInvites: 0,
+          pendingInvites: 0,
+          acceptedInvites: 0,
+          activeMembers: 0,
+        }
+      );
+    },
+  });
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -12,10 +56,12 @@ export default function InvitesPage() {
             Manage home member invitations
           </p>
         </div>
-        <Button>
-          <Plus className="h-4 w-4" />
-          Send Invite
-        </Button>
+        <InviteDialog homes={homes}>
+          <Button>
+            <Plus className="h-4 w-4" />
+            Send Invite
+          </Button>
+        </InviteDialog>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -26,7 +72,9 @@ export default function InvitesPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-semibold">0</div>
+            <div className="text-3xl font-semibold">
+              {stats?.totalInvites || 0}
+            </div>
           </CardContent>
         </Card>
 
@@ -39,7 +87,9 @@ export default function InvitesPage() {
           <CardContent>
             <div className="flex items-center gap-2">
               <Clock className="h-5 w-5 text-yellow-500" />
-              <div className="text-3xl font-semibold">0</div>
+              <div className="text-3xl font-semibold">
+                {stats?.pendingInvites || 0}
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -53,7 +103,9 @@ export default function InvitesPage() {
           <CardContent>
             <div className="flex items-center gap-2">
               <CheckCircle className="h-5 w-5 text-green-500" />
-              <div className="text-3xl font-semibold">0</div>
+              <div className="text-3xl font-semibold">
+                {stats?.acceptedInvites || 0}
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -67,72 +119,61 @@ export default function InvitesPage() {
           <CardContent>
             <div className="flex items-center gap-2">
               <Users className="h-5 w-5 text-blue-500" />
-              <div className="text-3xl font-semibold">0</div>
+              <div className="text-3xl font-semibold">
+                {stats?.activeMembers || 0}
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-base">Pending Invites</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <Clock className="h-10 w-10 text-muted-foreground/50" />
-              <h3 className="mt-3 text-sm font-semibold">No pending invites</h3>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Sent invitations will appear here
-              </p>
-              <Button className="mt-3" size="sm" variant="outline">
-                <Plus className="h-3 w-3" />
-                Send Invite
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <InviteList />
 
         <Card className="rounded-2xl shadow-sm">
           <CardHeader>
-            <CardTitle className="text-base">Recent Activity</CardTitle>
+            <CardTitle className="text-base">Quick Actions</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <Users className="h-10 w-10 text-muted-foreground/50" />
-              <h3 className="mt-3 text-sm font-semibold">No recent activity</h3>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Invite activity will appear here
-              </p>
+          <CardContent className="space-y-4">
+            <InviteDialog homes={homes}>
+              <Button className="w-full justify-start" variant="outline">
+                <MailPlus className="h-4 w-4" />
+                Send New Invitation
+              </Button>
+            </InviteDialog>
+
+            <Button className="w-full justify-start" variant="outline">
+              <Users className="h-4 w-4" />
+              View All Members
+            </Button>
+
+            <div className="pt-4 border-t">
+              <h4 className="text-sm font-medium mb-2">Available Homes</h4>
+              <div className="space-y-2">
+                {homes.length > 0 ? (
+                  homes.map((home) => (
+                    <div
+                      key={home.id}
+                      className="flex items-center justify-between p-2 bg-muted/50 rounded-lg"
+                    >
+                      <span className="text-sm">{home.name}</span>
+                      <InviteDialog homes={[home]}>
+                        <Button size="sm" variant="ghost">
+                          <Plus className="h-3 w-3" />
+                        </Button>
+                      </InviteDialog>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    No homes available for invitations
+                  </p>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
-
-      <Card className="rounded-2xl shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-base">Invite Management</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <MailPlus className="h-12 w-12 text-muted-foreground/50" />
-            <h3 className="mt-4 text-lg font-semibold">No invites found</h3>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Start by sending invitations to add members to homes
-            </p>
-            <div className="mt-4 flex gap-2">
-              <Button>
-                <Plus className="h-4 w-4" />
-                Send First Invite
-              </Button>
-              <Button variant="outline">
-                <Users className="h-4 w-4" />
-                View Members
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

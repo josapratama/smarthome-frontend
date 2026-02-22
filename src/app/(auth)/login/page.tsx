@@ -61,10 +61,18 @@ function LoginForm() {
         variant: "success",
       });
 
+      // Debug logging
+      console.log("Login success payload:", payload);
+      console.log("Redirect path:", payload?.data?.redirectTo || next);
+
       // Redirect based on user role
       const redirectPath = payload?.data?.redirectTo || next;
-      router.push(redirectPath);
-      router.refresh();
+
+      // Force a small delay to ensure cookies are set
+      setTimeout(() => {
+        router.push(redirectPath);
+        router.refresh();
+      }, 100);
     } catch {
       const errorMsg = "Network error. Coba lagi.";
       setErr(errorMsg);
