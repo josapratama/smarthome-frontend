@@ -2,6 +2,8 @@ import { getAccessToken } from "@/lib/api/server/auth-cookies";
 import { upstreamFetch } from "@/lib/api/server/upstream";
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const token = getAccessToken();
   if (!token)

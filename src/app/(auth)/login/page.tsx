@@ -15,7 +15,7 @@ function cn(...c: Array<string | false | null | undefined>) {
   return c.filter(Boolean).join(" ");
 }
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const sp = useSearchParams();
   const next = sp.get("next") ?? "/dashboard";
@@ -285,5 +285,13 @@ export default function LoginPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <React.Suspense fallback={<div>Loading...</div>}>
+      <LoginForm />
+    </React.Suspense>
   );
 }

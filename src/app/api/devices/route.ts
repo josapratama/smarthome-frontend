@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { backendFetch } from "@/lib/api/server/backend";
 import { handleApiError } from "@/lib/api/server/error-handler";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
