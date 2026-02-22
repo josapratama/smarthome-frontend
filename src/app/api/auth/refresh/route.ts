@@ -27,15 +27,15 @@ export async function POST() {
     refreshToken,
   );
 
-  if (!res.ok) {
+  if (!res.ok || !payload || "error" in payload) {
     await clearAuthCookies();
     return NextResponse.json(payload ?? { message: "Refresh gagal" }, {
       status: 401,
     });
   }
 
-  const data = payload?.data;
-  if (!data?.accessToken) {
+  const data = payload.data;
+  if (!data.accessToken) {
     await clearAuthCookies();
     return NextResponse.json(
       { message: "Backend tidak mengirim accessToken" },

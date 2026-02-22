@@ -133,24 +133,26 @@ export function TelemetryClient({ deviceId }: { deviceId: number }) {
                         {fmtDateTime(record.timestamp)}
                       </td>
                       <td className="p-2">
-                        {formatValue(record.current, "A")}
+                        {formatValue(record.data.current, "A")}
                       </td>
                       <td className="p-2">
-                        {formatValue(record.gasPpm, "PPM")}
+                        {formatValue(record.data.gasPpm, "PPM")}
                       </td>
                       <td className="p-2">
-                        {record.flame === null
+                        {record.data.flame === null
                           ? "-"
-                          : record.flame
+                          : record.data.flame
                             ? "🔥"
                             : "✅"}
                       </td>
                       <td className="p-2">
-                        {formatValue(record.binLevel, "%")}
+                        {formatValue(record.data.binLevel, "%")}
                       </td>
-                      <td className="p-2">{formatValue(record.powerW, "W")}</td>
                       <td className="p-2">
-                        {formatValue(record.energyKwh, "kWh")}
+                        {formatValue(record.data.powerW, "W")}
+                      </td>
+                      <td className="p-2">
+                        {formatValue(record.data.energyKwh, "kWh")}
                       </td>
                     </tr>
                   ))}

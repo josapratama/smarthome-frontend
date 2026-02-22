@@ -1,4 +1,4 @@
-import type { paths } from "@/src/generated/api";
+import type { paths } from "@/generated/api";
 
 export type ApiPaths = paths;
 
