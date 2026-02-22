@@ -43,17 +43,8 @@ export async function POST() {
     );
   }
 
-  // Check user role - this frontend is for ADMIN only
-  if (data.user.role !== "ADMIN") {
-    await clearAuthCookies();
-    return NextResponse.json(
-      {
-        message: "Akses ditolak. Aplikasi ini hanya untuk Admin.",
-        error: "FORBIDDEN",
-      },
-      { status: 403 },
-    );
-  }
+  // Allow both ADMIN and USER roles
+  // (removed ADMIN-only restriction to support multi-role frontend)
 
   await setAuthCookies(data.accessToken, data.refreshToken);
 
