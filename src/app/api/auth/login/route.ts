@@ -2,6 +2,12 @@ import { NextResponse } from "next/server";
 import { authUpstream } from "@/lib/api/server/auth-upstream";
 
 export async function POST(req: Request) {
+  // Debug logging
+  console.log("=== LOGIN DEBUG ===");
+  console.log("BACKEND_BASE_URL:", process.env.BACKEND_BASE_URL);
+  console.log("NEXT_PUBLIC_API_URL:", process.env.NEXT_PUBLIC_API_URL);
+  console.log("NODE_ENV:", process.env.NODE_ENV);
+
   try {
     const body = await req.json().catch(() => null);
 
