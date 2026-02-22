@@ -3,8 +3,17 @@
  * Used in Next.js API routes to proxy authentication requests
  */
 
-const BACKEND_URL = process.env.BACKEND_BASE_URL || "http://localhost:3000";
+const BACKEND_URL =
+  process.env.BACKEND_BASE_URL ||
+  process.env.NEXT_PUBLIC_API_URL ||
+  "http://localhost:3000";
 const API_PREFIX = process.env.BACKEND_API_PREFIX || "/api/v1";
+
+// Log configuration in development
+if (process.env.NODE_ENV === "development") {
+  console.log("Backend URL:", BACKEND_URL);
+  console.log("API Prefix:", API_PREFIX);
+}
 
 interface LoginResponse {
   data: {
@@ -32,6 +41,19 @@ export const authUpstream = {
 
     console.log("Calling backend login:", url);
     console.log("Request body:", { username, password: "***" });
+
+    // Validate backend URL
+    if (!BACKEND_URL || BACKEND_URL === "http://localhost:3000") {
+      console.error("BACKEND_BASE_URL not configured properly!");
+      return {
+        res: { ok: false, status: 500 } as Response,
+        payload: {
+          error: "CONFIGURATION_ERROR",
+          message:
+            "Backend URL not configured. Please set BACKEND_BASE_URL environment variable.",
+        },
+      };
+    }
 
     try {
       const res = await fetch(url, {
