@@ -1,9 +1,20 @@
+"use client";
+
+import { UserInvites } from "@/components/invites/user-invites";
+
 export default function UserDashboardPage() {
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
+        <p className="text-muted-foreground">
+          Welcome to your Smart Home dashboard
+        </p>
+      </div>
 
-      <div className="bg-card rounded-lg shadow-md p-6 mb-6 border border-border">
+      <UserInvites />
+
+      <div className="bg-card rounded-lg shadow-md p-6 border border-border">
         <h2 className="text-xl font-semibold mb-4">Welcome!</h2>
         <p className="text-muted-foreground">
           This is your Smart Home dashboard. Here you can monitor and control

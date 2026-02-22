@@ -37,9 +37,9 @@ import { apiFetchBrowser } from "@/lib/api/client.browser";
 
 const inviteSchema = z.object({
   homeId: z.string().min(1, "Please select a home"),
-  email: z.string().email("Please enter a valid email address"),
+  email: z.email({ message: "Please enter a valid email address" }),
   roleInHome: z.enum(["MEMBER", "GUEST"], {
-    required_error: "Please select a role",
+    message: "Please select a role",
   }),
 });
 
