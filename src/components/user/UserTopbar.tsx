@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { LogOut, User, Sun, Moon, Monitor } from "lucide-react";
+import { LogOut, User, Sun, Moon, Monitor, Menu } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
 import { useTheme } from "@/components/providers/theme-provider";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export function UserTopbar() {
+interface UserTopbarProps {
+  onMenuClick?: () => void;
+}
+
+export function UserTopbar({ onMenuClick }: UserTopbarProps) {
   const router = useRouter();
   const { t } = useTranslation();
   const { theme, setTheme } = useTheme();
@@ -33,13 +37,24 @@ export function UserTopbar() {
   const ThemeIcon = theme === "light" ? Sun : theme === "dark" ? Moon : Monitor;
 
   return (
-    <header className="bg-background border-b border-border px-6 py-4">
+    <header className="bg-card border-b border-border px-4 py-3 md:px-6 md:py-4">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <h2 className="text-lg font-semibold">Welcome back!</h2>
+        <div className="flex items-center gap-3">
+          {/* Mobile Menu Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden"
+            onClick={onMenuClick}
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+          <h2 className="text-base font-semibold md:text-lg">
+            {t("welcomeBack")}
+          </h2>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -62,20 +77,22 @@ export function UserTopbar() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="hidden items-center gap-2 text-sm text-muted-foreground md:flex">
             <User className="h-4 w-4" />
             <span className="px-2 py-1 bg-primary/10 text-primary rounded text-xs">
               USER
             </span>
           </div>
 
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-accent rounded-lg transition-colors"
+            className="gap-2"
           >
             <LogOut className="h-4 w-4" />
-            {t("logout")}
-          </button>
+            <span className="hidden md:inline">{t("logout")}</span>
+          </Button>
         </div>
       </div>
     </header>

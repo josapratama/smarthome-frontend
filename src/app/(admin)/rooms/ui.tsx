@@ -54,9 +54,9 @@ function AddRoomDialog() {
 
   const createMutation = useMutation({
     mutationFn: async (data: RoomCreateRequest) => {
-      return apiFetchBrowser("/api/v1/rooms", {
+      return apiFetchBrowser(`/api/v1/homes/${data.homeId}/rooms`, {
         method: "POST",
-        body: JSON.stringify(data),
+        body: JSON.stringify({ name: data.name }),
         headers: { "Content-Type": "application/json" },
       });
     },
@@ -64,7 +64,10 @@ function AddRoomDialog() {
       queryClient.invalidateQueries({ queryKey: qk.rooms.all });
       setOpen(false);
       setFormData({ name: "", homeId: "" });
-      toast({ title: t("roomCreated") });
+      toast({
+        title: t("roomCreated"),
+        variant: "success",
+      });
     },
     onError: (error: any) => {
       toast({

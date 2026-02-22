@@ -18,6 +18,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -29,6 +40,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { Pencil, Trash2 } from "lucide-react";
 
 function fmtDateTime(v?: string | null) {
   if (!v) return "-";
@@ -181,6 +193,174 @@ function UploadFirmwareDialog() {
   );
 }
 
+function EditFirmwareDialog({ firmware }: { firmware: FirmwareReleaseDTO }) {
+  const [open, setOpen] = useState(false);
+  const [notes, setNotes] = useState(firmware.notes || "");
+  const [file, setFile] = useState<File | null>(null);
+
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const { t } = useTranslation();
+
+  const updateMutation = useMutation({
+    mutationFn: async (data: { releaseNotes: string; file: File | null }) => {
+      if (data.file) {
+        // Upload new file
+        const form = new FormData();
+        form.append("file", data.file);
+        form.append("notes", data.releaseNotes);
+
+        return apiFetchBrowser(`/api/v1/firmware/releases/${firmware.id}`, {
+          method: "PATCH",
+          body: form,
+        });
+      } else {
+        // Update notes only
+        return apiFetchBrowser(`/api/v1/firmware/releases/${firmware.id}`, {
+          method: "PATCH",
+          body: JSON.stringify({ releaseNotes: data.releaseNotes }),
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: qk.firmware.releases() });
+      setOpen(false);
+      setFile(null);
+      toast({ title: t("firmwareUpdated") });
+    },
+    onError: (error: any) => {
+      toast({
+        title: t("failedUpdateFirmware"),
+        description: error.message || t("unknownError"),
+        variant: "destructive",
+      });
+    },
+  });
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm">
+          <Pencil className="h-4 w-4" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>{t("editFirmware")}</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div>
+            <Label>{t("version")}</Label>
+            <Input value={firmware.version} disabled />
+          </div>
+
+          <div>
+            <Label>{t("platform")}</Label>
+            <Input value={firmware.platform} disabled />
+          </div>
+
+          <div>
+            <Label htmlFor="file">
+              {t("replaceFirmwareFile")} ({t("optional")})
+            </Label>
+            <Input
+              id="file"
+              type="file"
+              accept=".bin,.hex,.elf"
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
+            />
+            {file && (
+              <p className="text-xs text-muted-foreground mt-1">
+                {t("selectedFile")}: {file.name} ({formatFileSize(file.size)})
+              </p>
+            )}
+          </div>
+
+          <div>
+            <Label htmlFor="notes">{t("releaseNotes")}</Label>
+            <Textarea
+              id="notes"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder={t("whatsNew")}
+              rows={4}
+            />
+          </div>
+
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setOpen(false)}>
+              {t("cancel")}
+            </Button>
+            <Button
+              onClick={() =>
+                updateMutation.mutate({ releaseNotes: notes, file })
+              }
+              disabled={updateMutation.isPending}
+            >
+              {updateMutation.isPending ? t("saving") : t("save")}
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function DeleteFirmwareDialog({ firmware }: { firmware: FirmwareReleaseDTO }) {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const { t } = useTranslation();
+
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
+      return apiFetchBrowser(`/api/v1/firmware/releases/${firmware.id}`, {
+        method: "DELETE",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: qk.firmware.releases() });
+      toast({ title: t("firmwareDeleted") });
+    },
+    onError: (error: any) => {
+      toast({
+        title: t("failedDeleteFirmware"),
+        description: error.message || t("unknownError"),
+        variant: "destructive",
+      });
+    },
+  });
+
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant="outline" size="sm">
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{t("deleteFirmware")}</AlertDialogTitle>
+          <AlertDialogDescription>
+            {t("deleteFirmwareConfirm")} {firmware.version} ({firmware.platform}
+            )?
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() => deleteMutation.mutate()}
+            disabled={deleteMutation.isPending}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
+            {deleteMutation.isPending ? t("deleting") : t("delete")}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
 export function FirmwareClient() {
   const { t } = useTranslation();
 
@@ -265,7 +445,7 @@ export function FirmwareClient() {
                     </div>
                   </div>
 
-                  <div className="flex shrink-0 items-center gap-3">
+                  <div className="flex shrink-0 items-center gap-2">
                     <Button variant="outline" size="sm" asChild>
                       <a
                         href={`http://192.168.100.11:3000/api/v1/firmware/releases/${firmware.id}/download`}
@@ -275,6 +455,8 @@ export function FirmwareClient() {
                         {t("download")}
                       </a>
                     </Button>
+                    <EditFirmwareDialog firmware={firmware} />
+                    <DeleteFirmwareDialog firmware={firmware} />
                   </div>
                 </div>
               ))}

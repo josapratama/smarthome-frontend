@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 
 function cn(...c: Array<string | false | null | undefined>) {
   return c.filter(Boolean).join(" ");
@@ -18,6 +19,7 @@ export default function LoginPage() {
   const router = useRouter();
   const sp = useSearchParams();
   const next = sp.get("next") ?? "/dashboard";
+  const { toast } = useToast();
 
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -42,16 +44,35 @@ export default function LoginPage() {
       const payload = await res.json().catch(() => null);
 
       if (!res.ok) {
-        setErr(payload?.message ?? payload?.error ?? "Login gagal");
+        const errorMsg = payload?.message ?? payload?.error ?? "Login gagal";
+        setErr(errorMsg);
+        toast({
+          title: "Login Gagal",
+          description: errorMsg,
+          variant: "destructive",
+        });
         return;
       }
+
+      // Success toast
+      toast({
+        title: "Login Berhasil",
+        description: "Selamat datang kembali!",
+        variant: "success",
+      });
 
       // Redirect based on user role
       const redirectPath = payload?.data?.redirectTo || next;
       router.push(redirectPath);
       router.refresh();
     } catch {
-      setErr("Network error. Coba lagi.");
+      const errorMsg = "Network error. Coba lagi.";
+      setErr(errorMsg);
+      toast({
+        title: "Koneksi Gagal",
+        description: errorMsg,
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }

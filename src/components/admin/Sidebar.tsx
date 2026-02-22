@@ -16,10 +16,17 @@ import {
   AlertTriangle,
   Brain,
   Settings,
+  X,
 } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
+import { cn } from "@/lib/utils";
 
-export function Sidebar() {
+interface SidebarProps {
+  className?: string;
+  onClose?: () => void;
+}
+
+export function Sidebar({ className, onClose }: SidebarProps) {
   const pathname = usePathname();
   const { t } = useTranslation();
 
@@ -40,11 +47,21 @@ export function Sidebar() {
   ];
 
   return (
-    <aside className="flex h-screen w-64 flex-col border-r bg-card">
-      <div className="flex h-16 shrink-0 items-center border-b px-6">
-        <h1 className="text-xl font-bold">Smart Home Admin</h1>
+    <aside
+      className={cn("flex h-screen w-64 flex-col border-r bg-card", className)}
+    >
+      <div className="flex h-16 shrink-0 items-center justify-between border-b px-4">
+        <h1 className="text-lg font-bold">Smart Home</h1>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="rounded-lg p-2 hover:bg-muted lg:hidden"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        )}
       </div>
-      <nav className="flex-1 space-y-1 overflow-y-auto p-4">
+      <nav className="flex-1 space-y-1 overflow-y-auto p-3">
         {navigation.map((item) => {
           const isActive =
             pathname === item.href || pathname.startsWith(item.href + "/");
@@ -54,13 +71,15 @@ export function Sidebar() {
             <Link
               key={item.name}
               href={item.href}
-              className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
+              onClick={onClose}
+              className={cn(
+                "flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors",
                 isActive
                   ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              }`}
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
+              )}
             >
-              <Icon className="h-4 w-4" />
+              <Icon className="h-5 w-5 shrink-0" />
               <span>{item.name}</span>
             </Link>
           );

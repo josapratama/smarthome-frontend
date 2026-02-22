@@ -1,61 +1,52 @@
 /**
- * Simple toast hook
- * For production, consider using sonner or react-hot-toast
+ * Toast hook using Sonner
+ * Wrapper to maintain compatibility with existing code
  */
 
-import { useState, useCallback } from "react";
-
-interface Toast {
-  id: string;
-  title?: string;
-  description?: string;
-  variant?: "default" | "destructive";
-}
-
-let toastCount = 0;
+import { toast as sonnerToast } from "sonner";
 
 export function useToast() {
-  const [toasts, setToasts] = useState<Toast[]>([]);
+  const toast = ({
+    title,
+    description,
+    variant = "default",
+  }: {
+    title?: string;
+    description?: string;
+    variant?: "default" | "destructive" | "success" | "warning";
+  }) => {
+    const message = title || "";
+    const desc = description;
 
-  const toast = useCallback(
-    ({
-      title,
-      description,
-      variant = "default",
-    }: {
-      title?: string;
-      description?: string;
-      variant?: "default" | "destructive";
-    }) => {
-      const id = `toast-${++toastCount}`;
-      const newToast: Toast = { id, title, description, variant };
+    switch (variant) {
+      case "success":
+        return sonnerToast.success(message, { description: desc });
+      case "destructive":
+        return sonnerToast.error(message, { description: desc });
+      case "warning":
+        return sonnerToast.warning(message, { description: desc });
+      default:
+        return sonnerToast.info(message, { description: desc });
+    }
+  };
 
-      setToasts((prev) => [...prev, newToast]);
-
-      // Auto dismiss after 3 seconds
-      setTimeout(() => {
-        setToasts((prev) => prev.filter((t) => t.id !== id));
-      }, 3000);
-
-      // For now, also use console for debugging
-      if (variant === "destructive") {
-        console.error(title, description);
-      } else {
-        console.log(title, description);
-      }
-
-      return { id };
-    },
-    [],
-  );
-
-  const dismiss = useCallback((toastId: string) => {
-    setToasts((prev) => prev.filter((t) => t.id !== toastId));
-  }, []);
+  const dismiss = (toastId?: string | number) => {
+    if (toastId) {
+      sonnerToast.dismiss(toastId);
+    } else {
+      sonnerToast.dismiss();
+    }
+  };
 
   return {
     toast,
     dismiss,
-    toasts,
+    // Expose sonner methods directly for advanced usage
+    success: sonnerToast.success,
+    error: sonnerToast.error,
+    warning: sonnerToast.warning,
+    info: sonnerToast.info,
+    loading: sonnerToast.loading,
+    promise: sonnerToast.promise,
   };
 }

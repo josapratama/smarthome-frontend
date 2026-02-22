@@ -1,6 +1,6 @@
 import { QueryProvider } from "@/lib/query/provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 export default function RootLayout({

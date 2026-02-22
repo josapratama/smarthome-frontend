@@ -9,10 +9,17 @@ import {
   Zap,
   AlertTriangle,
   Settings,
+  X,
 } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
+import { cn } from "@/lib/utils";
 
-export function UserSidebar() {
+interface UserSidebarProps {
+  className?: string;
+  onClose?: () => void;
+}
+
+export function UserSidebar({ className, onClose }: UserSidebarProps) {
   const pathname = usePathname();
   const { t } = useTranslation();
 
@@ -26,13 +33,28 @@ export function UserSidebar() {
   ];
 
   return (
-    <aside className="w-64 bg-background border-r border-border">
-      <div className="p-6">
-        <h1 className="text-2xl font-bold">Smart Home</h1>
-        <p className="text-sm text-muted-foreground mt-1">User Dashboard</p>
+    <aside
+      className={cn(
+        "w-64 flex h-screen flex-col bg-card border-r border-border",
+        className,
+      )}
+    >
+      <div className="flex h-16 shrink-0 items-center justify-between border-b px-4">
+        <div>
+          <h1 className="text-lg font-bold">Smart Home</h1>
+          <p className="text-xs text-muted-foreground">User</p>
+        </div>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="rounded-lg p-2 hover:bg-muted lg:hidden"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        )}
       </div>
 
-      <nav className="px-4 space-y-1">
+      <nav className="flex-1 overflow-y-auto p-3 space-y-1">
         {navigation.map((item) => {
           const isActive =
             pathname === item.href || pathname.startsWith(item.href + "/");
@@ -42,13 +64,15 @@ export function UserSidebar() {
             <Link
               key={item.name}
               href={item.href}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-colors ${
+              onClick={onClose}
+              className={cn(
+                "flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "text-foreground hover:bg-accent"
-              }`}
+                  ? "bg-primary/10 text-primary"
+                  : "text-foreground hover:bg-accent",
+              )}
             >
-              <Icon className="h-4 w-4" />
+              <Icon className="h-5 w-5 shrink-0" />
               <span>{item.name}</span>
             </Link>
           );
