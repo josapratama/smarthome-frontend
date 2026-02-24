@@ -1,18 +1,19 @@
+import { NextRequest, NextResponse } from "next/server";
 import { backendFetch } from "@/lib/api/server/backend";
-import { handleApiError } from "@/lib/api/server/error-handler";
-import type { UserDTO } from "@/lib/api/dto/auth.dto";
 
-export const dynamic = "force-dynamic";
-
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const data = await backendFetch<{ data: UserDTO }>(
-      "/api/v1/auth/me",
-      {},
-      { auth: "admin_cookie" },
+    const response = await backendFetch("/api/v1/me", {
+      method: "GET",
+    });
+
+    return NextResponse.json(response);
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || "Failed to fetch user info" },
+      { status: error.status || 500 },
     );
-    return Response.json(data);
-  } catch (error) {
-    return handleApiError(error);
   }
 }
+
+export const dynamic = "force-dynamic";
