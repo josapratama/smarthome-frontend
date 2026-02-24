@@ -1,82 +1,60 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { backendFetch } from "@/lib/api/server/backend";
-import { handleApiError } from "@/lib/api/server/error-handler";
-import type { HomeDTO, HomeUpdateRequest } from "@/lib/api/dto/homes.dto";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ homeId: string }> },
+  { params }: { params: { homeId: string } },
 ) {
   try {
-    const { homeId } = await params;
-    const id = parseInt(homeId);
+    const response = await backendFetch(`/api/v1/homes/${params.homeId}`, {
+      method: "GET",
+    });
 
-    if (isNaN(id) || id <= 0) {
-      return Response.json({ error: "Invalid home ID" }, { status: 400 });
-    }
-
-    const data = await backendFetch<{ data: HomeDTO }>(
-      `/homes/${id}`,
-      {},
-      { auth: "admin_cookie" },
+    return NextResponse.json(response);
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || "Failed to fetch home" },
+      { status: error.status || 500 },
     );
-    return Response.json(data);
-  } catch (error) {
-    return handleApiError(error);
   }
 }
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ homeId: string }> },
+  { params }: { params: { homeId: string } },
 ) {
   try {
-    const { homeId } = await params;
-    const id = parseInt(homeId);
+    const body = await request.json();
+    const response = await backendFetch(`/api/v1/homes/${params.homeId}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    });
 
-    if (isNaN(id) || id <= 0) {
-      return Response.json({ error: "Invalid home ID" }, { status: 400 });
-    }
-
-    const body: HomeUpdateRequest = await request.json();
-
-    const data = await backendFetch(
-      `/homes/${id}`,
-      {
-        method: "PATCH",
-        body: JSON.stringify(body),
-      },
-      { auth: "admin_cookie" },
+    return NextResponse.json(response);
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || "Failed to update home" },
+      { status: error.status || 500 },
     );
-
-    return Response.json(data);
-  } catch (error) {
-    return handleApiError(error);
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ homeId: string }> },
+  { params }: { params: { homeId: string } },
 ) {
   try {
-    const { homeId } = await params;
-    const id = parseInt(homeId);
+    const response = await backendFetch(`/api/v1/homes/${params.homeId}`, {
+      method: "DELETE",
+    });
 
-    if (isNaN(id) || id <= 0) {
-      return Response.json({ error: "Invalid home ID" }, { status: 400 });
-    }
-
-    const data = await backendFetch(
-      `/homes/${id}`,
-      {
-        method: "DELETE",
-      },
-      { auth: "admin_cookie" },
+    return NextResponse.json(response);
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || "Failed to delete home" },
+      { status: error.status || 500 },
     );
-
-    return Response.json(data);
-  } catch (error) {
-    return handleApiError(error);
   }
 }
+
+export const dynamic = "force-dynamic";

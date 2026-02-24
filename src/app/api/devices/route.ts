@@ -1,37 +1,24 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { backendFetch } from "@/lib/api/server/backend";
-import { handleApiError } from "@/lib/api/server/error-handler";
 
-export const dynamic = "force-dynamic";
-
-export async function GET(req: Request) {
+export async function GET(request: NextRequest) {
   try {
-    const url = new URL(req.url);
-    const sp = url.searchParams;
+    const searchParams = request.nextUrl.searchParams;
+    const homeId = searchParams.get("homeId");
 
-    // sanitize homeId
-    const homeId = sp.get("homeId");
-    if (!homeId || homeId === "NaN" || Number.isNaN(Number(homeId))) {
-      sp.delete("homeId");
-    }
+    const url = homeId ? `/api/v1/devices?homeId=${homeId}` : "/api/v1/devices";
 
-    // sanitize status (backend cuma terima "true"/"false")
-    const status = sp.get("status");
-    if (status && status !== "true" && status !== "false") {
-      sp.delete("status");
-    }
+    const response = await backendFetch(url, {
+      method: "GET",
+    });
 
-    const qs = sp.toString();
-    const path = qs ? `/devices?${qs}` : "/devices";
-
-    const data = await backendFetch(
-      path,
-      { method: "GET" },
-      { auth: "admin_cookie" },
+    return NextResponse.json(response);
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || "Failed to fetch devices" },
+      { status: error.status || 500 },
     );
-
-    return NextResponse.json(data);
-  } catch (error) {
-    return handleApiError(error);
   }
 }
+
+export const dynamic = "force-dynamic";

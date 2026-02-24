@@ -3,17 +3,17 @@ import { backendFetch } from "@/lib/api/server/backend";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { deviceId: string } },
+  { params }: { params: { roomId: string } },
 ) {
   try {
-    const response = await backendFetch(`/api/v1/devices/${params.deviceId}`, {
+    const response = await backendFetch(`/api/v1/rooms/${params.roomId}`, {
       method: "GET",
     });
 
     return NextResponse.json(response);
   } catch (error: any) {
     return NextResponse.json(
-      { error: error.message || "Failed to fetch device" },
+      { error: error.message || "Failed to fetch room" },
       { status: error.status || 500 },
     );
   }
@@ -21,11 +21,11 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { deviceId: string } },
+  { params }: { params: { roomId: string } },
 ) {
   try {
     const body = await request.json();
-    const response = await backendFetch(`/api/v1/devices/${params.deviceId}`, {
+    const response = await backendFetch(`/api/v1/rooms/${params.roomId}`, {
       method: "PATCH",
       body: JSON.stringify(body),
     });
@@ -33,7 +33,7 @@ export async function PATCH(
     return NextResponse.json(response);
   } catch (error: any) {
     return NextResponse.json(
-      { error: error.message || "Failed to update device" },
+      { error: error.message || "Failed to update room" },
       { status: error.status || 500 },
     );
   }
@@ -41,17 +41,17 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { deviceId: string } },
+  { params }: { params: { roomId: string } },
 ) {
   try {
-    const response = await backendFetch(`/api/v1/devices/${params.deviceId}`, {
+    const response = await backendFetch(`/api/v1/rooms/${params.roomId}`, {
       method: "DELETE",
     });
 
     return NextResponse.json(response);
   } catch (error: any) {
     return NextResponse.json(
-      { error: error.message || "Failed to delete device" },
+      { error: error.message || "Failed to delete room" },
       { status: error.status || 500 },
     );
   }
