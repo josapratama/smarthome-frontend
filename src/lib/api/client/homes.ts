@@ -35,17 +35,17 @@ export interface UpdateHomeInput {
 export const homesApi = {
   list: async () => {
     const res = await api.get<{ data: { homes: Home[] } }>("/api/homes");
-    return res.data.homes;
+    return res.data.data.homes;
   },
 
   getById: async (homeId: number) => {
     const res = await api.get<{ data: { home: Home } }>(`/api/homes/${homeId}`);
-    return res.data.home;
+    return res.data.data.home;
   },
 
   create: async (input: CreateHomeInput) => {
     const res = await api.post<{ data: { home: Home } }>("/api/homes", input);
-    return res.data.home;
+    return res.data.data.home;
   },
 
   update: async (homeId: number, input: UpdateHomeInput) => {
@@ -53,7 +53,7 @@ export const homesApi = {
       `/api/homes/${homeId}`,
       input,
     );
-    return res.data.home;
+    return res.data.data.home;
   },
 
   delete: async (homeId: number) => {

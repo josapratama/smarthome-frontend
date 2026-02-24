@@ -1,4 +1,4 @@
-import { apiClient } from "./base";
+import { api, apiClient } from "../client";
 
 export interface Device {
   id: number;
@@ -28,31 +28,31 @@ export interface DeviceWithDetails extends Device {
 export const devicesApi = {
   list: async (homeId?: number) => {
     const params = homeId ? `?homeId=${homeId}` : "";
-    const res = await apiClient.get<{ data: DeviceWithDetails[] }>(
+    const res = await api.get<{ data: DeviceWithDetails[] }>(
       `/api/devices${params}`,
     );
-    return res.data;
+    return res.data.data;
   },
 
   getById: async (deviceId: number) => {
-    const res = await apiClient.get<{ data: DeviceWithDetails }>(
+    const res = await api.get<{ data: DeviceWithDetails }>(
       `/api/devices/${deviceId}`,
     );
-    return res.data;
+    return res.data.data;
   },
 
   update: async (
     deviceId: number,
     input: { name?: string; roomId?: number | null },
   ) => {
-    const res = await apiClient.patch<{ data: Device }>(
+    const res = await api.patch<{ data: Device }>(
       `/api/devices/${deviceId}`,
       input,
     );
-    return res.data;
+    return res.data.data;
   },
 
   delete: async (deviceId: number) => {
-    await apiClient.delete(`/api/devices/${deviceId}`);
+    await api.delete(`/api/devices/${deviceId}`);
   },
 };
