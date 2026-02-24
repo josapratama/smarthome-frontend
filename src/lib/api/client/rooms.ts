@@ -1,4 +1,4 @@
-import { apiClient } from "./base";
+import { api } from "../client";
 
 export interface Room {
   homeId: number;
@@ -21,19 +21,17 @@ export interface UpdateRoomInput {
 
 export const roomsApi = {
   listByHome: async (homeId: number) => {
-    const res = await apiClient.get<{ data: Room[] }>(
-      `/api/homes/${homeId}/rooms`,
-    );
+    const res = await api.get<{ data: Room[] }>(`/api/homes/${homeId}/rooms`);
     return res.data;
   },
 
   getById: async (roomId: number) => {
-    const res = await apiClient.get<{ data: Room }>(`/api/rooms/${roomId}`);
+    const res = await api.get<{ data: Room }>(`/api/rooms/${roomId}`);
     return res.data;
   },
 
   create: async (homeId: number, input: CreateRoomInput) => {
-    const res = await apiClient.post<{ data: Room }>(
+    const res = await api.post<{ data: Room }>(
       `/api/homes/${homeId}/rooms`,
       input,
     );
@@ -41,14 +39,11 @@ export const roomsApi = {
   },
 
   update: async (roomId: number, input: UpdateRoomInput) => {
-    const res = await apiClient.patch<{ data: Room }>(
-      `/api/rooms/${roomId}`,
-      input,
-    );
+    const res = await api.patch<{ data: Room }>(`/api/rooms/${roomId}`, input);
     return res.data;
   },
 
   delete: async (roomId: number) => {
-    await apiClient.delete(`/api/rooms/${roomId}`);
+    await api.delete(`/api/rooms/${roomId}`);
   },
 };

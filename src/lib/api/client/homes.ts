@@ -1,4 +1,4 @@
-import { apiClient } from "./base";
+import { api } from "../client";
 
 export interface Home {
   id: number;
@@ -34,27 +34,22 @@ export interface UpdateHomeInput {
 
 export const homesApi = {
   list: async () => {
-    const res = await apiClient.get<{ data: { homes: Home[] } }>("/api/homes");
+    const res = await api.get<{ data: { homes: Home[] } }>("/api/homes");
     return res.data.homes;
   },
 
   getById: async (homeId: number) => {
-    const res = await apiClient.get<{ data: { home: Home } }>(
-      `/api/homes/${homeId}`,
-    );
+    const res = await api.get<{ data: { home: Home } }>(`/api/homes/${homeId}`);
     return res.data.home;
   },
 
   create: async (input: CreateHomeInput) => {
-    const res = await apiClient.post<{ data: { home: Home } }>(
-      "/api/homes",
-      input,
-    );
+    const res = await api.post<{ data: { home: Home } }>("/api/homes", input);
     return res.data.home;
   },
 
   update: async (homeId: number, input: UpdateHomeInput) => {
-    const res = await apiClient.patch<{ data: { home: Home } }>(
+    const res = await api.patch<{ data: { home: Home } }>(
       `/api/homes/${homeId}`,
       input,
     );
@@ -62,6 +57,6 @@ export const homesApi = {
   },
 
   delete: async (homeId: number) => {
-    await apiClient.delete(`/api/homes/${homeId}`);
+    await api.delete(`/api/homes/${homeId}`);
   },
 };
