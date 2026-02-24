@@ -4,7 +4,7 @@ import axios, {
   InternalAxiosRequestConfig,
 } from "axios";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 class ApiClient {
   private client: AxiosInstance;
@@ -12,7 +12,7 @@ class ApiClient {
 
   constructor() {
     this.client = axios.create({
-      baseURL: `${API_URL}/api/v1`,
+      baseURL: `${API_URL}/api`,
       headers: {
         "Content-Type": "application/json",
       },
@@ -48,7 +48,7 @@ class ApiClient {
 
           try {
             const { data } = await axios.post(
-              `${API_URL}/api/v1/auth/refresh`,
+              `${API_URL}/api/auth/refresh`,
               {},
               { withCredentials: true },
             );
