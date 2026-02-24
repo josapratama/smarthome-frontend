@@ -26,12 +26,17 @@ export async function backendFetch<T = any>(
   // Add authorization if needed
   if (auth === "admin_cookie") {
     const token = await getAccessToken();
+    console.log(`[BACKEND_FETCH] ${path} - Token present:`, !!token);
     if (token) {
       headers["Authorization"] = `Bearer ${token}`;
+      console.log(`[BACKEND_FETCH] ${path} - Authorization header set`);
+    } else {
+      console.log(`[BACKEND_FETCH] ${path} - No token found in cookies`);
     }
   }
 
   const url = path.startsWith("http") ? path : `${BACKEND_URL}${path}`;
+  console.log(`[BACKEND_FETCH] Calling: ${url}`);
 
   const response = await fetch(url, {
     ...fetchInit,
@@ -39,11 +44,15 @@ export async function backendFetch<T = any>(
     headers,
   });
 
+  console.log(`[BACKEND_FETCH] ${path} - Response status:`, response.status);
+
   if (!response.ok) {
     const error = await response.json().catch(() => ({
       error: "UNKNOWN_ERROR",
       message: response.statusText,
     }));
+
+    console.log(`[BACKEND_FETCH] ${path} - Error:`, error);
 
     throw {
       status: response.status,
