@@ -16,9 +16,10 @@ import {
   AlertTriangle,
   Brain,
   Settings,
+  User,
   X,
 } from "lucide-react";
-import { useTranslation } from "@/hooks/use-translation";
+import { useLanguage } from "@/contexts/language-context";
 import { cn } from "@/lib/utils";
 
 interface SidebarProps {
@@ -28,7 +29,7 @@ interface SidebarProps {
 
 export function Sidebar({ className, onClose }: SidebarProps) {
   const pathname = usePathname();
-  const { t } = useTranslation();
+  const { t } = useLanguage();
 
   const navigation = [
     { name: t("dashboard"), href: "/dashboard", icon: LayoutDashboard },
@@ -44,6 +45,7 @@ export function Sidebar({ className, onClose }: SidebarProps) {
     { name: "Invites", href: "/invites", icon: Mail },
     { name: "AI Models", href: "/ai", icon: Brain },
     { name: t("settings"), href: "/settings", icon: Settings },
+    { name: t("profile"), href: "/profile", icon: User },
   ];
 
   return (

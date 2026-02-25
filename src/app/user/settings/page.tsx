@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { usePreferences } from "@/hooks/use-preferences";
 import { useTranslation } from "@/hooks/use-translation";
-import { useTheme } from "@/components/providers/theme-provider";
+import { useTheme } from "@/contexts/theme-context";
 import {
   Card,
   CardContent,

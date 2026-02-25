@@ -40,6 +40,9 @@ export default function UserDashboardPage() {
   const offlineDevices = devices.filter((d) => d.status === "OFFLINE");
   const errorDevices = devices.filter((d) => d.status === "ERROR");
 
+  const homesCount = homes?.length || 0;
+  const devicesCount = devices?.length || 0;
+
   return (
     <div className="space-y-6">
       <div>
@@ -69,11 +72,11 @@ export default function UserDashboardPage() {
                   <HomeIcon className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold">{homes.length}</div>
+                  <div className="text-3xl font-bold">{homesCount}</div>
                   <p className="text-xs text-muted-foreground mt-2">
-                    {homes.length === 0
+                    {homesCount === 0
                       ? "Create your first home"
-                      : `${homes.length} ${homes.length === 1 ? "home" : "homes"} configured`}
+                      : `${homesCount} ${homesCount === 1 ? "home" : "homes"} configured`}
                   </p>
                 </CardContent>
               </Card>
@@ -88,11 +91,11 @@ export default function UserDashboardPage() {
                   <Smartphone className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold">{devices.length}</div>
+                  <div className="text-3xl font-bold">{devicesCount}</div>
                   <p className="text-xs text-muted-foreground mt-2">
-                    {devices.length === 0
+                    {devicesCount === 0
                       ? "No devices paired yet"
-                      : `${devices.length} ${devices.length === 1 ? "device" : "devices"} registered`}
+                      : `${devicesCount} ${devicesCount === 1 ? "device" : "devices"} registered`}
                   </p>
                 </CardContent>
               </Card>
@@ -137,7 +140,7 @@ export default function UserDashboardPage() {
             </Link>
           </div>
 
-          {homes.length === 0 && devices.length === 0 && (
+          {homesCount === 0 && devicesCount === 0 && (
             <div className="mt-6 bg-primary/10 border border-primary/20 rounded-lg p-6">
               <h3 className="text-lg font-semibold mb-2">Getting Started</h3>
               <ul className="space-y-2 text-sm text-foreground mb-4">
@@ -153,11 +156,11 @@ export default function UserDashboardPage() {
             </div>
           )}
 
-          {homes.length > 0 && (
+          {homesCount > 0 && (
             <div>
               <h2 className="text-2xl font-bold mb-4">Your Homes</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {homes.slice(0, 3).map((home) => {
+                {homes?.slice(0, 3).map((home) => {
                   const homeDevices = devices.filter(
                     (d) => d.homeId === home.id,
                   );
@@ -193,7 +196,7 @@ export default function UserDashboardPage() {
                   );
                 })}
               </div>
-              {homes.length > 3 && (
+              {homesCount > 3 && (
                 <div className="mt-4 text-center">
                   <Link href="/user/homes">
                     <Button variant="outline">View All Homes</Button>

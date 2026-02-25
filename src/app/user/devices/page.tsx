@@ -70,7 +70,7 @@ export default function UserDevicesPage() {
             <Skeleton key={i} className="h-[200px] rounded-lg" />
           ))}
         </div>
-      ) : devices.length === 0 ? (
+      ) : (devices?.length ?? 0) === 0 ? (
         <div className="bg-card rounded-lg shadow-md p-8 text-center border border-border">
           <div className="text-6xl mb-4">📱</div>
           <h2 className="text-xl font-semibold mb-2">No Devices Yet</h2>
@@ -83,7 +83,7 @@ export default function UserDevicesPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {devices.map((device) => (
+          {devices?.map((device) => (
             <Link key={device.id} href={`/user/devices/${device.id}`}>
               <Card className="hover:shadow-lg transition-shadow cursor-pointer">
                 <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">

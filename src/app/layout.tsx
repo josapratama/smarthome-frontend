@@ -1,5 +1,5 @@
 import { QueryProvider } from "@/lib/query/provider";
-import { ThemeProvider } from "@/components/providers/theme-provider";
+import { ThemeProvider } from "@/contexts/theme-context";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -15,13 +15,8 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               try {
-                const prefs = localStorage.getItem('user-preferences');
-                const theme = prefs ? JSON.parse(prefs).theme : 'system';
-                const resolved = theme === 'system' 
-                  ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-                  : theme;
-                document.documentElement.classList.add(resolved);
-                document.documentElement.setAttribute('data-theme', resolved);
+                const theme = localStorage.getItem('theme') || 'dark';
+                document.documentElement.classList.add(theme);
               } catch (e) {}
             `,
           }}

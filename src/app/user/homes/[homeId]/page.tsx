@@ -5,14 +5,23 @@ import { useParams, useRouter } from "next/navigation";
 import { homesApi, Home } from "@/lib/api/client/homes";
 import { roomsApi, Room } from "@/lib/api/client/rooms";
 import { devicesApi, DeviceWithDetails } from "@/lib/api/client/devices";
+import { membersApi, HomeMember } from "@/lib/api/client/members";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, Plus, Home as HomeIcon, DoorOpen } from "lucide-react";
+import {
+  ArrowLeft,
+  Plus,
+  Home as HomeIcon,
+  DoorOpen,
+  Users,
+} from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { CreateRoomDialog } from "@/components/user/create-room-dialog";
 import { RoomCard } from "@/components/user/room-card";
+import { InviteMemberDialog } from "@/components/user/invite-member-dialog";
+import { MembersList } from "@/components/user/members-list";
 
 export default function HomeDetailPage() {
   const params = useParams();
@@ -22,10 +31,23 @@ export default function HomeDetailPage() {
   const [home, setHome] = useState<Home | null>(null);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [devices, setDevices] = useState<DeviceWithDetails[]>([]);
+  const [members, setMembers] = useState<HomeMember[]>([]);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [createRoomDialogOpen, setCreateRoomDialogOpen] = useState(false);
+  const [inviteMemberDialogOpen, setInviteMemberDialogOpen] = useState(false);
 
   useEffect(() => {
+    // Get current user ID
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.data?.id) {
+          setCurrentUserId(data.data.id);
+        }
+      })
+      .catch(console.error);
+
     if (homeId) {
       loadData();
     }
@@ -34,14 +56,18 @@ export default function HomeDetailPage() {
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const [homeData, roomsData, devicesData] = await Promise.all([
-        homesApi.getById(homeId),
-        roomsApi.listByHome(homeId),
-        devicesApi.list(homeId),
-      ]);
+      const [homeData, roomsData, devicesData, membersData] = await Promise.all(
+        [
+          homesApi.getById(homeId),
+          roomsApi.listByHome(homeId),
+          devicesApi.list(homeId),
+          membersApi.listByHome(homeId),
+        ],
+      );
       setHome(homeData);
       setRooms(roomsData);
       setDevices(devicesData);
+      setMembers(membersData);
     } catch (error: any) {
       toast.error(error.message || "Failed to load home details");
     } finally {
@@ -78,6 +104,7 @@ export default function HomeDetailPage() {
 
   const devicesInHome = devices.filter((d) => d.homeId === homeId);
   const onlineDevices = devicesInHome.filter((d) => d.status === "ONLINE");
+  const isOwner = home && currentUserId && home.ownerUserId === currentUserId;
 
   return (
     <div className="space-y-6">
@@ -98,7 +125,7 @@ export default function HomeDetailPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Rooms</CardTitle>
@@ -130,6 +157,16 @@ export default function HomeDetailPage() {
             <div className="text-2xl font-bold text-green-600">
               {onlineDevices.length}
             </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Members</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{members.length}</div>
           </CardContent>
         </Card>
       </div>
@@ -175,12 +212,43 @@ export default function HomeDetailPage() {
         )}
       </div>
 
+      {/* Members */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold">Members</h2>
+          {isOwner && (
+            <Button onClick={() => setInviteMemberDialogOpen(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Invite Member
+            </Button>
+          )}
+        </div>
+
+        {currentUserId && (
+          <MembersList
+            members={members}
+            homeId={homeId}
+            currentUserId={currentUserId}
+            onUpdate={loadData}
+          />
+        )}
+      </div>
+
       <CreateRoomDialog
         open={createRoomDialogOpen}
         onOpenChange={setCreateRoomDialogOpen}
         homeId={homeId}
         onSuccess={loadData}
       />
+
+      {isOwner && (
+        <InviteMemberDialog
+          open={inviteMemberDialogOpen}
+          onOpenChange={setInviteMemberDialogOpen}
+          homeId={homeId}
+          onSuccess={loadData}
+        />
+      )}
     </div>
   );
 }

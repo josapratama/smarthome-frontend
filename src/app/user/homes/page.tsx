@@ -32,8 +32,8 @@ export default function UserHomesPage() {
     fetch("/api/auth/me")
       .then((res) => res.json())
       .then((data) => {
-        if (data.data?.user?.id) {
-          setUserId(data.data.user.id);
+        if (data.data?.id) {
+          setUserId(data.data.id);
         }
       })
       .catch(console.error);
@@ -88,7 +88,7 @@ export default function UserHomesPage() {
             <Skeleton key={i} className="h-[180px] rounded-lg" />
           ))}
         </div>
-      ) : homes.length === 0 ? (
+      ) : (homes?.length ?? 0) === 0 ? (
         <div className="bg-card rounded-lg shadow-md p-8 text-center border border-border">
           <div className="text-6xl mb-4">🏡</div>
           <h2 className="text-xl font-semibold mb-2">No Homes Yet</h2>
@@ -102,7 +102,7 @@ export default function UserHomesPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {homes.map((home) => (
+          {homes?.map((home) => (
             <HomeCard
               key={home.id}
               home={home}
