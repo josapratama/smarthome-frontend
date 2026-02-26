@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useMemo } from "react";
 import { translations, type Language } from "@/lib/i18n/translations";
 
 interface LanguageContextType {
@@ -31,17 +31,22 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const setLanguage = (lang: Language) => {
-    console.log("[Language] Changing language to:", lang);
+    console.log("[Language] Changing language from", language, "to:", lang);
     setLanguageState(lang);
     localStorage.setItem("language", lang);
-    // Force re-render by updating state
-    window.dispatchEvent(new Event("languagechange"));
   };
 
   const t = (key: string): string => {
     const translation = translations[language];
-    return (translation as any)[key] || (translations.id as any)[key] || key;
+    const result =
+      (translation as any)[key] || (translations.id as any)[key] || key;
+    return result;
   };
+
+  const contextValue = useMemo(
+    () => ({ language, setLanguage, t }),
+    [language],
+  );
 
   // Return a loading placeholder instead of null to prevent hydration mismatch
   if (!mounted) {
@@ -49,7 +54,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={contextValue}>
       {children}
     </LanguageContext.Provider>
   );
