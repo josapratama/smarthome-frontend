@@ -383,6 +383,221 @@ export default function NotificationsPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* Edit Template Dialog */}
+      <Dialog
+        open={isTemplateDialogOpen}
+        onOpenChange={setIsTemplateDialogOpen}
+      >
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Template</DialogTitle>
+            <DialogDescription>
+              Update notification template settings
+            </DialogDescription>
+          </DialogHeader>
+          {selectedTemplate && (
+            <EditTemplateForm
+              template={selectedTemplate}
+              onSuccess={() => {
+                setIsTemplateDialogOpen(false);
+                setSelectedTemplate(null);
+                loadTemplates();
+              }}
+              onCancel={() => {
+                setIsTemplateDialogOpen(false);
+                setSelectedTemplate(null);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+// Edit Template Form Component
+function EditTemplateForm({
+  template,
+  onSuccess,
+  onCancel,
+}: {
+  template: NotificationTemplate;
+  onSuccess: () => void;
+  onCancel: () => void;
+}) {
+  const [formData, setFormData] = useState({
+    channel: template.channel,
+    emailSubject: template.emailSubject || "",
+    emailBody: template.emailBody || "",
+    pushTitle: template.pushTitle || "",
+    pushBody: template.pushBody || "",
+    pushIcon: template.pushIcon || "",
+    pushSound: template.pushSound || "default",
+    isActive: template.isActive,
+  });
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSubmit = async () => {
+    setIsSaving(true);
+    try {
+      const res = await fetch(
+        `/api/v1/notifications/templates/${template.type}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        },
+      );
+
+      if (res.ok) {
+        toast.success("Template updated successfully");
+        onSuccess();
+      } else {
+        const data = await res.json();
+        toast.error(data.error || "Failed to update template");
+      }
+    } catch (error) {
+      toast.error("Failed to update template");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <Label>Channel</Label>
+        <Select
+          value={formData.channel}
+          onValueChange={(val) => setFormData({ ...formData, channel: val })}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="FCM">Push Notification (FCM)</SelectItem>
+            <SelectItem value="EMAIL">Email</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {formData.channel === "EMAIL" ? (
+        <>
+          <div className="space-y-2">
+            <Label>Email Subject</Label>
+            <Input
+              placeholder="e.g., {{homeName}} - Alert"
+              value={formData.emailSubject}
+              onChange={(e) =>
+                setFormData({ ...formData, emailSubject: e.target.value })
+              }
+            />
+            <p className="text-xs text-muted-foreground">
+              Use {`{{variableName}}`} for dynamic values
+            </p>
+          </div>
+          <div className="space-y-2">
+            <Label>Email Body (HTML)</Label>
+            <Textarea
+              placeholder="HTML content with {{variables}}"
+              value={formData.emailBody}
+              onChange={(e) =>
+                setFormData({ ...formData, emailBody: e.target.value })
+              }
+              rows={8}
+            />
+            <p className="text-xs text-muted-foreground">
+              Supports HTML and {`{{variableName}}`} placeholders
+            </p>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="space-y-2">
+            <Label>Push Title</Label>
+            <Input
+              placeholder="e.g., 🔥 Fire Alert!"
+              value={formData.pushTitle}
+              onChange={(e) =>
+                setFormData({ ...formData, pushTitle: e.target.value })
+              }
+            />
+            <p className="text-xs text-muted-foreground">
+              Use {`{{variableName}}`} for dynamic values
+            </p>
+          </div>
+          <div className="space-y-2">
+            <Label>Push Body</Label>
+            <Textarea
+              placeholder="e.g., Fire detected in {{roomName}} at {{homeName}}"
+              value={formData.pushBody}
+              onChange={(e) =>
+                setFormData({ ...formData, pushBody: e.target.value })
+              }
+              rows={4}
+            />
+            <p className="text-xs text-muted-foreground">
+              Use {`{{variableName}}`} for dynamic values
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Icon URL (optional)</Label>
+              <Input
+                placeholder="https://..."
+                value={formData.pushIcon}
+                onChange={(e) =>
+                  setFormData({ ...formData, pushIcon: e.target.value })
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Sound</Label>
+              <Select
+                value={formData.pushSound}
+                onValueChange={(val) =>
+                  setFormData({ ...formData, pushSound: val })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="default">Default</SelectItem>
+                  <SelectItem value="alarm">Alarm</SelectItem>
+                  <SelectItem value="alert">Alert</SelectItem>
+                  <SelectItem value="notification">Notification</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </>
+      )}
+
+      <div className="flex items-center space-x-2">
+        <input
+          type="checkbox"
+          id="isActive"
+          checked={formData.isActive}
+          onChange={(e) =>
+            setFormData({ ...formData, isActive: e.target.checked })
+          }
+          className="h-4 w-4 rounded border-gray-300"
+        />
+        <Label htmlFor="isActive" className="cursor-pointer">
+          Template is active
+        </Label>
+      </div>
+
+      <DialogFooter>
+        <Button variant="outline" onClick={onCancel} disabled={isSaving}>
+          Cancel
+        </Button>
+        <Button onClick={handleSubmit} disabled={isSaving}>
+          {isSaving ? "Saving..." : "Save Changes"}
+        </Button>
+      </DialogFooter>
     </div>
   );
 }
