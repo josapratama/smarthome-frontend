@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/language-context";
 
 function fmtDateTime(v?: string | null) {
   if (!v) return "-";
@@ -29,6 +30,8 @@ function getLastSeenStatus(lastSeenAt: string | null | undefined) {
 }
 
 export function MonitoringClient() {
+  const { t } = useLanguage();
+
   const devicesQuery = useQuery({
     queryKey: qk.devices.list(),
     queryFn: async () => {
@@ -59,9 +62,9 @@ export function MonitoringClient() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Monitoring</h1>
+          <h1 className="text-2xl font-semibold">{t("monitoringPage")}</h1>
           <p className="text-sm text-muted-foreground">
-            Real-time device status and system health.
+            {t("realTimeMonitoring")}
           </p>
         </div>
 
@@ -72,7 +75,7 @@ export function MonitoringClient() {
           }}
           disabled={devicesQuery.isFetching}
         >
-          Refresh All
+          {t("refreshAll")}
         </Button>
       </div>
 
@@ -81,7 +84,7 @@ export function MonitoringClient() {
         <Card className="rounded-2xl shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">
-              Total Devices
+              {t("totalDevices")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -92,7 +95,7 @@ export function MonitoringClient() {
         <Card className="rounded-2xl shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">
-              Online
+              {t("onlineDevices")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -105,7 +108,7 @@ export function MonitoringClient() {
         <Card className="rounded-2xl shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">
-              Offline
+              {t("offlineDevices")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -140,7 +143,7 @@ export function MonitoringClient() {
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
               <div className="h-3 w-3 rounded-full bg-green-500"></div>
-              Online Devices ({onlineDevices.length})
+              {t("onlineDevicesList")} ({onlineDevices.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -151,7 +154,7 @@ export function MonitoringClient() {
               </div>
             ) : onlineDevices.length === 0 ? (
               <div className="text-sm text-muted-foreground">
-                No online devices
+                {t("noOnlineDevices")}
               </div>
             ) : (
               <div className="space-y-2 max-h-96 overflow-y-auto">

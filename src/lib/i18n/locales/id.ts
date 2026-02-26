@@ -239,7 +239,6 @@ export const id = {
   totalInvites: "Total Undangan",
   accepted: "Diterima",
   activeMembers: "Anggota Aktif",
-  quickActions: "Aksi Cepat",
   sendNewInvitation: "Kirim Undangan Baru",
   viewAllMembers: "Lihat Semua Anggota",
   availableHomes: "Rumah Tersedia",
