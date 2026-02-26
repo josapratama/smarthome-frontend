@@ -135,7 +135,15 @@ export default function SettingsPage() {
       });
 
       if (res.ok) {
-        toast.success("Password changed successfully");
+        const data = await res.json();
+        const remainingChanges = data.data?.remainingChanges;
+        if (remainingChanges !== undefined) {
+          toast.success(
+            `Password changed successfully. You have ${remainingChanges} password change(s) remaining this month.`,
+          );
+        } else {
+          toast.success("Password changed successfully");
+        }
         setPasswordForm({
           oldPassword: "",
           newPassword: "",
@@ -143,7 +151,13 @@ export default function SettingsPage() {
         });
       } else {
         const data = await res.json();
-        toast.error(data.error || "Failed to change password");
+        const errorMsg =
+          data.error === "PASSWORD_CHANGE_LIMIT_EXCEEDED"
+            ? "Password change limit exceeded. You can only change your password 3 times per month. Please try again next month."
+            : data.error === "INVALID_CREDENTIALS"
+              ? "Current password is incorrect"
+              : data.error || "Failed to change password";
+        toast.error(errorMsg);
       }
     } catch (error) {
       toast.error("Failed to change password");
@@ -380,7 +394,8 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle>Change Password</CardTitle>
               <CardDescription>
-                Update your password to keep your account secure
+                Update your password to keep your account secure. You can change
+                your password up to 3 times per month.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -391,6 +406,10 @@ export default function SettingsPage() {
                 </p>
               ) : (
                 <>
+                  <div className="p-3 bg-muted rounded-lg text-sm text-muted-foreground">
+                    ℹ️ Password can be changed maximum 3 times per month for
+                    security reasons.
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="oldPassword">Current Password</Label>
                     <Input
