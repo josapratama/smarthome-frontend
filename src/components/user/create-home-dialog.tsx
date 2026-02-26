@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { homesApi, CreateHomeInput } from "@/lib/api/client/homes";
 import { toast } from "sonner";
+import { useLanguage } from "@/contexts/language-context";
 
 const homeSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
@@ -49,6 +50,7 @@ export function CreateHomeDialog({
   userId,
 }: CreateHomeDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useLanguage();
 
   const form = useForm<HomeFormData>({
     resolver: zodResolver(homeSchema),
@@ -68,12 +70,12 @@ export function CreateHomeDialog({
         ownerUserId: userId,
       };
       await homesApi.create(input);
-      toast.success("Home created successfully");
+      toast.success(t("homeCreated"));
       form.reset();
       onOpenChange(false);
       onSuccess();
     } catch (error: any) {
-      toast.error(error.message || "Failed to create home");
+      toast.error(error.message || t("failedCreateHome"));
     } finally {
       setIsLoading(false);
     }
@@ -83,10 +85,8 @@ export function CreateHomeDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Create New Home</DialogTitle>
-          <DialogDescription>
-            Add a new home to organize your devices by location.
-          </DialogDescription>
+          <DialogTitle>{t("createNewHome")}</DialogTitle>
+          <DialogDescription>{t("addNewHomeDesc")}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -95,9 +95,9 @@ export function CreateHomeDialog({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Home Name *</FormLabel>
+                  <FormLabel>{t("homeName")} *</FormLabel>
                   <FormControl>
-                    <Input placeholder="My Home" {...field} />
+                    <Input placeholder={t("myHome")} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -109,10 +109,10 @@ export function CreateHomeDialog({
               name="addressText"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Address</FormLabel>
+                  <FormLabel>{t("address")}</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="123 Main Street"
+                      placeholder={t("addressPlaceholder")}
                       {...field}
                       rows={2}
                     />
@@ -128,9 +128,9 @@ export function CreateHomeDialog({
                 name="city"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>City</FormLabel>
+                    <FormLabel>{t("city")}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Jakarta" {...field} />
+                      <Input placeholder={t("cityPlaceholder")} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -142,9 +142,12 @@ export function CreateHomeDialog({
                 name="postalCode"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Postal Code</FormLabel>
+                    <FormLabel>{t("postalCode")}</FormLabel>
                     <FormControl>
-                      <Input placeholder="12345" {...field} />
+                      <Input
+                        placeholder={t("postalCodePlaceholder")}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -159,10 +162,10 @@ export function CreateHomeDialog({
                 onClick={() => onOpenChange(false)}
                 disabled={isLoading}
               >
-                Cancel
+                {t("cancel")}
               </Button>
               <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Creating..." : "Create Home"}
+                {isLoading ? t("creating") : t("createHome")}
               </Button>
             </DialogFooter>
           </form>

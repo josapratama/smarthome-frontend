@@ -126,7 +126,7 @@ function UploadFirmwareDialog() {
 
           <div>
             <Label htmlFor="platform">
-              {t("platform")} {t("required")}
+              {t("appPlatform")} {t("required")}
             </Label>
             <Select
               value={formData.platform}
@@ -148,7 +148,7 @@ function UploadFirmwareDialog() {
 
           <div>
             <Label htmlFor="version">
-              {t("version")} {t("required")}
+              {t("appVersion")} {t("required")}
             </Label>
             <Input
               id="version"
@@ -251,12 +251,12 @@ function EditFirmwareDialog({ firmware }: { firmware: FirmwareReleaseDTO }) {
         </DialogHeader>
         <div className="space-y-4">
           <div>
-            <Label>{t("version")}</Label>
+            <Label>{t("appVersion")}</Label>
             <Input value={firmware.version} disabled />
           </div>
 
           <div>
-            <Label>{t("platform")}</Label>
+            <Label>{t("appPlatform")}</Label>
             <Input value={firmware.platform} disabled />
           </div>
 

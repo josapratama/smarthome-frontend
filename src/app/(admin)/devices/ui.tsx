@@ -230,7 +230,7 @@ export default function DevicesClient() {
           <Link href="/devices/register">
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              Register Device
+              {t("registerDevice")}
             </Button>
           </Link>
         </div>
@@ -239,7 +239,7 @@ export default function DevicesClient() {
       {/* Filters */}
       <div className="flex flex-wrap gap-3">
         <div className="flex items-center gap-2">
-          <label className="text-sm font-medium">Status:</label>
+          <label className="text-sm font-medium">{t("status")}:</label>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-32">
               <SelectValue />
@@ -253,11 +253,11 @@ export default function DevicesClient() {
         </div>
 
         <div className="flex items-center gap-2">
-          <label className="text-sm font-medium">Home ID:</label>
+          <label className="text-sm font-medium">{t("homeId")}:</label>
           <Input
             value={homeIdFilter}
             onChange={(e) => setHomeIdFilter(e.target.value)}
-            placeholder="Filter by home"
+            placeholder={t("filterByHome")}
             className="w-32"
           />
         </div>
@@ -317,7 +317,7 @@ export default function DevicesClient() {
                   <CardContent className="space-y-3">
                     <div className="text-xs text-muted-foreground space-y-1">
                       <div className="flex justify-between">
-                        <span>Last seen:</span>
+                        <span>{t("lastSeen")}:</span>
                         <span className="font-mono">
                           {d.lastSeenAt
                             ? new Date(d.lastSeenAt).toLocaleString()
@@ -325,12 +325,12 @@ export default function DevicesClient() {
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Home:</span>
+                        <span>{t("home")}:</span>
                         <span>#{d.homeId}</span>
                       </div>
                       {d.roomId && (
                         <div className="flex justify-between">
-                          <span>Room:</span>
+                          <span>{t("room")}:</span>
                           <span>#{d.roomId}</span>
                         </div>
                       )}
@@ -355,7 +355,7 @@ export default function DevicesClient() {
                         }}
                       >
                         <Activity className="mr-1 h-3 w-3" />
-                        Telemetry
+                        {t("telemetry")}
                       </Button>
                       <Button
                         variant="outline"
@@ -415,36 +415,38 @@ export default function DevicesClient() {
       <Dialog open={!!editDevice} onOpenChange={() => setEditDevice(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t("edit")} Device</DialogTitle>
+            <DialogTitle>
+              {t("edit")} {t("device")}
+            </DialogTitle>
             <DialogDescription>
-              Update device information for #{editDevice?.id}
+              {t("updateDeviceInfo")} #{editDevice?.id}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-name">Device Name</Label>
+              <Label htmlFor="edit-name">{t("deviceName")}</Label>
               <Input
                 id="edit-name"
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
-                placeholder="Enter device name"
+                placeholder={t("enterDeviceName")}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="edit-type">Device Type</Label>
+              <Label htmlFor="edit-type">{t("deviceType")}</Label>
               <Select value={editType} onValueChange={setEditType}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="SENSOR_NODE">Sensor Node</SelectItem>
-                  <SelectItem value="LIGHT">Light</SelectItem>
-                  <SelectItem value="FAN">Fan</SelectItem>
-                  <SelectItem value="DOOR">Door</SelectItem>
-                  <SelectItem value="POWER_METER">Power Meter</SelectItem>
-                  <SelectItem value="OTHER">Other</SelectItem>
+                  <SelectItem value="SENSOR_NODE">{t("sensorNode")}</SelectItem>
+                  <SelectItem value="LIGHT">{t("light")}</SelectItem>
+                  <SelectItem value="FAN">{t("fan")}</SelectItem>
+                  <SelectItem value="DOOR">{t("door")}</SelectItem>
+                  <SelectItem value="POWER_METER">{t("powerMeter")}</SelectItem>
+                  <SelectItem value="OTHER">{t("other")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -475,11 +477,11 @@ export default function DevicesClient() {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>{t("areYouSure")}</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete device{" "}
+              {t("deleteDeviceConfirm")}{" "}
               <span className="font-semibold">{deleteDevice?.deviceName}</span>{" "}
-              (#{deleteDevice?.id}). This action cannot be undone.
+              (#{deleteDevice?.id}). {t("cannotUndo")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -491,7 +493,7 @@ export default function DevicesClient() {
               disabled={deleteMutation.isPending}
               className="bg-red-600 hover:bg-red-700"
             >
-              {deleteMutation.isPending ? "Deleting..." : t("delete")}
+              {deleteMutation.isPending ? t("deleting") : t("delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

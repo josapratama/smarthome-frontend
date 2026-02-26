@@ -64,11 +64,11 @@ export function UserTopbar({ onMenuClick }: UserTopbarProps) {
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => setTheme("light")}>
                 <Sun className="h-4 w-4 mr-2" />
-                {t("light")}
+                {t("lightTheme")}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setTheme("dark")}>
                 <Moon className="h-4 w-4 mr-2" />
-                {t("dark")}
+                {t("darkTheme")}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setTheme("system")}>
                 <Monitor className="h-4 w-4 mr-2" />

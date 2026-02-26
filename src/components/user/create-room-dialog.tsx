@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { roomsApi } from "@/lib/api/client/rooms";
 import { toast } from "sonner";
+import { useLanguage } from "@/contexts/language-context";
 
 const roomSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
@@ -47,6 +48,7 @@ export function CreateRoomDialog({
   onSuccess,
 }: CreateRoomDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useLanguage();
 
   const form = useForm<RoomFormData>({
     resolver: zodResolver(roomSchema),
@@ -60,12 +62,12 @@ export function CreateRoomDialog({
     setIsLoading(true);
     try {
       await roomsApi.create(homeId, data);
-      toast.success("Room created successfully");
+      toast.success(t("roomCreated"));
       form.reset();
       onOpenChange(false);
       onSuccess();
     } catch (error: any) {
-      toast.error(error.message || "Failed to create room");
+      toast.error(error.message || t("failedCreateRoom"));
     } finally {
       setIsLoading(false);
     }
@@ -75,10 +77,8 @@ export function CreateRoomDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Create New Room</DialogTitle>
-          <DialogDescription>
-            Add a new room to organize your devices.
-          </DialogDescription>
+          <DialogTitle>{t("createNewRoom")}</DialogTitle>
+          <DialogDescription>{t("addNewRoomDesc")}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -87,9 +87,9 @@ export function CreateRoomDialog({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Room Name *</FormLabel>
+                  <FormLabel>{t("roomName")} *</FormLabel>
                   <FormControl>
-                    <Input placeholder="Living Room" {...field} />
+                    <Input placeholder={t("livingRoom")} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -101,10 +101,10 @@ export function CreateRoomDialog({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>{t("description")}</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Optional description"
+                      placeholder={t("optionalDescription")}
                       {...field}
                       rows={3}
                     />
@@ -121,10 +121,10 @@ export function CreateRoomDialog({
                 onClick={() => onOpenChange(false)}
                 disabled={isLoading}
               >
-                Cancel
+                {t("cancel")}
               </Button>
               <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Creating..." : "Create Room"}
+                {isLoading ? t("creating") : t("createRoom")}
               </Button>
             </DialogFooter>
           </form>

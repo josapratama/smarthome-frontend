@@ -31,6 +31,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Info, Edit, Trash2, Plus, Save } from "lucide-react";
 import { toast } from "sonner";
+import { useLanguage } from "@/contexts/language-context";
 
 interface AppInfo {
   id: number;
@@ -44,6 +45,7 @@ interface AppInfo {
 }
 
 export default function AppInfoPage() {
+  const { t } = useLanguage();
   const [appInfo, setAppInfo] = useState<AppInfo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -70,7 +72,7 @@ export default function AppInfoPage() {
         setAppInfo(data.data.appInfo);
       }
     } catch (error) {
-      toast.error("Failed to load app info");
+      toast.error(t("failedLoadAppInfo"));
     } finally {
       setIsLoading(false);
     }
@@ -123,20 +125,20 @@ export default function AppInfoPage() {
       });
 
       if (res.ok) {
-        toast.success(editingInfo ? "App info updated" : "App info created");
+        toast.success(editingInfo ? t("appInfoUpdated") : t("appInfoCreated"));
         setIsDialogOpen(false);
         loadAppInfo();
       } else {
         const data = await res.json();
-        toast.error(data.error || "Failed to save app info");
+        toast.error(data.error || t("failedSaveAppInfo"));
       }
     } catch (error) {
-      toast.error("Failed to save app info");
+      toast.error(t("failedSaveAppInfo"));
     }
   };
 
   const handleDelete = async (key: string) => {
-    if (!confirm("Are you sure you want to delete this app info?")) return;
+    if (!confirm(t("deleteAppInfoConfirm"))) return;
 
     try {
       const res = await fetch(`/api/v1/app-info/admin/${key}`, {
@@ -144,13 +146,13 @@ export default function AppInfoPage() {
       });
 
       if (res.ok) {
-        toast.success("App info deleted");
+        toast.success(t("appInfoDeleted"));
         loadAppInfo();
       } else {
-        toast.error("Failed to delete app info");
+        toast.error(t("failedDeleteAppInfo"));
       }
     } catch (error) {
-      toast.error("Failed to delete app info");
+      toast.error(t("failedDeleteAppInfo"));
     }
   };
 
@@ -169,14 +171,12 @@ export default function AppInfoPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">App Information</h1>
-          <p className="text-muted-foreground mt-1">
-            Manage application information and settings
-          </p>
+          <h1 className="text-3xl font-bold">{t("appInformation")}</h1>
+          <p className="text-muted-foreground mt-1">{t("manageAppInfo")}</p>
         </div>
         <Button onClick={() => handleOpenDialog()}>
           <Plus className="h-4 w-4 mr-2" />
-          Add Info
+          {t("addInfo")}
         </Button>
       </div>
 
@@ -185,7 +185,8 @@ export default function AppInfoPage() {
           <CardHeader>
             <CardTitle className="capitalize">{category}</CardTitle>
             <CardDescription>
-              {items.length} item{items.length !== 1 ? "s" : ""}
+              {items.length} {t("item")}
+              {items.length !== 1 ? "s" : ""}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -201,9 +202,9 @@ export default function AppInfoPage() {
                         {info.key}
                       </code>
                       {info.isPublic ? (
-                        <Badge variant="default">Public</Badge>
+                        <Badge variant="default">{t("public")}</Badge>
                       ) : (
-                        <Badge variant="secondary">Private</Badge>
+                        <Badge variant="secondary">{t("private")}</Badge>
                       )}
                     </div>
                     <p className="text-sm text-muted-foreground whitespace-pre-wrap">
@@ -237,13 +238,15 @@ export default function AppInfoPage() {
         <Card>
           <CardContent className="py-12 text-center">
             <Info className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No App Info Found</h3>
+            <h3 className="text-lg font-semibold mb-2">
+              {t("noAppInfoFound")}
+            </h3>
             <p className="text-muted-foreground mb-4">
-              Get started by adding your first app information
+              {t("getStartedAppInfo")}
             </p>
             <Button onClick={() => handleOpenDialog()}>
               <Plus className="h-4 w-4 mr-2" />
-              Add Info
+              {t("addInfo")}
             </Button>
           </CardContent>
         </Card>
@@ -253,47 +256,45 @@ export default function AppInfoPage() {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
-              {editingInfo ? "Edit App Info" : "Add App Info"}
+              {editingInfo ? t("editAppInfo") : t("addAppInfo")}
             </DialogTitle>
             <DialogDescription>
-              {editingInfo
-                ? "Update application information"
-                : "Add new application information"}
+              {editingInfo ? t("updateAppInfo") : t("addNewAppInfo")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="key">Key</Label>
+              <Label htmlFor="key">{t("key")}</Label>
               <Input
                 id="key"
                 value={formData.key}
                 onChange={(e) =>
                   setFormData({ ...formData, key: e.target.value })
                 }
-                placeholder="e.g., app_name"
+                placeholder={t("keyPlaceholder")}
                 disabled={!!editingInfo}
               />
               <p className="text-xs text-muted-foreground">
-                Unique identifier (cannot be changed after creation)
+                {t("keyDescription")}
               </p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="value">Value</Label>
+              <Label htmlFor="value">{t("value")}</Label>
               <Textarea
                 id="value"
                 value={formData.value}
                 onChange={(e) =>
                   setFormData({ ...formData, value: e.target.value })
                 }
-                placeholder="Enter value"
+                placeholder={t("enterValue")}
                 rows={4}
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="category">Category</Label>
+                <Label htmlFor="category">{t("category")}</Label>
                 <Select
                   value={formData.category}
                   onValueChange={(val) =>
@@ -304,16 +305,16 @@ export default function AppInfoPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="general">General</SelectItem>
-                    <SelectItem value="about">About</SelectItem>
-                    <SelectItem value="contact">Contact</SelectItem>
-                    <SelectItem value="legal">Legal</SelectItem>
+                    <SelectItem value="general">{t("general")}</SelectItem>
+                    <SelectItem value="about">{t("about")}</SelectItem>
+                    <SelectItem value="contact">{t("contact")}</SelectItem>
+                    <SelectItem value="legal">{t("legal")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="displayOrder">Display Order</Label>
+                <Label htmlFor="displayOrder">{t("displayOrder")}</Label>
                 <Input
                   id="displayOrder"
                   type="number"
@@ -339,17 +340,17 @@ export default function AppInfoPage() {
                 className="h-4 w-4 rounded border-gray-300"
               />
               <Label htmlFor="isPublic" className="cursor-pointer">
-                Public (visible to all users)
+                {t("publicVisibility")}
               </Label>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              Cancel
+              {t("cancel")}
             </Button>
             <Button onClick={handleSave}>
               <Save className="h-4 w-4 mr-2" />
-              Save
+              {t("save")}
             </Button>
           </DialogFooter>
         </DialogContent>
