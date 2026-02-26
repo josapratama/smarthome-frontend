@@ -69,9 +69,8 @@ export function MonitoringClient() {
           variant="outline"
           onClick={() => {
             devicesQuery.refetch();
-            heartbeatQuery.refetch();
           }}
-          disabled={devicesQuery.isFetching || heartbeatQuery.isFetching}
+          disabled={devicesQuery.isFetching}
         >
           Refresh All
         </Button>
@@ -123,9 +122,9 @@ export function MonitoringClient() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {heartbeatQuery.isLoading ? (
+            {devicesQuery.isLoading ? (
               <Skeleton className="h-8 w-16" />
-            ) : heartbeatQuery.error ? (
+            ) : devicesQuery.error ? (
               <Badge variant="destructive">Error</Badge>
             ) : (
               <Badge className="bg-green-100 text-green-800">Healthy</Badge>
