@@ -19,10 +19,14 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     setMounted(true);
-    // Load language from localStorage
+    // Load language from localStorage, default to Indonesian
     const savedLang = localStorage.getItem("language") as Language;
     if (savedLang && translations[savedLang]) {
       setLanguageState(savedLang);
+    } else {
+      // Set default to Indonesian if no saved preference
+      setLanguageState("id");
+      localStorage.setItem("language", "id");
     }
   }, []);
 
@@ -33,11 +37,12 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   const t = (key: string): string => {
     const translation = translations[language];
-    return (translation as any)[key] || (translations.en as any)[key] || key;
+    return (translation as any)[key] || (translations.id as any)[key] || key;
   };
 
+  // Return a loading placeholder instead of null to prevent hydration mismatch
   if (!mounted) {
-    return null;
+    return <>{children}</>;
   }
 
   return (

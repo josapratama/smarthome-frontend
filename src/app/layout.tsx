@@ -1,5 +1,6 @@
 import { QueryProvider } from "@/lib/query/provider";
 import { ThemeProvider } from "@/contexts/theme-context";
+import { LanguageProvider } from "@/contexts/language-context";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -24,10 +25,12 @@ export default function RootLayout({
       </head>
       <body suppressHydrationWarning>
         <ThemeProvider>
-          <QueryProvider>
-            {children}
-            <Toaster />
-          </QueryProvider>
+          <LanguageProvider>
+            <QueryProvider>
+              {children}
+              <Toaster />
+            </QueryProvider>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

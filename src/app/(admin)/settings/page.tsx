@@ -503,6 +503,10 @@ export default function SettingsPage() {
                 <SelectContent>
                   <SelectItem value="id">🇮🇩 Bahasa Indonesia</SelectItem>
                   <SelectItem value="en">🇬🇧 English</SelectItem>
+                  <SelectItem value="es">🇪🇸 Español</SelectItem>
+                  <SelectItem value="ja">🇯🇵 日本語</SelectItem>
+                  <SelectItem value="zh">🇨🇳 中文</SelectItem>
+                  <SelectItem value="ko">🇰🇷 한국어</SelectItem>
                 </SelectContent>
               </Select>
             </CardContent>

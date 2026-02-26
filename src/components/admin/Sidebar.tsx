@@ -16,7 +16,7 @@ import {
   AlertTriangle,
   Brain,
   Settings,
-  User,
+  Info,
   X,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
@@ -44,6 +44,7 @@ export function Sidebar({ className, onClose }: SidebarProps) {
     { name: "Notifications", href: "/notifications", icon: Bell },
     { name: "Invites", href: "/invites", icon: Mail },
     { name: "AI Models", href: "/ai", icon: Brain },
+    { name: "App Info", href: "/app-info", icon: Info },
     { name: t("settings"), href: "/settings", icon: Settings },
   ];
 
