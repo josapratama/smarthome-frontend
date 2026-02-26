@@ -75,7 +75,6 @@ export const qk = {
   // Monitoring
   monitoring: {
     all: ["monitoring"] as const,
-    heartbeat: () => ["monitoring", "heartbeat"] as const,
     overview: () => ["monitoring", "overview"] as const,
   },
 

@@ -40,14 +40,6 @@ export function MonitoringClient() {
     refetchInterval: 5_000, // Refresh every 5 seconds for monitoring
   });
 
-  const heartbeatQuery = useQuery({
-    queryKey: qk.monitoring.heartbeat(),
-    queryFn: async () => {
-      return apiFetchBrowser("/api/v1/monitoring/heartbeat");
-    },
-    refetchInterval: 10_000, // Refresh every 10 seconds
-  });
-
   const devices = devicesQuery.data ?? [];
   const onlineDevices = devices.filter((d) => d.status);
   const offlineDevices = devices.filter((d) => !d.status);
