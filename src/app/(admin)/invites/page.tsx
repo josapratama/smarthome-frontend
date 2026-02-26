@@ -7,6 +7,7 @@ import { Plus, MailPlus, Users, Clock, CheckCircle } from "lucide-react";
 import { InviteDialog } from "@/components/invites/invite-dialog";
 import { InviteList } from "@/components/invites/invite-list";
 import { apiFetchBrowser } from "@/lib/api/client.browser";
+import { useLanguage } from "@/contexts/language-context";
 
 interface Home {
   id: number;
@@ -22,6 +23,8 @@ interface InviteStats {
 }
 
 export default function InvitesPage() {
+  const { t } = useLanguage();
+
   const { data: homes = [] } = useQuery({
     queryKey: ["homes-for-invite"],
     queryFn: async () => {
@@ -51,15 +54,15 @@ export default function InvitesPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Home Invites</h1>
+          <h1 className="text-2xl font-semibold">{t("homeInvites")}</h1>
           <p className="text-sm text-muted-foreground">
-            Manage home member invitations
+            {t("manageMemberInvitations")}
           </p>
         </div>
         <InviteDialog homes={homes}>
           <Button>
             <Plus className="h-4 w-4" />
-            Send Invite
+            {t("sendInvite")}
           </Button>
         </InviteDialog>
       </div>
@@ -68,7 +71,7 @@ export default function InvitesPage() {
         <Card className="rounded-2xl shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">
-              Total Invites
+              {t("totalInvites")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -81,7 +84,7 @@ export default function InvitesPage() {
         <Card className="rounded-2xl shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">
-              Pending
+              {t("pending")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -97,7 +100,7 @@ export default function InvitesPage() {
         <Card className="rounded-2xl shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">
-              Accepted
+              {t("accepted")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -113,7 +116,7 @@ export default function InvitesPage() {
         <Card className="rounded-2xl shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">
-              Active Members
+              {t("activeMembers")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -132,23 +135,25 @@ export default function InvitesPage() {
 
         <Card className="rounded-2xl shadow-sm">
           <CardHeader>
-            <CardTitle className="text-base">Quick Actions</CardTitle>
+            <CardTitle className="text-base">{t("quickActions")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <InviteDialog homes={homes}>
               <Button className="w-full justify-start" variant="outline">
                 <MailPlus className="h-4 w-4" />
-                Send New Invitation
+                {t("sendNewInvitation")}
               </Button>
             </InviteDialog>
 
             <Button className="w-full justify-start" variant="outline">
               <Users className="h-4 w-4" />
-              View All Members
+              {t("viewAllMembers")}
             </Button>
 
             <div className="pt-4 border-t">
-              <h4 className="text-sm font-medium mb-2">Available Homes</h4>
+              <h4 className="text-sm font-medium mb-2">
+                {t("availableHomes")}
+              </h4>
               <div className="space-y-2">
                 {homes.length > 0 ? (
                   homes.map((home) => (
@@ -166,7 +171,7 @@ export default function InvitesPage() {
                   ))
                 ) : (
                   <p className="text-xs text-muted-foreground">
-                    No homes available for invitations
+                    {t("noHomesAvailable")}
                   </p>
                 )}
               </div>

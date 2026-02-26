@@ -1,20 +1,25 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, Sparkles, Brain, TrendingUp, Zap } from "lucide-react";
+import { useLanguage } from "@/contexts/language-context";
 
 export default function AIPage() {
+  const { t } = useLanguage();
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">AI & Automation</h1>
+          <h1 className="text-2xl font-semibold">{t("aiAutomation")}</h1>
           <p className="text-sm text-muted-foreground">
-            Intelligent automation and predictive analytics
+            {t("intelligentAutomation")}
           </p>
         </div>
         <Button>
           <Plus className="h-4 w-4" />
-          Create AI Rule
+          {t("createAiRule")}
         </Button>
       </div>
 
@@ -22,7 +27,7 @@ export default function AIPage() {
         <Card className="rounded-2xl shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">
-              AI Models
+              {t("aiModels")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -33,7 +38,7 @@ export default function AIPage() {
         <Card className="rounded-2xl shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">
-              Predictions
+              {t("predictions")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -47,7 +52,7 @@ export default function AIPage() {
         <Card className="rounded-2xl shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">
-              Automations
+              {t("automations")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -61,7 +66,7 @@ export default function AIPage() {
         <Card className="rounded-2xl shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">
-              Anomalies
+              {t("anomalies")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -76,16 +81,18 @@ export default function AIPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         <Card className="rounded-2xl shadow-sm">
           <CardHeader>
-            <CardTitle className="text-base">Energy Predictions</CardTitle>
+            <CardTitle className="text-base">
+              {t("energyPredictions")}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <TrendingUp className="h-10 w-10 text-muted-foreground/50" />
               <h3 className="mt-3 text-sm font-semibold">
-                No predictions available
+                {t("noPredictionsAvailable")}
               </h3>
               <p className="mt-1 text-xs text-muted-foreground">
-                AI energy predictions will appear here
+                {t("aiEnergyPredictions")}
               </p>
             </div>
           </CardContent>
@@ -93,16 +100,16 @@ export default function AIPage() {
 
         <Card className="rounded-2xl shadow-sm">
           <CardHeader>
-            <CardTitle className="text-base">Anomaly Detection</CardTitle>
+            <CardTitle className="text-base">{t("anomalyDetection")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <Brain className="h-10 w-10 text-muted-foreground/50" />
               <h3 className="mt-3 text-sm font-semibold">
-                No anomalies detected
+                {t("noAnomaliesDetected")}
               </h3>
               <p className="mt-1 text-xs text-muted-foreground">
-                System is operating normally
+                {t("systemOperatingNormally")}
               </p>
             </div>
           </CardContent>
@@ -111,20 +118,20 @@ export default function AIPage() {
 
       <Card className="rounded-2xl shadow-sm">
         <CardHeader>
-          <CardTitle className="text-base">AI Features</CardTitle>
+          <CardTitle className="text-base">{t("aiFeatures")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <Sparkles className="h-12 w-12 text-muted-foreground/50" />
             <h3 className="mt-4 text-lg font-semibold">
-              AI features coming soon
+              {t("aiFeaturesComing")}
             </h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              Intelligent automation, energy predictions, and anomaly detection
+              {t("aiDescription")}
             </p>
             <Button className="mt-4" variant="outline">
               <Brain className="h-4 w-4" />
-              Learn More
+              {t("learnMore")}
             </Button>
           </div>
         </CardContent>

@@ -40,11 +40,11 @@ export function Sidebar({ className, onClose }: SidebarProps) {
     { name: t("ota"), href: "/ota", icon: Upload },
     { name: t("monitoring"), href: "/monitoring", icon: Activity },
     { name: t("alarms"), href: "/alarms", icon: AlertTriangle },
-    { name: "Commands", href: "/commands", icon: Terminal },
-    { name: "Notifications", href: "/notifications", icon: Bell },
-    { name: "Invites", href: "/invites", icon: Mail },
-    { name: "AI Models", href: "/ai", icon: Brain },
-    { name: "App Info", href: "/app-info", icon: Info },
+    { name: t("commands"), href: "/commands", icon: Terminal },
+    { name: t("notifications"), href: "/notifications", icon: Bell },
+    { name: t("invites"), href: "/invites", icon: Mail },
+    { name: t("aiModels"), href: "/ai", icon: Brain },
+    { name: t("appInfo"), href: "/app-info", icon: Info },
     { name: t("settings"), href: "/settings", icon: Settings },
   ];
 

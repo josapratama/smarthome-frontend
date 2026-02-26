@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,20 +9,23 @@ import {
   CheckCircle,
   XCircle,
 } from "lucide-react";
+import { useLanguage } from "@/contexts/language-context";
 
 export default function CommandsPage() {
+  const { t } = useLanguage();
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Commands</h1>
+          <h1 className="text-2xl font-semibold">{t("commands")}</h1>
           <p className="text-sm text-muted-foreground">
-            Monitor and manage device commands
+            {t("monitorCommands")}
           </p>
         </div>
         <Button>
           <Plus className="h-4 w-4" />
-          Send Command
+          {t("sendCommand")}
         </Button>
       </div>
 
@@ -28,7 +33,7 @@ export default function CommandsPage() {
         <Card className="rounded-2xl shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">
-              Total Commands
+              {t("totalCommands")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -39,7 +44,7 @@ export default function CommandsPage() {
         <Card className="rounded-2xl shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">
-              Pending
+              {t("pending")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -53,7 +58,7 @@ export default function CommandsPage() {
         <Card className="rounded-2xl shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">
-              Successful
+              {t("successful")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -67,7 +72,7 @@ export default function CommandsPage() {
         <Card className="rounded-2xl shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">
-              Failed
+              {t("failed")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -81,18 +86,20 @@ export default function CommandsPage() {
 
       <Card className="rounded-2xl shadow-sm">
         <CardHeader>
-          <CardTitle className="text-base">Recent Commands</CardTitle>
+          <CardTitle className="text-base">{t("recentCommands")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <TerminalSquare className="h-12 w-12 text-muted-foreground/50" />
-            <h3 className="mt-4 text-lg font-semibold">No commands found</h3>
+            <h3 className="mt-4 text-lg font-semibold">
+              {t("noCommandsFound")}
+            </h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              Device commands will appear here once they are sent
+              {t("commandsWillAppear")}
             </p>
             <Button className="mt-4" variant="outline">
               <Plus className="h-4 w-4" />
-              Send First Command
+              {t("sendFirstCommand")}
             </Button>
           </div>
         </CardContent>

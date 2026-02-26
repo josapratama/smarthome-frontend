@@ -148,6 +148,14 @@ export const id = {
   errorMessage: "Pesan Error",
   backToOta: "Kembali ke OTA",
   updating: "Memperbarui…",
+  otaMonitoring: "Picu OTA + monitoring jobs (polling via TanStack Query)",
+  jobs: "Pekerjaan",
+  idle: "Idle",
+  selectDeviceToView: "Pilih perangkat untuk melihat pekerjaan.",
+  noJobsYet: "Belum ada pekerjaan.",
+  view: "Lihat",
+  release: "Rilis",
+  selectFirmwareVersion: "Pilih firmware",
 
   // Alarms
   manageAlarms: "Kelola alarm dan peringatan sistem",
@@ -164,6 +172,14 @@ export const id = {
   alarmDeleted: "Alarm berhasil dihapus",
   failedCreateAlarm: "Gagal membuat alarm",
   failedDeleteAlarm: "Gagal menghapus alarm",
+  monitorSecurityAlarms: "Monitor alarm keamanan dan kejadian",
+  createAlarmRule: "Buat Aturan Alarm",
+  critical: "Kritis",
+  active: "Aktif",
+  resolved: "Terselesaikan",
+  recentAlarms: "Alarm Terkini",
+  securityAlarmsWillAppear: "Alarm keamanan dan kejadian akan muncul di sini",
+  configureAlarmRules: "Konfigurasi Aturan Alarm",
 
   // Notifications
   manageNotifications: "Kelola notifikasi Anda",
@@ -175,6 +191,7 @@ export const id = {
   notificationSettings: "Pengaturan Notifikasi",
   emailNotifications: "Notifikasi Email",
   pushNotifications: "Notifikasi Push",
+  notifications: "Notifikasi",
 
   // Commands
   manageCommands: "Kelola perintah perangkat",
@@ -191,6 +208,13 @@ export const id = {
   noCommandsFound: "Tidak ada perintah ditemukan",
   commandSent: "Perintah berhasil dikirim",
   failedSendCommand: "Gagal mengirim perintah",
+  commands: "Perintah",
+  monitorCommands: "Monitor dan kelola perintah perangkat",
+  totalCommands: "Total Perintah",
+  successful: "Berhasil",
+  recentCommands: "Perintah Terkini",
+  commandsWillAppear: "Perintah perangkat akan muncul di sini setelah dikirim",
+  sendFirstCommand: "Kirim Perintah Pertama",
 
   // Invites
   manageInvites: "Kelola undangan rumah",
@@ -209,6 +233,17 @@ export const id = {
   acceptInvite: "Terima",
   declineInvite: "Tolak",
   cancelInvite: "Batalkan",
+  invites: "Undangan",
+  homeInvites: "Undangan Rumah",
+  manageMemberInvitations: "Kelola undangan anggota rumah",
+  totalInvites: "Total Undangan",
+  accepted: "Diterima",
+  activeMembers: "Anggota Aktif",
+  quickActions: "Aksi Cepat",
+  sendNewInvitation: "Kirim Undangan Baru",
+  viewAllMembers: "Lihat Semua Anggota",
+  availableHomes: "Rumah Tersedia",
+  noHomesAvailable: "Tidak ada rumah tersedia untuk undangan",
 
   // Settings & Profile
   appearance: "Tampilan",
@@ -300,6 +335,38 @@ export const id = {
   areYouSure: "Apakah Anda yakin?",
   deleteDeviceConfirm: "Ini akan menghapus perangkat secara permanen",
   cannotUndo: "Tindakan ini tidak dapat dibatalkan.",
+
+  // AI & Automation
+  aiAutomation: "AI & Otomasi",
+  aiModels: "Model AI",
+  intelligentAutomation: "Otomasi cerdas dan analitik prediktif",
+  createAiRule: "Buat Aturan AI",
+  predictions: "Prediksi",
+  automations: "Otomasi",
+  anomalies: "Anomali",
+  energyPredictions: "Prediksi Energi",
+  noPredictionsAvailable: "Tidak ada prediksi tersedia",
+  aiEnergyPredictions: "Prediksi energi AI akan muncul di sini",
+  anomalyDetection: "Deteksi Anomali",
+  noAnomaliesDetected: "Tidak ada anomali terdeteksi",
+  systemOperatingNormally: "Sistem beroperasi normal",
+  aiFeatures: "Fitur AI",
+  aiFeaturesComing: "Fitur AI segera hadir",
+  aiDescription: "Otomasi cerdas, prediksi energi, dan deteksi anomali",
+  learnMore: "Pelajari Lebih Lanjut",
+
+  // Monitoring
+  monitoringPage: "Monitoring",
+  realTimeMonitoring:
+    "Monitor status perangkat dan kesehatan sistem secara real-time.",
+  systemStatus: "Status Sistem",
+  refreshAll: "Segarkan Semua",
+  healthy: "Sehat",
+  onlineDevicesList: "Perangkat Online",
+  offlineDevicesList: "Perangkat Offline",
+  noOnlineDevices: "Tidak ada perangkat online",
+  noOfflineDevices: "Tidak ada perangkat offline",
+  updatingStatus: "Memperbarui status perangkat…",
 
   // Create dialogs
   createNewHome: "Buat Rumah Baru",
