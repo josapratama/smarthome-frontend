@@ -83,7 +83,7 @@ export default function SettingsPage() {
         });
       }
     } catch (error) {
-      toast.error("Failed to load profile");
+      toast.error(t("failedLoadProfile"));
     } finally {
       setIsLoading(false);
     }
@@ -99,14 +99,14 @@ export default function SettingsPage() {
       });
 
       if (res.ok) {
-        toast.success("Profile updated successfully");
+        toast.success(t("profileUpdatedSuccess"));
         loadProfile();
       } else {
         const data = await res.json();
-        toast.error(data.error || "Failed to update profile");
+        toast.error(data.error || t("failedUpdateProfile"));
       }
     } catch (error) {
-      toast.error("Failed to update profile");
+      toast.error(t("failedUpdateProfile"));
     } finally {
       setIsSaving(false);
     }
@@ -114,12 +114,12 @@ export default function SettingsPage() {
 
   const handleChangePassword = async () => {
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      toast.error("Passwords do not match");
+      toast.error(t("passwordsDoNotMatch"));
       return;
     }
 
     if (passwordForm.newPassword.length < 8) {
-      toast.error("Password must be at least 8 characters");
+      toast.error(t("passwordMinLength"));
       return;
     }
 
@@ -139,10 +139,13 @@ export default function SettingsPage() {
         const remainingChanges = data.data?.remainingChanges;
         if (remainingChanges !== undefined) {
           toast.success(
-            `Password changed successfully. You have ${remainingChanges} password change(s) remaining this month.`,
+            t("passwordChangedSuccess").replace(
+              "{count}",
+              remainingChanges.toString(),
+            ),
           );
         } else {
-          toast.success("Password changed successfully");
+          toast.success(t("passwordChangedSuccess").replace("{count}", "0"));
         }
         setPasswordForm({
           oldPassword: "",
@@ -153,14 +156,14 @@ export default function SettingsPage() {
         const data = await res.json();
         const errorMsg =
           data.error === "PASSWORD_CHANGE_LIMIT_EXCEEDED"
-            ? "Password change limit exceeded. You can only change your password 3 times per month. Please try again next month."
+            ? t("passwordChangeLimitExceeded")
             : data.error === "INVALID_CREDENTIALS"
-              ? "Current password is incorrect"
-              : data.error || "Failed to change password";
+              ? t("currentPasswordIncorrect")
+              : data.error || t("failedChangePassword");
         toast.error(errorMsg);
       }
     } catch (error) {
-      toast.error("Failed to change password");
+      toast.error(t("failedChangePassword"));
     } finally {
       setIsSaving(false);
     }
@@ -172,13 +175,13 @@ export default function SettingsPage() {
 
     // Validate file type
     if (!file.type.startsWith("image/")) {
-      toast.error("Please select an image file");
+      toast.error(t("pleaseSelectImage"));
       return;
     }
 
     // Validate file size (5MB)
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image size must be less than 5MB");
+      toast.error(t("imageSizeLimit"));
       return;
     }
 
@@ -193,14 +196,14 @@ export default function SettingsPage() {
       });
 
       if (res.ok) {
-        toast.success("Avatar uploaded successfully");
+        toast.success(t("avatarUploadedSuccess"));
         loadProfile();
       } else {
         const data = await res.json();
-        toast.error(data.error || "Failed to upload avatar");
+        toast.error(data.error || t("failedUploadAvatar"));
       }
     } catch (error) {
-      toast.error("Failed to upload avatar");
+      toast.error(t("failedUploadAvatar"));
     } finally {
       setIsUploadingAvatar(false);
       if (fileInputRef.current) {
@@ -210,7 +213,7 @@ export default function SettingsPage() {
   };
 
   const handleDeleteAvatar = async () => {
-    if (!confirm("Are you sure you want to delete your avatar?")) return;
+    if (!confirm(t("deleteAvatarConfirm"))) return;
 
     try {
       const res = await fetch("/api/auth/profile/avatar", {
@@ -218,13 +221,13 @@ export default function SettingsPage() {
       });
 
       if (res.ok) {
-        toast.success("Avatar deleted successfully");
+        toast.success(t("avatarDeletedSuccess"));
         loadProfile();
       } else {
-        toast.error("Failed to delete avatar");
+        toast.error(t("failedDeleteAvatar"));
       }
     } catch (error) {
-      toast.error("Failed to delete avatar");
+      toast.error(t("failedDeleteAvatar"));
     }
   };
 
@@ -248,7 +251,7 @@ export default function SettingsPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Loading...</p>
+          <p className="mt-4 text-muted-foreground">{t("loadingProfile")}</p>
         </div>
       </div>
     );
@@ -259,15 +262,15 @@ export default function SettingsPage() {
       <div>
         <h1 className="text-3xl font-bold">{t("settings")}</h1>
         <p className="text-muted-foreground mt-1">
-          Manage your account settings and preferences
+          {t("manageAccountSettings")}
         </p>
       </div>
 
       <Tabs defaultValue="profile" className="space-y-6">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="profile">Profile</TabsTrigger>
-          <TabsTrigger value="security">Security</TabsTrigger>
-          <TabsTrigger value="preferences">Preferences</TabsTrigger>
+          <TabsTrigger value="profile">{t("profile")}</TabsTrigger>
+          <TabsTrigger value="security">{t("security")}</TabsTrigger>
+          <TabsTrigger value="preferences">{t("preferences")}</TabsTrigger>
         </TabsList>
 
         {/* Profile Tab */}
@@ -277,11 +280,9 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Camera className="h-5 w-5" />
-                Profile Picture
+                {t("profilePicture")}
               </CardTitle>
-              <CardDescription>
-                Upload a profile picture or use your Google avatar
-              </CardDescription>
+              <CardDescription>{t("uploadProfilePicture")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-6">
@@ -306,7 +307,9 @@ export default function SettingsPage() {
                       size="sm"
                     >
                       <Camera className="h-4 w-4 mr-2" />
-                      {isUploadingAvatar ? "Uploading..." : "Upload Photo"}
+                      {isUploadingAvatar
+                        ? t("uploadingPhoto")
+                        : t("uploadPhoto")}
                     </Button>
                     {user?.avatarUrl && (
                       <Button
@@ -315,12 +318,12 @@ export default function SettingsPage() {
                         onClick={handleDeleteAvatar}
                       >
                         <Trash2 className="h-4 w-4 mr-2" />
-                        Delete
+                        {t("delete")}
                       </Button>
                     )}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    JPG, PNG or WebP. Max size 5MB.
+                    {t("jpgPngWebp")}
                   </p>
                 </div>
               </div>
@@ -332,13 +335,13 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <User className="h-5 w-5" />
-                Profile Information
+                {t("profileInformation")}
               </CardTitle>
-              <CardDescription>Update your account information</CardDescription>
+              <CardDescription>{t("updateAccountInformation")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="username">{t("username")}</Label>
                 <Input
                   id="username"
                   value={profileForm.username}
@@ -349,7 +352,7 @@ export default function SettingsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t("email")}</Label>
                 <div className="flex gap-2">
                   <Mail className="h-5 w-5 text-muted-foreground mt-2" />
                   <Input
@@ -364,7 +367,7 @@ export default function SettingsPage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>Role</Label>
+                <Label>{t("role")}</Label>
                 <div className="flex gap-2">
                   <Shield className="h-5 w-5 text-muted-foreground mt-2" />
                   <Input value={user?.role} disabled />
@@ -372,8 +375,7 @@ export default function SettingsPage() {
               </div>
               {user?.authProvider === "google" && (
                 <p className="text-sm text-muted-foreground">
-                  Your account is managed by Google. Some fields cannot be
-                  edited.
+                  {t("yourAccountManagedByGoogle")}
                 </p>
               )}
               <Button
@@ -382,7 +384,7 @@ export default function SettingsPage() {
                 className="w-full"
               >
                 <Save className="h-4 w-4 mr-2" />
-                {isSaving ? "Saving..." : "Save Changes"}
+                {isSaving ? t("saving") : t("saveChanges")}
               </Button>
             </CardContent>
           </Card>
@@ -392,26 +394,21 @@ export default function SettingsPage() {
         <TabsContent value="security" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Change Password</CardTitle>
-              <CardDescription>
-                Update your password to keep your account secure. You can change
-                your password up to 3 times per month.
-              </CardDescription>
+              <CardTitle>{t("changePasswordTitle")}</CardTitle>
+              <CardDescription>{t("changePasswordDesc")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {user?.authProvider === "google" ? (
                 <p className="text-sm text-muted-foreground">
-                  Your account is managed by Google. Password changes must be
-                  done through your Google account.
+                  {t("googlePasswordChange")}
                 </p>
               ) : (
                 <>
                   <div className="p-3 bg-muted rounded-lg text-sm text-muted-foreground">
-                    ℹ️ Password can be changed maximum 3 times per month for
-                    security reasons.
+                    ℹ️ {t("passwordChangeLimit")}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="oldPassword">Current Password</Label>
+                    <Label htmlFor="oldPassword">{t("currentPassword")}</Label>
                     <Input
                       id="oldPassword"
                       type="password"
@@ -425,7 +422,7 @@ export default function SettingsPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="newPassword">New Password</Label>
+                    <Label htmlFor="newPassword">{t("newPassword")}</Label>
                     <Input
                       id="newPassword"
                       type="password"
@@ -440,7 +437,7 @@ export default function SettingsPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="confirmPassword">
-                      Confirm New Password
+                      {t("confirmNewPassword")}
                     </Label>
                     <Input
                       id="confirmPassword"
@@ -459,7 +456,7 @@ export default function SettingsPage() {
                     disabled={isSaving}
                     className="w-full"
                   >
-                    {isSaving ? "Changing..." : "Change Password"}
+                    {isSaving ? t("changingPassword") : t("changePassword")}
                   </Button>
                 </>
               )}
@@ -473,9 +470,9 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Moon className="h-5 w-5" />
-                Theme
+                {t("themeTitle")}
               </CardTitle>
-              <CardDescription>Choose your preferred theme</CardDescription>
+              <CardDescription>{t("choosePreferredTheme")}</CardDescription>
             </CardHeader>
             <CardContent>
               <Select value={theme} onValueChange={setTheme}>
@@ -486,19 +483,19 @@ export default function SettingsPage() {
                   <SelectItem value="light">
                     <div className="flex items-center gap-2">
                       <Sun className="h-4 w-4" />
-                      Light
+                      {t("lightTheme")}
                     </div>
                   </SelectItem>
                   <SelectItem value="dark">
                     <div className="flex items-center gap-2">
                       <Moon className="h-4 w-4" />
-                      Dark
+                      {t("darkTheme")}
                     </div>
                   </SelectItem>
                   <SelectItem value="system">
                     <div className="flex items-center gap-2">
                       <Monitor className="h-4 w-4" />
-                      System
+                      {t("system")}
                     </div>
                   </SelectItem>
                 </SelectContent>
@@ -510,9 +507,9 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Globe className="h-5 w-5" />
-                Language
+                {t("languageTitle")}
               </CardTitle>
-              <CardDescription>Choose your preferred language</CardDescription>
+              <CardDescription>{t("choosePreferredLanguage")}</CardDescription>
             </CardHeader>
             <CardContent>
               <Select value={language} onValueChange={setLanguage}>
