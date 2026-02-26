@@ -8,7 +8,7 @@ import {
   Home,
   Zap,
   AlertTriangle,
-  User,
+  Settings,
   X,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
@@ -29,7 +29,7 @@ export function UserSidebar({ className, onClose }: UserSidebarProps) {
     { name: t("homes"), href: "/user/homes", icon: Home },
     { name: t("energy"), href: "/user/energy", icon: Zap },
     { name: t("alarms"), href: "/user/alarms", icon: AlertTriangle },
-    { name: t("profile"), href: "/user/profile", icon: User },
+    { name: t("settings"), href: "/user/settings", icon: Settings },
   ];
 
   return (

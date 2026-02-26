@@ -45,7 +45,6 @@ export function Sidebar({ className, onClose }: SidebarProps) {
     { name: "Invites", href: "/invites", icon: Mail },
     { name: "AI Models", href: "/ai", icon: Brain },
     { name: t("settings"), href: "/settings", icon: Settings },
-    { name: t("profile"), href: "/profile", icon: User },
   ];
 
   return (

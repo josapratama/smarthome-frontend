@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 const BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
 
-export async function POST(req: NextRequest) {
+export async function PATCH(req: NextRequest) {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("access_token")?.value;
@@ -15,8 +15,8 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
-    const res = await fetch(`${BACKEND_URL}/api/v1/change-password`, {
-      method: "POST",
+    const res = await fetch(`${BACKEND_URL}/api/v1/profile`, {
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error("[Change Password] Error:", error);
+    console.error("[Profile Update] Error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },
