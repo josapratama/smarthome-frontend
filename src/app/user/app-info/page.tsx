@@ -92,14 +92,22 @@ export default function UserAppInfoPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {items?.map((info) => (
-                <div key={info.key} className="space-y-1">
-                  <h4 className="text-sm font-medium text-muted-foreground">
-                    {formatKey(info.key)}
-                  </h4>
-                  <p className="text-base whitespace-pre-wrap">{info.value}</p>
-                </div>
-              ))}
+              {items?.map(
+                (info: {
+                  key: string;
+                  value: string;
+                  displayOrder: number;
+                }) => (
+                  <div key={info.key} className="space-y-1">
+                    <h4 className="text-sm font-medium text-muted-foreground">
+                      {formatKey(info.key)}
+                    </h4>
+                    <p className="text-base whitespace-pre-wrap">
+                      {info.value}
+                    </p>
+                  </div>
+                ),
+              )}
             </div>
           </CardContent>
         </Card>

@@ -15,7 +15,7 @@ interface OverviewData {
   homesList: Array<{
     id: number;
     name: string;
-    city?: string;
+    city?: string | null;
     roleInHome: string;
     devicesOnline: number;
     devicesOffline: number;

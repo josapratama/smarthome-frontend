@@ -348,9 +348,9 @@ export default function UserDashboardPage() {
                               </div>
                             )}
                           </div>
-                          {home.address && (
+                          {home.addressText && (
                             <p className="text-xs text-muted-foreground truncate">
-                              📍 {home.address}
+                              📍 {home.addressText}
                             </p>
                           )}
                         </CardContent>
