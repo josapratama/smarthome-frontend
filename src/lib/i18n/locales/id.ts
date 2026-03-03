@@ -32,6 +32,30 @@ export const id = {
   goToLogin: "Ke halaman login",
   home: "Beranda",
 
+  // Guest
+  guestPanel: "Panel Tamu",
+  guest: "Tamu",
+  readOnlyAccess: "Akses Baca Saja",
+  readOnlyMode: "Mode Baca Saja",
+  guestDashboardDesc: "Lihat status rumah dan perangkat Anda",
+  homesYouCanView: "Rumah yang dapat Anda lihat",
+  devicesActive: "Perangkat aktif",
+  devicesInactive: "Perangkat tidak aktif",
+  guestAccessInfo: "Akses Tamu - Hanya Lihat",
+  guestAccessDesc:
+    "Sebagai tamu, Anda hanya dapat melihat status perangkat dan rumah. Anda tidak dapat mengontrol perangkat atau mengubah pengaturan.",
+  yourHomes: "Rumah Anda",
+  noHomesYet: "Belum ada rumah",
+  waitForInvitation: "Tunggu undangan dari pemilik rumah untuk bergabung",
+  failedLoadData: "Gagal memuat data",
+  viewDeviceStatus: "Lihat status perangkat",
+  viewOnly: "Hanya Lihat",
+  searchDevices: "Cari perangkat...",
+  failedLoadDevices: "Gagal memuat perangkat",
+  noDevicesYet: "Belum ada perangkat",
+  noDevicesInHomes: "Belum ada perangkat di rumah Anda",
+  tryDifferentSearch: "Coba kata kunci pencarian yang berbeda",
+
   // Rooms
   manageRooms: "Kelola ruangan di semua rumah",
   totalRooms: "Total Ruangan",
@@ -489,7 +513,6 @@ export const id = {
   thisMonth: "Bulan Ini",
   cost: "Biaya",
   controlYourDevices: "Kontrol perangkat IoT Anda",
-  noDevicesYet: "Belum Ada Perangkat",
   startPairing:
     "Mulai dengan memasangkan perangkat ESP32 Anda untuk monitor dan kontrol.",
   devicesWillAppear:
@@ -504,7 +527,6 @@ export const id = {
   telemetryWillAppear:
     "Data telemetri akan muncul di sini setelah perangkat mengirim data.",
   failedLoadDevice: "Gagal memuat perangkat",
-  failedLoadDevices: "Gagal memuat perangkat",
   timestamp: "Waktu",
   // Notifications Page
   failedLoadNotifications: "Gagal memuat notifikasi",
