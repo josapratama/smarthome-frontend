@@ -20,11 +20,17 @@ export const id = {
   myHomes: "Rumah Saya",
   pendingInvites: "Undangan Tertunda",
   welcomeBack: "Selamat datang kembali",
-  systemOverview: "Ringkasan Sistem",
+  systemOverview: "Ringkasan sistem dari backend",
   recentActivity: "Aktivitas Terkini",
   quickActions: "Aksi Cepat",
   viewAll: "Lihat Semua",
   noActivity: "Tidak ada aktivitas terkini",
+  users: "Pengguna",
+  openAlarms: "Alarm Terbuka",
+  failedLoadDashboard: "Gagal memuat dasbor",
+  unknownError: "Kesalahan tidak diketahui",
+  goToLogin: "Ke halaman login",
+  home: "Beranda",
 
   // Rooms
   manageRooms: "Kelola ruangan di semua rumah",
@@ -318,7 +324,6 @@ export const id = {
   error: "Error",
   success: "Berhasil",
   noData: "Tidak ada data tersedia",
-  unknownError: "Error tidak diketahui",
   required: "*",
   homeId: "ID Rumah",
   filterByHome: "Filter berdasarkan rumah",
@@ -462,7 +467,6 @@ export const id = {
   failedUpdateProfile: "Gagal memperbarui profil",
   security: "Keamanan",
   preferences: "Preferensi",
-  home: "Beranda",
 
   // Device Control
   deviceControl: "Kontrol Perangkat",

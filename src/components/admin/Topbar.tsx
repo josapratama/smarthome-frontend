@@ -1,93 +1,75 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { LogOut, User, Sun, Moon, Monitor, Menu } from "lucide-react";
+import { Bell, Menu } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
-import { useTheme } from "@/contexts/theme-context";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 interface TopbarProps {
   onMenuClick?: () => void;
 }
 
 export function Topbar({ onMenuClick }: TopbarProps) {
-  const router = useRouter();
   const { t } = useTranslation();
-  const { theme, setTheme } = useTheme();
+  const router = useRouter();
+  const [unreadCount, setUnreadCount] = useState(0);
 
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-      router.push("/login");
-      router.refresh();
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+  useEffect(() => {
+    // TODO: Fetch real notification count from API
+    setUnreadCount(0);
+  }, []);
+
+  const handleNotificationClick = () => {
+    router.push("/notifications");
   };
 
-  const ThemeIcon = theme === "light" ? Sun : theme === "dark" ? Moon : Monitor;
-
   return (
-    <header className="flex h-14 shrink-0 items-center justify-between border-b bg-card px-4 md:h-16 md:px-6">
-      <div className="flex items-center gap-3">
-        {/* Mobile Menu Button */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="lg:hidden"
-          onClick={onMenuClick}
-        >
-          <Menu className="h-5 w-5" />
-        </Button>
-        <h2 className="text-base font-semibold md:text-lg">Admin</h2>
-      </div>
+    <header className="bg-card border-b border-border px-4 py-3 md:px-6 md:py-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          {/* Mobile Menu Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden"
+            onClick={onMenuClick}
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
 
-      <div className="flex items-center gap-2 md:gap-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <ThemeIcon className="h-5 w-5" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setTheme("light")}>
-              <Sun className="h-4 w-4 mr-2" />
-              {t("lightTheme")}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("dark")}>
-              <Moon className="h-4 w-4 mr-2" />
-              {t("darkTheme")}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("system")}>
-              <Monitor className="h-4 w-4 mr-2" />
-              {t("system")}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        <div className="hidden items-center gap-2 text-sm text-muted-foreground md:flex">
-          <User className="h-4 w-4" />
-          <span>Admin</span>
+          {/* Logo/Brand */}
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
+              <span className="text-white font-bold text-sm">SH</span>
+            </div>
+            <div className="hidden md:block">
+              <h2 className="text-base font-bold leading-none">Smart Home</h2>
+              <p className="text-xs text-muted-foreground">Panel Admin</p>
+            </div>
+          </div>
         </div>
 
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleLogout}
-          className="gap-2"
-        >
-          <LogOut className="h-4 w-4" />
-          <span className="hidden md:inline">{t("logout")}</span>
-        </Button>
+        <div className="flex items-center gap-2">
+          {/* Notifications */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative"
+            onClick={handleNotificationClick}
+          >
+            <Bell className="h-5 w-5" />
+            {unreadCount > 0 && (
+              <Badge
+                variant="destructive"
+                className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+              >
+                {unreadCount}
+              </Badge>
+            )}
+          </Button>
+        </div>
       </div>
     </header>
   );
