@@ -13,10 +13,8 @@ export default async function GuestLayout({
 
   if (!token) redirect("/login");
 
-  // Redirect based on role
-  if (userRole === "ADMIN") redirect("/dashboard");
-  if (userRole === "USER") redirect("/user/dashboard");
-  // GUEST stays here
+  // Guest layout is accessible by all authenticated users
+  // The actual permission check should be done at the API level
 
   return <GuestLayoutClient>{children}</GuestLayoutClient>;
 }
