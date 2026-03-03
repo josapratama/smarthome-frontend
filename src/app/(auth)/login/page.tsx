@@ -3,13 +3,28 @@
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff, Loader2, Home, Zap, Shield, Lock } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Loader2,
+  Home,
+  Zap,
+  Shield,
+  Lock,
+  Moon,
+  Sun,
+  Globe,
+} from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import {
+  PublicSettingsProvider,
+  usePublicSettings,
+} from "@/contexts/public-settings-context";
 
 function cn(...c: Array<string | false | null | undefined>) {
   return c.filter(Boolean).join(" ");
@@ -20,6 +35,7 @@ function LoginForm() {
   const sp = useSearchParams();
   const next = sp.get("next") ?? "/dashboard";
   const { toast } = useToast();
+  const { t, language, setLanguage, theme, setTheme } = usePublicSettings();
 
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -44,10 +60,10 @@ function LoginForm() {
       const payload = await res.json().catch(() => null);
 
       if (!res.ok) {
-        const errorMsg = payload?.message ?? payload?.error ?? "Login gagal";
+        const errorMsg = payload?.message ?? payload?.error ?? t("loginFailed");
         setErr(errorMsg);
         toast({
-          title: "Login Gagal",
+          title: t("loginFailed"),
           description: errorMsg,
           variant: "destructive",
         });
@@ -56,8 +72,8 @@ function LoginForm() {
 
       // Success toast
       toast({
-        title: "Login Berhasil",
-        description: "Selamat datang kembali!",
+        title: t("loginSuccess"),
+        description: t("welcomeBack"),
         variant: "success",
       });
 
@@ -74,10 +90,10 @@ function LoginForm() {
         router.refresh();
       }, 100);
     } catch {
-      const errorMsg = "Network error. Coba lagi.";
+      const errorMsg = t("networkError");
       setErr(errorMsg);
       toast({
-        title: "Koneksi Gagal",
+        title: t("connectionFailed"),
         description: errorMsg,
         variant: "destructive",
       });
@@ -98,11 +114,39 @@ function LoginForm() {
             <Home className="h-6 w-6 text-primary" />
             <span className="text-xl font-bold">Smart Home</span>
           </Link>
-          <Link href="/">
-            <Button variant="ghost" size="sm">
-              Back to Home
+          <div className="flex items-center gap-2">
+            {/* Language Toggle */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setLanguage(language === "id" ? "en" : "id")}
+              className="gap-2"
+            >
+              <Globe className="h-4 w-4" />
+              <span className="hidden sm:inline">
+                {language === "id" ? "ID" : "EN"}
+              </span>
             </Button>
-          </Link>
+
+            {/* Theme Toggle */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            >
+              {theme === "dark" ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
+            </Button>
+
+            <Link href="/">
+              <Button variant="ghost" size="sm">
+                {t("backToHome")}
+              </Button>
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -111,10 +155,11 @@ function LoginForm() {
           {/* Left Side - Info */}
           <div className="hidden lg:block space-y-8">
             <div>
-              <h1 className="text-4xl font-bold mb-4">Welcome to Smart Home</h1>
+              <h1 className="text-4xl font-bold mb-4">
+                {t("welcomeToSmartHome")}
+              </h1>
               <p className="text-lg text-muted-foreground">
-                Kelola semua perangkat IoT Anda dari satu platform yang aman dan
-                mudah digunakan.
+                {t("loginDescription")}
               </p>
             </div>
 
@@ -124,10 +169,9 @@ function LoginForm() {
                   <Shield className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1">Secure & Private</h3>
+                  <h3 className="font-semibold mb-1">{t("securePrivate")}</h3>
                   <p className="text-sm text-muted-foreground">
-                    Keamanan tingkat enterprise dengan enkripsi end-to-end untuk
-                    melindungi data Anda.
+                    {t("securePrivateDesc")}
                   </p>
                 </div>
               </div>
@@ -137,10 +181,9 @@ function LoginForm() {
                   <Zap className="h-6 w-6 text-blue-500" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1">Real-time Control</h3>
+                  <h3 className="font-semibold mb-1">{t("realtimeControl")}</h3>
                   <p className="text-sm text-muted-foreground">
-                    Kontrol dan monitoring perangkat secara real-time dari mana
-                    saja.
+                    {t("realtimeControlDesc")}
                   </p>
                 </div>
               </div>
@@ -150,10 +193,9 @@ function LoginForm() {
                   <Lock className="h-6 w-6 text-purple-500" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1">Role-based Access</h3>
+                  <h3 className="font-semibold mb-1">{t("roleBasedAccess")}</h3>
                   <p className="text-sm text-muted-foreground">
-                    Sistem manajemen user dengan role-based access control untuk
-                    keamanan maksimal.
+                    {t("roleBasedAccessDesc")}
                   </p>
                 </div>
               </div>
@@ -161,7 +203,7 @@ function LoginForm() {
 
             <div className="bg-muted/50 rounded-xl p-6 border">
               <div className="text-sm text-muted-foreground mb-2">
-                Demo Credentials
+                {t("demoCredentials")}
               </div>
               <div className="space-y-2 font-mono text-sm">
                 <div>
@@ -185,20 +227,22 @@ function LoginForm() {
                     <Home className="h-8 w-8 text-primary" />
                   </div>
                 </div>
-                <CardTitle className="text-2xl text-center">Sign In</CardTitle>
+                <CardTitle className="text-2xl text-center">
+                  {t("signIn")}
+                </CardTitle>
                 <p className="text-sm text-muted-foreground text-center">
-                  Masuk ke akun Anda untuk melanjutkan
+                  {t("signInSubtitle")}
                 </p>
               </CardHeader>
 
               <CardContent>
                 <form onSubmit={onSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="username">Username</Label>
+                    <Label htmlFor="username">{t("username")}</Label>
                     <Input
                       id="username"
                       autoComplete="username"
-                      placeholder="Masukkan username"
+                      placeholder={t("enterUsername")}
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       disabled={loading}
@@ -209,7 +253,7 @@ function LoginForm() {
 
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="password">Password</Label>
+                      <Label htmlFor="password">{t("password")}</Label>
                       <Link
                         href="/forgot-password"
                         className={cn(
@@ -217,7 +261,7 @@ function LoginForm() {
                           loading && "pointer-events-none opacity-50",
                         )}
                       >
-                        Lupa password?
+                        {t("forgotPassword")}
                       </Link>
                     </div>
 
@@ -226,7 +270,7 @@ function LoginForm() {
                         id="password"
                         type={showPw ? "text" : "password"}
                         autoComplete="current-password"
-                        placeholder="Masukkan password"
+                        placeholder={t("enterPassword")}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         disabled={loading}
@@ -259,10 +303,10 @@ function LoginForm() {
                     {loading ? (
                       <span className="flex items-center gap-2">
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        Signing in...
+                        {t("signingIn")}
                       </span>
                     ) : (
-                      "Sign In"
+                      t("signIn")
                     )}
                   </Button>
 
@@ -272,7 +316,7 @@ function LoginForm() {
                     </div>
                     <div className="relative flex justify-center text-xs uppercase">
                       <span className="bg-background px-2 text-muted-foreground">
-                        Or continue with
+                        {t("orContinueWith")}
                       </span>
                     </div>
                   </div>
@@ -304,29 +348,29 @@ function LoginForm() {
                         d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                       />
                     </svg>
-                    Continue with Google
+                    {t("continueWithGoogle")}
                   </Button>
 
                   <div className="text-center text-xs text-muted-foreground pt-2">
-                    Dengan login, Anda menyetujui{" "}
+                    {t("byLoggingIn")}{" "}
                     <Link href="#" className="text-primary hover:underline">
-                      Terms of Service
+                      {t("termsOfService")}
                     </Link>{" "}
-                    dan{" "}
+                    {t("and")}{" "}
                     <Link href="#" className="text-primary hover:underline">
-                      Privacy Policy
+                      {t("privacyPolicy")}
                     </Link>
                   </div>
 
                   <div className="text-center text-sm pt-4 border-t">
                     <span className="text-muted-foreground">
-                      Belum punya akun?{" "}
+                      {t("dontHaveAccount")}{" "}
                     </span>
                     <Link
                       href="/register"
                       className="font-medium text-primary hover:underline"
                     >
-                      Daftar sekarang
+                      {t("registerNow")}
                     </Link>
                   </div>
                 </form>
@@ -340,8 +384,7 @@ function LoginForm() {
       <footer className="border-t mt-12">
         <div className="container mx-auto px-4 py-6">
           <div className="text-center text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Smart Home Platform. All rights
-            reserved.
+            © {new Date().getFullYear()} {t("footerText")}
           </div>
         </div>
       </footer>
@@ -351,8 +394,10 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <React.Suspense fallback={<div>Loading...</div>}>
-      <LoginForm />
-    </React.Suspense>
+    <PublicSettingsProvider>
+      <React.Suspense fallback={<div>Loading...</div>}>
+        <LoginForm />
+      </React.Suspense>
+    </PublicSettingsProvider>
   );
 }

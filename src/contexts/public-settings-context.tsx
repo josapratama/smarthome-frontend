@@ -52,16 +52,42 @@ const translations = {
 
     // Auth Pages
     signIn: "Masuk",
-    signInDesc: "Masuk ke akun Anda untuk melanjutkan",
+    signInSubtitle: "Masuk ke akun Anda untuk melanjutkan",
+    signingIn: "Masuk...",
     username: "Username",
+    enterUsername: "Masukkan username",
     email: "Email",
+    enterEmail: "Masukkan email",
     password: "Password",
+    enterPassword: "Masukkan password",
     confirmPassword: "Konfirmasi Password",
     forgotPassword: "Lupa password?",
     continueWith: "Atau lanjutkan dengan",
     continueWithGoogle: "Lanjutkan dengan Google",
     dontHaveAccount: "Belum punya akun?",
     registerNow: "Daftar sekarang",
+    byLoggingIn: "Dengan login, Anda menyetujui",
+    termsOfService: "Syarat & Ketentuan",
+    and: "dan",
+    privacyPolicy: "Kebijakan Privasi",
+    loginFailed: "Login gagal",
+    loginSuccess: "Login Berhasil",
+    welcomeBack: "Selamat datang kembali!",
+    networkError: "Kesalahan jaringan. Coba lagi.",
+    connectionFailed: "Koneksi Gagal",
+    backToHome: "Kembali ke Beranda",
+    welcomeToSmartHome: "Selamat Datang di Smart Home",
+    loginDescription:
+      "Kelola semua perangkat IoT Anda dari satu platform yang aman dan mudah digunakan.",
+    securePrivateDesc:
+      "Keamanan tingkat enterprise dengan enkripsi end-to-end untuk melindungi data Anda.",
+    realtimeControl: "Kontrol Real-time",
+    realtimeControlDesc:
+      "Kontrol dan monitoring perangkat secara real-time dari mana saja.",
+    roleBasedAccessDesc:
+      "Sistem manajemen user dengan role-based access control untuk keamanan maksimal.",
+    demoCredentials: "Kredensial Demo",
+    footerText: "Smart Home Platform. Semua hak dilindungi.",
 
     // Register
     createAccount: "Buat Akun Baru",
@@ -73,18 +99,25 @@ const translations = {
     registerButton: "Daftar Sekarang",
     registering: "Mendaftar...",
     agreeToTerms: "Dengan mendaftar, Anda menyetujui",
-    termsOfService: "Syarat & Ketentuan",
-    and: "dan",
-    privacyPolicy: "Kebijakan Privasi",
     kami: "kami",
 
     // Forgot Password
     forgotPasswordTitle: "Lupa Password",
     forgotPasswordDesc: "Masukkan email Anda. Kami akan kirim instruksi reset.",
+    forgotPasswordSubtitle:
+      "Masukkan email Anda. Kami akan kirim instruksi reset.",
     emailAddress: "Alamat Email",
     sendResetLink: "Kirim Link Reset",
+    sendResetInstructions: "Kirim instruksi reset",
     sending: "Mengirim...",
     backToLogin: "Kembali ke Login",
+    requestSent: "Permintaan terkirim",
+    requestSentDesc:
+      "Jika email terdaftar, Anda akan menerima instruksi reset password.",
+    sendAgain: "Kirim lagi",
+    didntReceiveEmail:
+      "Tidak menerima email? Cek folder spam / tunggu beberapa menit.",
+    failedSendResetRequest: "Gagal mengirim permintaan reset",
 
     // Common
     loading: "Memuat...",
@@ -121,16 +154,42 @@ const translations = {
 
     // Auth Pages
     signIn: "Sign In",
-    signInDesc: "Sign in to your account to continue",
+    signInSubtitle: "Sign in to your account to continue",
+    signingIn: "Signing in...",
     username: "Username",
+    enterUsername: "Enter username",
     email: "Email",
+    enterEmail: "Enter email",
     password: "Password",
+    enterPassword: "Enter password",
     confirmPassword: "Confirm Password",
     forgotPassword: "Forgot password?",
     continueWith: "Or continue with",
     continueWithGoogle: "Continue with Google",
     dontHaveAccount: "Don't have an account?",
     registerNow: "Register now",
+    byLoggingIn: "By logging in, you agree to our",
+    termsOfService: "Terms of Service",
+    and: "and",
+    privacyPolicy: "Privacy Policy",
+    loginFailed: "Login failed",
+    loginSuccess: "Login Successful",
+    welcomeBack: "Welcome back!",
+    networkError: "Network error. Try again.",
+    connectionFailed: "Connection Failed",
+    backToHome: "Back to Home",
+    welcomeToSmartHome: "Welcome to Smart Home",
+    loginDescription:
+      "Manage all your IoT devices from one secure and easy-to-use platform.",
+    securePrivateDesc:
+      "Enterprise-grade security with end-to-end encryption to protect your data.",
+    realtimeControl: "Real-time Control",
+    realtimeControlDesc:
+      "Control and monitor devices in real-time from anywhere.",
+    roleBasedAccessDesc:
+      "User management system with role-based access control for maximum security.",
+    demoCredentials: "Demo Credentials",
+    footerText: "Smart Home Platform. All rights reserved.",
 
     // Register
     createAccount: "Create New Account",
@@ -142,18 +201,24 @@ const translations = {
     registerButton: "Register Now",
     registering: "Registering...",
     agreeToTerms: "By registering, you agree to our",
-    termsOfService: "Terms of Service",
-    and: "and",
-    privacyPolicy: "Privacy Policy",
     kami: "",
 
     // Forgot Password
     forgotPasswordTitle: "Forgot Password",
     forgotPasswordDesc: "Enter your email. We'll send reset instructions.",
+    forgotPasswordSubtitle: "Enter your email. We'll send reset instructions.",
     emailAddress: "Email Address",
     sendResetLink: "Send Reset Link",
+    sendResetInstructions: "Send reset instructions",
     sending: "Sending...",
     backToLogin: "Back to Login",
+    requestSent: "Request sent",
+    requestSentDesc:
+      "If the email is registered, you will receive password reset instructions.",
+    sendAgain: "Send again",
+    didntReceiveEmail:
+      "Didn't receive email? Check spam folder / wait a few minutes.",
+    failedSendResetRequest: "Failed to send reset request",
 
     // Common
     loading: "Loading...",
