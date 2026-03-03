@@ -14,11 +14,33 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Eye, EyeOff, Mail, Lock, User, Home, Loader2 } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Mail,
+  Lock,
+  User,
+  Home,
+  Loader2,
+  Globe,
+  Moon,
+  Sun,
+} from "lucide-react";
 import { toast } from "sonner";
+import {
+  PublicSettingsProvider,
+  usePublicSettings,
+} from "@/contexts/public-settings-context";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-export default function RegisterPage() {
+function RegisterPageContent() {
   const router = useRouter();
+  const { theme, language, toggleTheme, setLanguage, t } = usePublicSettings();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -42,22 +64,34 @@ export default function RegisterPage() {
 
     // Validation
     if (!formData.username || !formData.email || !formData.password) {
-      toast.error("Mohon isi semua field yang diperlukan");
+      toast.error(
+        language === "id"
+          ? "Mohon isi semua field yang diperlukan"
+          : "Please fill all required fields",
+      );
       return;
     }
 
     if (formData.password.length < 8) {
-      toast.error("Password minimal 8 karakter");
+      toast.error(
+        language === "id"
+          ? "Password minimal 8 karakter"
+          : "Password must be at least 8 characters",
+      );
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      toast.error("Password dan konfirmasi password tidak cocok");
+      toast.error(
+        language === "id"
+          ? "Password dan konfirmasi password tidak cocok"
+          : "Passwords do not match",
+      );
       return;
     }
 
     if (!formData.email.includes("@")) {
-      toast.error("Email tidak valid");
+      toast.error(language === "id" ? "Email tidak valid" : "Invalid email");
       return;
     }
 
@@ -77,13 +111,24 @@ export default function RegisterPage() {
       const data = await res.json();
 
       if (res.ok) {
-        toast.success("Registrasi berhasil! Silakan login.");
+        toast.success(
+          language === "id"
+            ? "Registrasi berhasil! Silakan login."
+            : "Registration successful! Please login.",
+        );
         router.push("/login");
       } else {
-        toast.error(data.error || "Registrasi gagal");
+        toast.error(
+          data.error ||
+            (language === "id" ? "Registrasi gagal" : "Registration failed"),
+        );
       }
     } catch (error) {
-      toast.error("Terjadi kesalahan. Silakan coba lagi.");
+      toast.error(
+        language === "id"
+          ? "Terjadi kesalahan. Silakan coba lagi."
+          : "An error occurred. Please try again.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -95,27 +140,58 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
+      {/* Settings in top right */}
+      <div className="fixed top-4 right-4 flex gap-2 z-50">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="icon">
+              <Globe className="h-5 w-5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => setLanguage("id")}>
+              <span className={language === "id" ? "font-bold" : ""}>
+                🇮🇩 Bahasa Indonesia
+              </span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setLanguage("en")}>
+              <span className={language === "en" ? "font-bold" : ""}>
+                🇬🇧 English
+              </span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <Button variant="outline" size="icon" onClick={toggleTheme}>
+          {theme === "dark" ? (
+            <Sun className="h-5 w-5" />
+          ) : (
+            <Moon className="h-5 w-5" />
+          )}
+        </Button>
+      </div>
+
       <div className="w-full max-w-md">
         {/* Logo/Brand */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 mb-4 shadow-lg">
-            <Home className="w-8 h-8 text-white" />
-          </div>
+          <Link href="/" className="inline-block">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 mb-4 shadow-lg">
+              <Home className="w-8 h-8 text-white" />
+            </div>
+          </Link>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Smart Home
+            {t("smartHome")}
           </h1>
-          <p className="text-muted-foreground mt-2">
-            Kontrol rumah pintar Anda dengan mudah
-          </p>
+          <p className="text-muted-foreground mt-2">{t("tagline")}</p>
         </div>
 
         <Card className="border-0 shadow-xl">
           <CardHeader className="space-y-1 pb-4">
             <CardTitle className="text-2xl font-bold text-center">
-              Buat Akun Baru
+              {t("createAccount")}
             </CardTitle>
             <CardDescription className="text-center">
-              Daftar untuk mulai menggunakan Smart Home
+              {t("registerDesc")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -144,7 +220,7 @@ export default function RegisterPage() {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                 />
               </svg>
-              Daftar dengan Google
+              {t("registerWithGoogle")}
             </Button>
 
             <div className="relative">
@@ -153,7 +229,7 @@ export default function RegisterPage() {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-card px-2 text-muted-foreground">
-                  Atau daftar dengan email
+                  {t("orRegisterWith")}
                 </span>
               </div>
             </div>
@@ -161,7 +237,7 @@ export default function RegisterPage() {
             {/* Registration Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="username">{t("username")}</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -179,7 +255,7 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t("email")}</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -197,14 +273,14 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t("password")}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="password"
                     name="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Minimal 8 karakter"
+                    placeholder={t("minChars")}
                     value={formData.password}
                     onChange={handleChange}
                     className="pl-10 pr-10 h-11"
@@ -226,14 +302,14 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Konfirmasi Password</Label>
+                <Label htmlFor="confirmPassword">{t("confirmPassword")}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="confirmPassword"
                     name="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Ulangi password"
+                    placeholder={t("repeatPassword")}
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     className="pl-10 pr-10 h-11"
@@ -262,43 +338,53 @@ export default function RegisterPage() {
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Mendaftar...
+                    {t("registering")}
                   </>
                 ) : (
-                  "Daftar Sekarang"
+                  t("registerButton")
                 )}
               </Button>
             </form>
 
             <div className="text-center text-sm">
-              <span className="text-muted-foreground">Sudah punya akun? </span>
+              <span className="text-muted-foreground">
+                {t("alreadyHaveAccount")}{" "}
+              </span>
               <Link
                 href="/login"
                 className="font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
               >
-                Login di sini
+                {t("login")}
               </Link>
             </div>
 
             <p className="text-xs text-center text-muted-foreground px-4">
-              Dengan mendaftar, Anda menyetujui{" "}
+              {t("agreeToTerms")}{" "}
               <Link href="/terms" className="underline hover:text-foreground">
-                Syarat & Ketentuan
+                {t("termsOfService")}
               </Link>{" "}
-              dan{" "}
+              {t("and")}{" "}
               <Link href="/privacy" className="underline hover:text-foreground">
-                Kebijakan Privasi
+                {t("privacyPolicy")}
               </Link>{" "}
-              kami.
+              {t("kami")}.
             </p>
           </CardContent>
         </Card>
 
         {/* Footer */}
         <p className="text-center text-sm text-muted-foreground mt-6">
-          © 2024 Smart Home. All rights reserved.
+          © 2024 {t("smartHome")}. {t("allRightsReserved")}.
         </p>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <PublicSettingsProvider>
+      <RegisterPageContent />
+    </PublicSettingsProvider>
   );
 }

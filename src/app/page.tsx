@@ -1,199 +1,223 @@
 "use client";
 
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import {
   Home,
-  Zap,
   Shield,
-  Smartphone,
-  Activity,
-  Cloud,
-  ArrowRight,
-  CheckCircle2,
-  Cpu,
+  Zap,
   Lock,
-  TrendingUp,
+  Activity,
+  Cpu,
+  Moon,
+  Sun,
+  Globe,
+  Menu,
+  X,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  PublicSettingsProvider,
+  usePublicSettings,
+} from "@/contexts/public-settings-context";
+import { useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-export default function LandingPage() {
+function LandingPageContent() {
+  const { theme, language, toggleTheme, setLanguage, t } = usePublicSettings();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const features = [
     {
-      icon: Home,
-      title: "Smart Home Control",
-      description: "Kontrol semua perangkat smart home Anda dari satu tempat",
-    },
-    {
-      icon: Smartphone,
-      title: "Mobile & Web Access",
-      description:
-        "Akses dari mana saja melalui web browser atau aplikasi mobile",
-    },
-    {
-      icon: Activity,
-      title: "Real-time Monitoring",
-      description:
-        "Pantau status perangkat dan konsumsi energi secara real-time",
-    },
-    {
       icon: Shield,
-      title: "Secure & Private",
-      description: "Keamanan tingkat enterprise dengan enkripsi end-to-end",
+      title: t("securePrivate"),
+      description: t("secureDesc"),
+      color: "text-blue-500",
+      bgColor: "bg-blue-500/10",
     },
     {
       icon: Zap,
-      title: "Energy Management",
-      description: "Optimalkan penggunaan energi dan hemat biaya listrik",
+      title: t("realTimeControl"),
+      description: t("realTimeDesc"),
+      color: "text-yellow-500",
+      bgColor: "bg-yellow-500/10",
     },
     {
-      icon: Cloud,
-      title: "Cloud Sync",
-      description: "Data tersinkronisasi otomatis ke cloud dengan backup",
+      icon: Lock,
+      title: t("roleBasedAccess"),
+      description: t("roleBasedDesc"),
+      color: "text-purple-500",
+      bgColor: "bg-purple-500/10",
     },
-  ];
-
-  const benefits = [
-    "Kontrol perangkat dari mana saja",
-    "Hemat energi hingga 30%",
-    "Notifikasi real-time",
-    "Automasi cerdas dengan AI",
-    "Multi-user & role management",
-    "OTA firmware updates",
+    {
+      icon: Activity,
+      title: t("automation"),
+      description: t("automationDesc"),
+      color: "text-green-500",
+      bgColor: "bg-green-500/10",
+    },
+    {
+      icon: Zap,
+      title: t("energyMonitoring"),
+      description: t("energyMonitoringDesc"),
+      color: "text-orange-500",
+      bgColor: "bg-orange-500/10",
+    },
+    {
+      icon: Cpu,
+      title: t("multiDevice"),
+      description: t("multiDeviceDesc"),
+      color: "text-pink-500",
+      bgColor: "bg-pink-500/10",
+    },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
-      {/* Header */}
+    <div className="min-h-screen bg-background">
+      {/* Header/Navbar */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Home className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold">Smart Home</span>
-          </div>
-          <nav className="hidden md:flex items-center gap-6">
-            <Link
-              href="#features"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Features
-            </Link>
-            <Link
-              href="#benefits"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Benefits
-            </Link>
-            <Link
-              href="#about"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              About
-            </Link>
-          </nav>
-          <Link href="/login">
-            <Button>
-              Login
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+          <Link
+            href="/"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          >
+            <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+              <Home className="h-6 w-6 text-white" />
+            </div>
+            <span className="text-xl font-bold">{t("smartHome")}</span>
           </Link>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-4">
+            {/* Language Selector */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Globe className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setLanguage("id")}>
+                  <span className={language === "id" ? "font-bold" : ""}>
+                    🇮🇩 Bahasa Indonesia
+                  </span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLanguage("en")}>
+                  <span className={language === "en" ? "font-bold" : ""}>
+                    🇬🇧 English
+                  </span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Theme Toggle */}
+            <Button variant="ghost" size="icon" onClick={toggleTheme}>
+              {theme === "dark" ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </Button>
+
+            <Link href="/login">
+              <Button variant="ghost">{t("login")}</Button>
+            </Link>
+            <Link href="/register">
+              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                {t("signUp")}
+              </Button>
+            </Link>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
+          </Button>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t bg-background p-4 space-y-3">
+            <div className="flex items-center justify-between pb-3 border-b">
+              <span className="text-sm font-medium">{t("language")}</span>
+              <div className="flex gap-2">
+                <Button
+                  variant={language === "id" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setLanguage("id")}
+                >
+                  🇮🇩
+                </Button>
+                <Button
+                  variant={language === "en" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setLanguage("en")}
+                >
+                  🇬🇧
+                </Button>
+              </div>
+            </div>
+            <div className="flex items-center justify-between pb-3 border-b">
+              <span className="text-sm font-medium">Theme</span>
+              <Button variant="outline" size="sm" onClick={toggleTheme}>
+                {theme === "dark" ? (
+                  <Sun className="h-4 w-4 mr-2" />
+                ) : (
+                  <Moon className="h-4 w-4 mr-2" />
+                )}
+                {theme === "dark" ? "Light" : "Dark"}
+              </Button>
+            </div>
+            <Link href="/login" className="block">
+              <Button variant="outline" className="w-full">
+                {t("login")}
+              </Button>
+            </Link>
+            <Link href="/register" className="block">
+              <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600">
+                {t("signUp")}
+              </Button>
+            </Link>
+          </div>
+        )}
       </header>
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 md:py-32">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <div className="inline-block">
-              <span className="px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full">
-                IoT Smart Home Platform
-              </span>
-            </div>
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-              Kontrol Rumah Anda dengan
-              <span className="text-primary"> Cerdas</span>
-            </h1>
-            <p className="text-lg text-muted-foreground">
-              Platform IoT terintegrasi untuk mengelola semua perangkat smart
-              home Anda. Monitoring real-time, automasi cerdas, dan hemat
-              energi.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/login">
-                <Button size="lg" className="w-full sm:w-auto">
-                  Get Started
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-              <Button size="lg" variant="outline" className="w-full sm:w-auto">
-                Learn More
+        <div className="max-w-4xl mx-auto text-center space-y-8">
+          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            {t("tagline")}
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            {t("description")}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/register">
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8"
+              >
+                {t("getStarted")}
               </Button>
-            </div>
-            <div className="flex items-center gap-8 pt-4">
-              <div>
-                <div className="text-2xl font-bold">1000+</div>
-                <div className="text-sm text-muted-foreground">
-                  Active Devices
-                </div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold">500+</div>
-                <div className="text-sm text-muted-foreground">Happy Users</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold">99.9%</div>
-                <div className="text-sm text-muted-foreground">Uptime</div>
-              </div>
-            </div>
-          </div>
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-purple-500/20 blur-3xl rounded-full"></div>
-            <div className="relative bg-card border rounded-2xl p-8 shadow-2xl">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                      <Cpu className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <div className="font-medium">Living Room</div>
-                      <div className="text-sm text-muted-foreground">
-                        5 devices
-                      </div>
-                    </div>
-                  </div>
-                  <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
-                </div>
-                <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-blue-500/10 flex items-center justify-center">
-                      <Zap className="h-5 w-5 text-blue-500" />
-                    </div>
-                    <div>
-                      <div className="font-medium">Energy Usage</div>
-                      <div className="text-sm text-muted-foreground">
-                        2.4 kWh today
-                      </div>
-                    </div>
-                  </div>
-                  <TrendingUp className="h-4 w-4 text-green-500" />
-                </div>
-                <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-purple-500/10 flex items-center justify-center">
-                      <Lock className="h-5 w-5 text-purple-500" />
-                    </div>
-                    <div>
-                      <div className="font-medium">Security</div>
-                      <div className="text-sm text-muted-foreground">
-                        All systems active
-                      </div>
-                    </div>
-                  </div>
-                  <CheckCircle2 className="h-4 w-4 text-green-500" />
-                </div>
-              </div>
-            </div>
+            </Link>
+            <Link href="#features">
+              <Button size="lg" variant="outline" className="text-lg px-8">
+                {t("learnMore")}
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -203,92 +227,44 @@ export default function LandingPage() {
         id="features"
         className="container mx-auto px-4 py-20 bg-muted/30"
       >
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Fitur Unggulan
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+            {t("features")}
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Platform lengkap dengan berbagai fitur untuk memudahkan pengelolaan
-            smart home Anda
-          </p>
-        </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature, idx) => (
-            <Card
-              key={idx}
-              className="border-2 hover:border-primary/50 transition-colors"
-            >
-              <CardContent className="p-6">
-                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <feature.icon className="h-6 w-6 text-primary" />
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {features.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <div
+                  key={index}
+                  className="p-6 rounded-xl border bg-card hover:shadow-lg transition-shadow"
+                >
+                  <div
+                    className={`h-12 w-12 rounded-lg ${feature.bgColor} flex items-center justify-center mb-4`}
+                  >
+                    <Icon className={`h-6 w-6 ${feature.color}`} />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">
+                    {feature.title}
+                  </h3>
+                  <p className="text-muted-foreground">{feature.description}</p>
                 </div>
-                <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {feature.description}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section id="benefits" className="container mx-auto px-4 py-20">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Mengapa Memilih Smart Home?
-            </h2>
-            <p className="text-muted-foreground mb-8">
-              Tingkatkan kenyamanan, keamanan, dan efisiensi energi rumah Anda
-              dengan teknologi IoT terkini.
-            </p>
-            <div className="space-y-3">
-              {benefits.map((benefit, idx) => (
-                <div key={idx} className="flex items-center gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span>{benefit}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="bg-gradient-to-br from-primary/10 to-purple-500/10 rounded-2xl p-8">
-            <div className="space-y-6">
-              <div className="bg-background rounded-xl p-6 shadow-lg">
-                <div className="text-4xl font-bold text-primary mb-2">30%</div>
-                <div className="text-sm text-muted-foreground">
-                  Penghematan Energi
-                </div>
-              </div>
-              <div className="bg-background rounded-xl p-6 shadow-lg">
-                <div className="text-4xl font-bold text-primary mb-2">24/7</div>
-                <div className="text-sm text-muted-foreground">
-                  Monitoring & Support
-                </div>
-              </div>
-              <div className="bg-background rounded-xl p-6 shadow-lg">
-                <div className="text-4xl font-bold text-primary mb-2">100%</div>
-                <div className="text-sm text-muted-foreground">
-                  Secure & Encrypted
-                </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
       <section className="container mx-auto px-4 py-20">
-        <div className="bg-gradient-to-r from-primary to-purple-600 rounded-2xl p-12 text-center text-white">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Siap Memulai?</h2>
-          <p className="text-lg mb-8 opacity-90 max-w-2xl mx-auto">
-            Bergabunglah dengan ribuan pengguna yang telah merasakan kemudahan
-            smart home
-          </p>
-          <Link href="/login">
-            <Button size="lg" variant="secondary" className="text-primary">
-              Login Sekarang
-              <ArrowRight className="ml-2 h-4 w-4" />
+        <div className="max-w-4xl mx-auto text-center space-y-8 p-12 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600">
+          <h2 className="text-3xl md:text-4xl font-bold text-white">
+            {t("readyToStart")}
+          </h2>
+          <p className="text-xl text-white/90">{t("readyDesc")}</p>
+          <Link href="/register">
+            <Button size="lg" variant="secondary" className="text-lg px-8">
+              {t("signUp")}
             </Button>
           </Link>
         </div>
@@ -297,17 +273,27 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t bg-muted/30">
         <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <Home className="h-5 w-5 text-primary" />
-              <span className="font-semibold">Smart Home Platform</span>
+              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                <Home className="h-5 w-5 text-white" />
+              </div>
+              <span className="font-semibold">{t("smartHome")}</span>
             </div>
-            <div className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} Smart Home. All rights reserved.
-            </div>
+            <p className="text-sm text-muted-foreground">
+              © 2024 {t("smartHome")}. {t("allRightsReserved")}.
+            </p>
           </div>
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function LandingPage() {
+  return (
+    <PublicSettingsProvider>
+      <LandingPageContent />
+    </PublicSettingsProvider>
   );
 }
