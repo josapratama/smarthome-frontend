@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Cpu,
@@ -11,9 +11,13 @@ import {
   Settings,
   Info,
   X,
+  LogOut,
+  User,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 interface UserSidebarProps {
   className?: string;
@@ -22,6 +26,7 @@ interface UserSidebarProps {
 
 export function UserSidebar({ className, onClose }: UserSidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const { t } = useLanguage();
 
   const navigation = [
@@ -34,6 +39,19 @@ export function UserSidebar({ className, onClose }: UserSidebarProps) {
     { name: t("settings"), href: "/user/settings", icon: Settings },
   ];
 
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      router.push("/login");
+      router.refresh();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   return (
     <aside
       className={cn(
@@ -42,9 +60,14 @@ export function UserSidebar({ className, onClose }: UserSidebarProps) {
       )}
     >
       <div className="flex h-16 shrink-0 items-center justify-between border-b px-4">
-        <div>
-          <h1 className="text-lg font-bold">Smart Home</h1>
-          <p className="text-xs text-muted-foreground">User</p>
+        <div className="flex items-center gap-2">
+          <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
+            <span className="text-white font-bold">SH</span>
+          </div>
+          <div>
+            <h1 className="text-lg font-bold leading-none">Smart Home</h1>
+            <p className="text-xs text-muted-foreground mt-0.5">User Panel</p>
+          </div>
         </div>
         {onClose && (
           <button
@@ -70,7 +93,7 @@ export function UserSidebar({ className, onClose }: UserSidebarProps) {
               className={cn(
                 "flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-primary/10 text-primary"
+                  ? "bg-primary text-primary-foreground shadow-sm"
                   : "text-foreground hover:bg-accent",
               )}
             >
@@ -80,6 +103,34 @@ export function UserSidebar({ className, onClose }: UserSidebarProps) {
           );
         })}
       </nav>
+
+      <Separator />
+
+      {/* User Profile & Logout */}
+      <div className="p-3 space-y-2">
+        <Link
+          href="/user/profile"
+          onClick={onClose}
+          className={cn(
+            "flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-colors",
+            pathname === "/user/profile"
+              ? "bg-primary text-primary-foreground shadow-sm"
+              : "text-foreground hover:bg-accent",
+          )}
+        >
+          <User className="h-5 w-5 shrink-0" />
+          <span>{t("profile")}</span>
+        </Link>
+
+        <Button
+          variant="ghost"
+          onClick={handleLogout}
+          className="w-full justify-start gap-3 px-3 py-3 h-auto text-sm font-medium text-red-600 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
+        >
+          <LogOut className="h-5 w-5 shrink-0" />
+          <span>{t("logout")}</span>
+        </Button>
+      </div>
     </aside>
   );
 }
