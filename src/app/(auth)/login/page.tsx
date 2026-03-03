@@ -317,6 +317,18 @@ function LoginForm() {
                       Privacy Policy
                     </Link>
                   </div>
+
+                  <div className="text-center text-sm pt-4 border-t">
+                    <span className="text-muted-foreground">
+                      Belum punya akun?{" "}
+                    </span>
+                    <Link
+                      href="/register"
+                      className="font-medium text-primary hover:underline"
+                    >
+                      Daftar sekarang
+                    </Link>
+                  </div>
                 </form>
               </CardContent>
             </Card>
