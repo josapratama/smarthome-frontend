@@ -46,7 +46,7 @@ export function UserTopbar({ onMenuClick }: UserTopbarProps) {
             </div>
             <div className="hidden md:block">
               <h2 className="text-base font-bold leading-none">Smart Home</h2>
-              <p className="text-xs text-muted-foreground">Control Center</p>
+              <p className="text-xs text-muted-foreground">Pusat Kontrol</p>
             </div>
           </div>
         </div>

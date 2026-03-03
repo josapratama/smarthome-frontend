@@ -502,5 +502,7 @@ export const id = {
   failedLoadDevice: "Gagal memuat perangkat",
   failedLoadDevices: "Gagal memuat perangkat",
   timestamp: "Waktu",
-  room: "Ruangan",
+  // Notifications Page
+  failedLoadNotifications: "Gagal memuat notifikasi",
+  notificationDeleted: "Notifikasi berhasil dihapus",
 } as const;

@@ -39,52 +39,52 @@ export default function NotificationsPage() {
         {
           id: "1",
           type: "danger",
-          title: "High Temperature Alert",
-          message: "Living room temperature exceeded 35°C",
-          deviceName: "Temperature Sensor",
+          title: "Peringatan Suhu Tinggi",
+          message: "Suhu ruang tamu melebihi 35°C",
+          deviceName: "Sensor Suhu",
           timestamp: new Date(Date.now() - 5 * 60000),
           read: false,
         },
         {
           id: "2",
           type: "warning",
-          title: "Power Consumption High",
-          message: "Current power usage is above normal",
-          deviceName: "Power Meter",
+          title: "Konsumsi Daya Tinggi",
+          message: "Penggunaan daya saat ini di atas normal",
+          deviceName: "Meteran Daya",
           timestamp: new Date(Date.now() - 15 * 60000),
           read: false,
         },
         {
           id: "3",
           type: "info",
-          title: "Device Connected",
-          message: "New device successfully paired",
-          deviceName: "Smart Light",
+          title: "Perangkat Terhubung",
+          message: "Perangkat baru berhasil dipasangkan",
+          deviceName: "Lampu Pintar",
           timestamp: new Date(Date.now() - 60 * 60000),
           read: true,
         },
         {
           id: "4",
           type: "danger",
-          title: "Motion Detected",
-          message: "Unusual motion detected in garage",
-          deviceName: "Motion Sensor",
+          title: "Gerakan Terdeteksi",
+          message: "Gerakan tidak biasa terdeteksi di garasi",
+          deviceName: "Sensor Gerak",
           timestamp: new Date(Date.now() - 2 * 60 * 60000),
           read: true,
         },
         {
           id: "5",
           type: "info",
-          title: "Firmware Update Available",
-          message: "New firmware version 2.1.0 is available",
-          deviceName: "Smart Thermostat",
+          title: "Pembaruan Firmware Tersedia",
+          message: "Versi firmware baru 2.1.0 tersedia",
+          deviceName: "Thermostat Pintar",
           timestamp: new Date(Date.now() - 24 * 60 * 60000),
           read: true,
         },
       ];
       setNotifications(mockNotifications);
     } catch (error) {
-      toast.error("Failed to load notifications");
+      toast.error(t("failedLoadNotifications"));
     } finally {
       setIsLoading(false);
     }
@@ -130,10 +130,10 @@ export default function NotificationsPage() {
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
 
-    if (minutes < 1) return "Just now";
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    return `${days}d ago`;
+    if (minutes < 1) return "Baru saja";
+    if (minutes < 60) return `${minutes} menit lalu`;
+    if (hours < 24) return `${hours} jam lalu`;
+    return `${days} hari lalu`;
   };
 
   const markAsRead = (id: string) => {
@@ -150,7 +150,7 @@ export default function NotificationsPage() {
 
   const deleteNotification = (id: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
-    toast.success("Notification deleted");
+    toast.success(t("notificationDeleted"));
   };
 
   const filteredNotifications =
@@ -229,8 +229,8 @@ export default function NotificationsPage() {
                 </h2>
                 <p className="text-muted-foreground">
                   {filter === "unread"
-                    ? "You're all caught up!"
-                    : "Notifications will appear here"}
+                    ? "Semua notifikasi sudah dibaca!"
+                    : "Notifikasi akan muncul di sini"}
                 </p>
               </CardContent>
             </Card>
@@ -260,7 +260,7 @@ export default function NotificationsPage() {
                             </h3>
                             {!notification.read && (
                               <Badge variant="default" className="h-5">
-                                New
+                                Baru
                               </Badge>
                             )}
                           </div>

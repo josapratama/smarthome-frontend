@@ -37,7 +37,7 @@ export function UserSidebar({ className, onClose }: UserSidebarProps) {
     { name: t("energy"), href: "/user/energy", icon: Zap },
     { name: t("alarms"), href: "/user/alarms", icon: AlertTriangle },
     { name: t("notifications"), href: "/user/notifications", icon: Bell },
-    { name: "App Info", href: "/user/app-info", icon: Info },
+    { name: t("appInformation"), href: "/user/app-info", icon: Info },
     { name: t("settings"), href: "/user/settings", icon: Settings },
   ];
 
@@ -68,7 +68,9 @@ export function UserSidebar({ className, onClose }: UserSidebarProps) {
           </div>
           <div>
             <h1 className="text-lg font-bold leading-none">Smart Home</h1>
-            <p className="text-xs text-muted-foreground mt-0.5">User Panel</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Panel Pengguna
+            </p>
           </div>
         </div>
         {onClose && (
