@@ -17,9 +17,9 @@ import {
   Activity,
 } from "lucide-react";
 import { toast } from "sonner";
-import { useTranslation } from "@/lib/i18n/client";
 import { DeviceControl } from "@/components/user/device-control";
 import { SensorCard } from "@/components/user/sensor-card";
+import { useTranslation } from "@/hooks/use-translation";
 
 interface TelemetryData {
   voltage?: number;

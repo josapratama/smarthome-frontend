@@ -13,6 +13,7 @@ import {
   X,
   LogOut,
   User,
+  Bell,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 import { cn } from "@/lib/utils";
@@ -35,6 +36,7 @@ export function UserSidebar({ className, onClose }: UserSidebarProps) {
     { name: t("homes"), href: "/user/homes", icon: Home },
     { name: t("energy"), href: "/user/energy", icon: Zap },
     { name: t("alarms"), href: "/user/alarms", icon: AlertTriangle },
+    { name: t("notifications"), href: "/user/notifications", icon: Bell },
     { name: "App Info", href: "/user/app-info", icon: Info },
     { name: t("settings"), href: "/user/settings", icon: Settings },
   ];

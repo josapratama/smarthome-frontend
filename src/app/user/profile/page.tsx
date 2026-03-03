@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   Card,
@@ -33,13 +33,15 @@ import {
   LogOut,
   Save,
   X,
-  Moon,
+  Camera,
+  Trash2,
   Sun,
+  Moon,
   Globe,
 } from "lucide-react";
 import { toast } from "sonner";
-import { useTheme } from "@/contexts/theme-context";
 import { useLanguage } from "@/contexts/language-context";
+import { useTheme } from "@/contexts/theme-context";
 
 interface UserProfile {
   id: number;
@@ -48,6 +50,7 @@ interface UserProfile {
   role: "USER" | "ADMIN";
   googleName?: string;
   googlePicture?: string;
+  avatarUrl?: string | null;
   authProvider?: string;
   createdAt: string;
 }
@@ -56,14 +59,23 @@ export default function UserProfilePage() {
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
 
   const [editedUsername, setEditedUsername] = useState("");
   const [editedEmail, setEditedEmail] = useState("");
+
+  const [passwordForm, setPasswordForm] = useState({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
 
   useEffect(() => {
     loadProfile();
@@ -137,6 +149,134 @@ export default function UserProfilePage() {
     setIsEditing(false);
   };
 
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error(t("pleaseSelectImage"));
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error(t("imageSizeLimit"));
+      return;
+    }
+
+    setIsUploadingAvatar(true);
+    try {
+      const formData = new FormData();
+      formData.append("avatar", file);
+
+      const res = await fetch("/api/auth/profile/avatar", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (res.ok) {
+        toast.success(t("avatarUploadedSuccess"));
+        loadProfile();
+      } else {
+        const data = await res.json();
+        toast.error(data.error || t("failedUploadAvatar"));
+      }
+    } catch (error) {
+      toast.error(t("failedUploadAvatar"));
+    } finally {
+      setIsUploadingAvatar(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleDeleteAvatar = async () => {
+    if (!confirm(t("deleteAvatarConfirm"))) return;
+
+    try {
+      const res = await fetch("/api/auth/profile/avatar", {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        toast.success(t("avatarDeletedSuccess"));
+        loadProfile();
+      } else {
+        toast.error(t("failedDeleteAvatar"));
+      }
+    } catch (error) {
+      toast.error(t("failedDeleteAvatar"));
+    }
+  };
+
+  const handleChangePassword = async () => {
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      toast.error(t("passwordsDoNotMatch"));
+      return;
+    }
+
+    if (passwordForm.newPassword.length < 8) {
+      toast.error(t("passwordMinLength"));
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const res = await fetch("/api/auth/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          oldPassword: passwordForm.oldPassword,
+          newPassword: passwordForm.newPassword,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const remainingChanges = data.data?.remainingChanges;
+        if (remainingChanges !== undefined) {
+          toast.success(
+            t("passwordChangedSuccess").replace(
+              "{count}",
+              remainingChanges.toString(),
+            ),
+          );
+        } else {
+          toast.success(t("passwordChangedSuccess").replace("{count}", "0"));
+        }
+        setPasswordForm({
+          oldPassword: "",
+          newPassword: "",
+          confirmPassword: "",
+        });
+        setShowPasswordForm(false);
+      } else {
+        const data = await res.json();
+        const errorMsg =
+          data.error === "PASSWORD_CHANGE_LIMIT_EXCEEDED"
+            ? t("passwordChangeLimitExceeded")
+            : data.error === "INVALID_CREDENTIALS"
+              ? t("currentPasswordIncorrect")
+              : data.error || t("failedChangePassword");
+        toast.error(errorMsg);
+      }
+    } catch (error) {
+      toast.error(t("failedChangePassword"));
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const getAvatarUrl = () => {
+    if (profile?.avatarUrl) {
+      return `http://localhost:3000${profile.avatarUrl}`;
+    }
+    if (profile?.googlePicture) {
+      return profile.googlePicture;
+    }
+    return undefined;
+  };
+
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
@@ -187,10 +327,44 @@ export default function UserProfilePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex flex-col items-center text-center space-y-4">
-              <Avatar className="h-24 w-24">
-                <AvatarImage src={profile.googlePicture} alt={displayName} />
-                <AvatarFallback className="text-2xl">{initials}</AvatarFallback>
-              </Avatar>
+              <div className="relative">
+                <Avatar className="h-24 w-24">
+                  <AvatarImage src={getAvatarUrl()} alt={displayName} />
+                  <AvatarFallback className="text-2xl">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+                {!isGoogleUser && (
+                  <div className="absolute -bottom-2 -right-2 flex gap-1">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAvatarUpload}
+                      className="hidden"
+                    />
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="h-8 w-8 rounded-full"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploadingAvatar}
+                    >
+                      <Camera className="h-4 w-4" />
+                    </Button>
+                    {profile.avatarUrl && (
+                      <Button
+                        size="icon"
+                        variant="destructive"
+                        className="h-8 w-8 rounded-full"
+                        onClick={handleDeleteAvatar}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </div>
 
               <div>
                 <h3 className="font-semibold text-lg">{displayName}</h3>
@@ -308,78 +482,110 @@ export default function UserProfilePage() {
                 )}
               </div>
 
-              {!isGoogleUser && (
-                <>
-                  <Separator />
-                  <div className="space-y-2">
-                    <Label>{t("password")}</Label>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-start"
-                      onClick={() => router.push("/user/change-password")}
-                    >
-                      <Key className="h-4 w-4 mr-2" />
-                      {t("changePassword")}
-                    </Button>
-                  </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Appearance Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{t("appearance")}</CardTitle>
-              <CardDescription>
-                {language === "id"
-                  ? "Sesuaikan pengalaman Anda"
-                  : "Customize your experience"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Theme Switcher */}
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>{t("theme")}</Label>
-                  <p className="text-sm text-muted-foreground">
-                    {theme === "dark" ? t("darkMode") : t("lightMode")}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Sun className="h-4 w-4" />
-                  <Switch
-                    checked={theme === "dark"}
-                    onCheckedChange={toggleTheme}
-                  />
-                  <Moon className="h-4 w-4" />
-                </div>
-              </div>
-
               <Separator />
 
-              {/* Language Selector */}
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>{t("language")}</Label>
-                  <p className="text-sm text-muted-foreground">
-                    {language === "id" ? t("indonesian") : t("english")}
-                  </p>
-                </div>
-                <Select
-                  value={language}
-                  onValueChange={(val) => setLanguage(val as "id" | "en")}
-                >
-                  <SelectTrigger className="w-[180px]">
-                    <Globe className="h-4 w-4 mr-2" />
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="id">{t("indonesian")}</SelectItem>
-                    <SelectItem value="en">{t("english")}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              {/* Security Section */}
+              {!isGoogleUser && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Key className="h-5 w-5" />
+                      {t("security")}
+                    </CardTitle>
+                    <CardDescription>{t("changePasswordDesc")}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {!showPasswordForm ? (
+                      <Button
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => setShowPasswordForm(true)}
+                      >
+                        <Key className="h-4 w-4 mr-2" />
+                        {t("changePassword")}
+                      </Button>
+                    ) : (
+                      <div className="space-y-4">
+                        <div className="p-3 bg-muted rounded-lg text-sm text-muted-foreground">
+                          ℹ️ {t("passwordChangeLimit")}
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="oldPassword">
+                            {t("currentPassword")}
+                          </Label>
+                          <Input
+                            id="oldPassword"
+                            type="password"
+                            value={passwordForm.oldPassword}
+                            onChange={(e) =>
+                              setPasswordForm({
+                                ...passwordForm,
+                                oldPassword: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="newPassword">
+                            {t("newPassword")}
+                          </Label>
+                          <Input
+                            id="newPassword"
+                            type="password"
+                            value={passwordForm.newPassword}
+                            onChange={(e) =>
+                              setPasswordForm({
+                                ...passwordForm,
+                                newPassword: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="confirmPassword">
+                            {t("confirmNewPassword")}
+                          </Label>
+                          <Input
+                            id="confirmPassword"
+                            type="password"
+                            value={passwordForm.confirmPassword}
+                            onChange={(e) =>
+                              setPasswordForm({
+                                ...passwordForm,
+                                confirmPassword: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={handleChangePassword}
+                            disabled={isSaving}
+                            className="flex-1"
+                          >
+                            {isSaving
+                              ? t("changingPassword")
+                              : t("changePassword")}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              setShowPasswordForm(false);
+                              setPasswordForm({
+                                oldPassword: "",
+                                newPassword: "",
+                                confirmPassword: "",
+                              });
+                            }}
+                          >
+                            {t("cancel")}
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
             </CardContent>
           </Card>
 

@@ -8,7 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Power, Lightbulb, Fan, Thermometer, Zap } from "lucide-react";
 import { toast } from "sonner";
-import { useTranslation } from "@/lib/i18n/client";
+import { useTranslation } from "@/hooks/use-translation";
 
 interface DeviceControlProps {
   deviceId: number;
