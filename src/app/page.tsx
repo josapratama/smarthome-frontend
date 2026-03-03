@@ -80,24 +80,26 @@ function LandingPageContent() {
     <div className="min-h-screen bg-background">
       {/* Header/Navbar */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+        <div className="container mx-auto px-4 h-14 sm:h-16 flex items-center justify-between">
           <Link
             href="/"
             className="flex items-center gap-2 hover:opacity-80 transition-opacity"
           >
-            <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-              <Home className="h-6 w-6 text-white" />
+            <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+              <Home className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
             </div>
-            <span className="text-xl font-bold">{t("smartHome")}</span>
+            <span className="text-lg sm:text-xl font-bold">
+              {t("smartHome")}
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-2 lg:gap-4">
             {/* Language Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Globe className="h-5 w-5" />
+                <Button variant="ghost" size="icon" className="h-9 w-9">
+                  <Globe className="h-4 w-4 lg:h-5 lg:w-5" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -115,19 +117,29 @@ function LandingPageContent() {
             </DropdownMenu>
 
             {/* Theme Toggle */}
-            <Button variant="ghost" size="icon" onClick={toggleTheme}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className="h-9 w-9"
+            >
               {theme === "dark" ? (
-                <Sun className="h-5 w-5" />
+                <Sun className="h-4 w-4 lg:h-5 lg:w-5" />
               ) : (
-                <Moon className="h-5 w-5" />
+                <Moon className="h-4 w-4 lg:h-5 lg:w-5" />
               )}
             </Button>
 
             <Link href="/login">
-              <Button variant="ghost">{t("login")}</Button>
+              <Button variant="ghost" size="sm">
+                {t("login")}
+              </Button>
             </Link>
             <Link href="/register">
-              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+              <Button
+                size="sm"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              >
                 {t("signUp")}
               </Button>
             </Link>
@@ -137,7 +149,7 @@ function LandingPageContent() {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="md:hidden h-9 w-9"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? (
@@ -152,12 +164,15 @@ function LandingPageContent() {
         {mobileMenuOpen && (
           <div className="md:hidden border-t bg-background p-4 space-y-3">
             <div className="flex items-center justify-between pb-3 border-b">
-              <span className="text-sm font-medium">{t("language")}</span>
+              <span className="text-sm font-medium">
+                {language === "id" ? "Bahasa" : "Language"}
+              </span>
               <div className="flex gap-2">
                 <Button
                   variant={language === "id" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setLanguage("id")}
+                  className="h-8"
                 >
                   🇮🇩
                 </Button>
@@ -165,6 +180,7 @@ function LandingPageContent() {
                   variant={language === "en" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setLanguage("en")}
+                  className="h-8"
                 >
                   🇬🇧
                 </Button>
@@ -172,7 +188,12 @@ function LandingPageContent() {
             </div>
             <div className="flex items-center justify-between pb-3 border-b">
               <span className="text-sm font-medium">Theme</span>
-              <Button variant="outline" size="sm" onClick={toggleTheme}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={toggleTheme}
+                className="h-8"
+              >
                 {theme === "dark" ? (
                   <Sun className="h-4 w-4 mr-2" />
                 ) : (
@@ -182,12 +203,12 @@ function LandingPageContent() {
               </Button>
             </div>
             <Link href="/login" className="block">
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full h-10">
                 {t("login")}
               </Button>
             </Link>
             <Link href="/register" className="block">
-              <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600">
+              <Button className="w-full h-10 bg-gradient-to-r from-blue-600 to-purple-600">
                 {t("signUp")}
               </Button>
             </Link>
@@ -196,25 +217,29 @@ function LandingPageContent() {
       </header>
 
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-20 md:py-32">
-        <div className="max-w-4xl mx-auto text-center space-y-8">
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+      <section className="container mx-auto px-4 py-12 sm:py-16 md:py-24 lg:py-32">
+        <div className="max-w-4xl mx-auto text-center space-y-6 md:space-y-8">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent leading-tight px-4">
             {t("tagline")}
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
             {t("description")}
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/register">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
+            <Link href="/register" className="w-full sm:w-auto">
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8"
+                className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-base md:text-lg px-6 md:px-8 h-11 md:h-12"
               >
                 {t("getStarted")}
               </Button>
             </Link>
-            <Link href="#features">
-              <Button size="lg" variant="outline" className="text-lg px-8">
+            <Link href="#features" className="w-full sm:w-auto">
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full sm:w-auto text-base md:text-lg px-6 md:px-8 h-11 md:h-12"
+              >
                 {t("learnMore")}
               </Button>
             </Link>
@@ -225,29 +250,33 @@ function LandingPageContent() {
       {/* Features Section */}
       <section
         id="features"
-        className="container mx-auto px-4 py-20 bg-muted/30"
+        className="container mx-auto px-4 py-12 sm:py-16 md:py-20 bg-muted/30"
       >
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 md:mb-12 px-4">
             {t("features")}
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
             {features.map((feature, index) => {
               const Icon = feature.icon;
               return (
                 <div
                   key={index}
-                  className="p-6 rounded-xl border bg-card hover:shadow-lg transition-shadow"
+                  className="p-4 sm:p-5 md:p-6 rounded-xl border bg-card hover:shadow-lg transition-shadow"
                 >
                   <div
-                    className={`h-12 w-12 rounded-lg ${feature.bgColor} flex items-center justify-center mb-4`}
+                    className={`h-10 w-10 sm:h-11 sm:w-11 md:h-12 md:w-12 rounded-lg ${feature.bgColor} flex items-center justify-center mb-3 md:mb-4`}
                   >
-                    <Icon className={`h-6 w-6 ${feature.color}`} />
+                    <Icon
+                      className={`h-5 w-5 sm:h-5.5 sm:w-5.5 md:h-6 md:w-6 ${feature.color}`}
+                    />
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">
+                  <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-2">
                     {feature.title}
                   </h3>
-                  <p className="text-muted-foreground">{feature.description}</p>
+                  <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
+                    {feature.description}
+                  </p>
                 </div>
               );
             })}
@@ -256,14 +285,20 @@ function LandingPageContent() {
       </section>
 
       {/* CTA Section */}
-      <section className="container mx-auto px-4 py-20">
-        <div className="max-w-4xl mx-auto text-center space-y-8 p-12 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600">
-          <h2 className="text-3xl md:text-4xl font-bold text-white">
+      <section className="container mx-auto px-4 py-12 sm:py-16 md:py-20">
+        <div className="max-w-4xl mx-auto text-center space-y-6 md:space-y-8 p-6 sm:p-8 md:p-12 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white px-4">
             {t("readyToStart")}
           </h2>
-          <p className="text-xl text-white/90">{t("readyDesc")}</p>
+          <p className="text-base sm:text-lg md:text-xl text-white/90 px-4">
+            {t("readyDesc")}
+          </p>
           <Link href="/register">
-            <Button size="lg" variant="secondary" className="text-lg px-8">
+            <Button
+              size="lg"
+              variant="secondary"
+              className="text-base md:text-lg px-6 md:px-8 h-11 md:h-12"
+            >
               {t("signUp")}
             </Button>
           </Link>
@@ -272,15 +307,17 @@ function LandingPageContent() {
 
       {/* Footer */}
       <footer className="border-t bg-muted/30">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="container mx-auto px-4 py-6 sm:py-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                <Home className="h-5 w-5 text-white" />
+              <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                <Home className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
               </div>
-              <span className="font-semibold">{t("smartHome")}</span>
+              <span className="font-semibold text-sm sm:text-base">
+                {t("smartHome")}
+              </span>
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs sm:text-sm text-muted-foreground text-center">
               © 2024 {t("smartHome")}. {t("allRightsReserved")}.
             </p>
           </div>
