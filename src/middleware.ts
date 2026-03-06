@@ -6,18 +6,25 @@ export function middleware(request: NextRequest) {
   const userRole = request.cookies.get("user_role")?.value;
   const { pathname } = request.nextUrl;
 
-  // Public routes
+  // Public routes that don't require authentication
   const publicRoutes = [
-    "/",
-    "/login",
-    "/register",
-    "/forgot-password",
-    "/reset-password",
     "/public", // Allow all /public/* routes
   ];
   const isPublicRoute = publicRoutes.some((route) =>
     pathname.startsWith(route),
   );
+
+  // Auth pages (login, register, etc.)
+  const authPages = [
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/reset-password",
+  ];
+  const isAuthPage = authPages.some((route) => pathname.startsWith(route));
+
+  // Landing page
+  const isLandingPage = pathname === "/";
 
   // Admin routes (from route group (admin))
   const isAdminRoute =
@@ -33,21 +40,16 @@ export function middleware(request: NextRequest) {
     pathname.startsWith("/rooms") ||
     pathname.startsWith("/alarms") ||
     pathname.startsWith("/ai") ||
+    pathname.startsWith("/energy") ||
+    pathname.startsWith("/messages") ||
+    pathname.startsWith("/help") ||
     pathname.startsWith("/device-config");
 
   // User routes
   const isUserRoute = pathname.startsWith("/user");
 
-  // If user is authenticated and trying to access auth pages (login/register), redirect based on role
-  const authPages = [
-    "/login",
-    "/register",
-    "/forgot-password",
-    "/reset-password",
-  ];
-  const isAuthPage = authPages.some((route) => pathname.startsWith(route));
-
-  if (token && isAuthPage) {
+  // If user is authenticated and trying to access landing page or auth pages, redirect to their dashboard
+  if (token && (isLandingPage || isAuthPage)) {
     if (userRole === "ADMIN") {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     } else {
@@ -56,7 +58,7 @@ export function middleware(request: NextRequest) {
   }
 
   // If user is not authenticated and trying to access protected routes, redirect to login
-  if (!token && !isPublicRoute && pathname !== "/") {
+  if (!token && !isPublicRoute && !isLandingPage && !isAuthPage) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 

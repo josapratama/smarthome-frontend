@@ -10,6 +10,7 @@ import { HeroSection } from "@/components/landing/HeroSection";
 import { FeaturesSection } from "@/components/landing/FeaturesSection";
 import { CTASection } from "@/components/landing/CTASection";
 import { Footer } from "@/components/landing/Footer";
+import { AuthRedirect } from "@/components/landing/AuthRedirect";
 
 function LandingPageContent() {
   const { theme, language, toggleTheme, setLanguage, t } = usePublicSettings();
@@ -17,6 +18,7 @@ function LandingPageContent() {
 
   return (
     <div className="min-h-screen bg-background">
+      <AuthRedirect />
       <Header
         theme={theme}
         language={language}

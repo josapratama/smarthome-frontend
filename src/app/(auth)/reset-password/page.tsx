@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AuthRedirect } from "@/components/landing/AuthRedirect";
 
 function ResetPasswordForm() {
   const router = useRouter();
@@ -72,6 +73,7 @@ function ResetPasswordForm() {
 
   return (
     <div className="min-h-screen bg-linear-to-b from-background to-muted/40">
+      <AuthRedirect />
       <div className="mx-auto flex min-h-screen max-w-lg items-center justify-center p-6">
         <Card className="w-full rounded-2xl shadow-sm">
           <CardHeader className="space-y-1">

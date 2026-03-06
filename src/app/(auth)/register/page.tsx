@@ -37,6 +37,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { AuthRedirect } from "@/components/landing/AuthRedirect";
 
 function RegisterPageContent() {
   const router = useRouter();
@@ -140,6 +141,7 @@ function RegisterPageContent() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
+      <AuthRedirect />
       {/* Settings in top right */}
       <div className="fixed top-4 right-4 flex gap-2 z-50">
         <DropdownMenu>
