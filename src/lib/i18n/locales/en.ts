@@ -1222,4 +1222,8 @@ export const en = {
   perDay: "per day",
   dailyAverage: "Daily Average",
   total: "Total",
+
+  // Alarms Extended
+  allSeverity: "All Severity",
+  severity: "Severity",
 } as const;

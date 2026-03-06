@@ -1209,4 +1209,8 @@ export const id = {
   perDay: "per hari",
   dailyAverage: "Rata-rata Harian",
   total: "Total",
+
+  // Alarms Extended
+  allSeverity: "Semua Tingkat",
+  severity: "Tingkat Keparahan",
 } as const;
