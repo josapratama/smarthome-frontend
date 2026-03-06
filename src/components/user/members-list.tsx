@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "@/hooks/use-translation";
 import { HomeMember, membersApi } from "@/lib/api/client/members";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -37,6 +38,7 @@ export function MembersList({
   currentUserId,
   onUpdate,
 }: MembersListProps) {
+  const { t } = useTranslation();
   const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<HomeMember | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -47,12 +49,14 @@ export function MembersList({
     setIsLoading(true);
     try {
       await membersApi.remove(homeId, selectedMember.userId);
-      toast.success("Member removed successfully");
+      toast.success(t("memberRemovedSuccess") || "Member removed successfully");
       setRemoveDialogOpen(false);
       setSelectedMember(null);
       onUpdate();
     } catch (error: any) {
-      toast.error(error.message || "Failed to remove member");
+      toast.error(
+        error.message || t("failedToRemoveMember") || "Failed to remove member",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -61,9 +65,15 @@ export function MembersList({
   const handleResendInvite = async (member: HomeMember) => {
     try {
       await membersApi.resendInvite(homeId, member.userId);
-      toast.success("Invitation resent successfully");
+      toast.success(
+        t("invitationResentSuccess") || "Invitation resent successfully",
+      );
     } catch (error: any) {
-      toast.error(error.message || "Failed to resend invitation");
+      toast.error(
+        error.message ||
+          t("failedToResendInvitation") ||
+          "Failed to resend invitation",
+      );
     }
   };
 
@@ -73,13 +83,13 @@ export function MembersList({
         return (
           <Badge className="bg-yellow-600">
             <Crown className="h-3 w-3 mr-1" />
-            Owner
+            {t("owner") || "Owner"}
           </Badge>
         );
       case "MEMBER":
-        return <Badge className="bg-blue-600">Member</Badge>;
+        return <Badge className="bg-blue-600">{t("member") || "Member"}</Badge>;
       case "GUEST":
-        return <Badge variant="secondary">Guest</Badge>;
+        return <Badge variant="secondary">{t("guest") || "Guest"}</Badge>;
       default:
         return <Badge>{role}</Badge>;
     }
@@ -91,7 +101,7 @@ export function MembersList({
         return (
           <Badge variant="outline" className="text-green-600 border-green-600">
             <UserCheck className="h-3 w-3 mr-1" />
-            Active
+            {t("active") || "Active"}
           </Badge>
         );
       case "INVITED":
@@ -101,7 +111,7 @@ export function MembersList({
             className="text-orange-600 border-orange-600"
           >
             <Mail className="h-3 w-3 mr-1" />
-            Invited
+            {t("invited") || "Invited"}
           </Badge>
         );
       default:
@@ -114,7 +124,9 @@ export function MembersList({
       <Card>
         <CardContent className="py-8 text-center">
           <UserX className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-          <p className="text-muted-foreground">No members yet</p>
+          <p className="text-muted-foreground">
+            {t("noMembersYet") || "No members yet"}
+          </p>
         </CardContent>
       </Card>
     );
@@ -138,7 +150,7 @@ export function MembersList({
                       </p>
                       {isCurrentUser && (
                         <Badge variant="outline" className="text-xs">
-                          You
+                          {t("you") || "You"}
                         </Badge>
                       )}
                     </div>
@@ -148,13 +160,14 @@ export function MembersList({
                     </div>
                     {member.status === "INVITED" && (
                       <p className="text-xs text-muted-foreground mt-1">
-                        Invited{" "}
+                        {t("invited") || "Invited"}{" "}
                         {new Date(member.invitedAt).toLocaleDateString()}
                       </p>
                     )}
                     {member.joinedAt && (
                       <p className="text-xs text-muted-foreground mt-1">
-                        Joined {new Date(member.joinedAt).toLocaleDateString()}
+                        {t("joined") || "Joined"}{" "}
+                        {new Date(member.joinedAt).toLocaleDateString()}
                       </p>
                     )}
                   </div>
@@ -172,7 +185,7 @@ export function MembersList({
                             onClick={() => handleResendInvite(member)}
                           >
                             <Mail className="h-4 w-4 mr-2" />
-                            Resend Invitation
+                            {t("resendInvitation") || "Resend Invitation"}
                           </DropdownMenuItem>
                         )}
                         <DropdownMenuItem
@@ -183,7 +196,7 @@ export function MembersList({
                           }}
                         >
                           <UserX className="h-4 w-4 mr-2" />
-                          Remove Member
+                          {t("removeMember") || "Remove Member"}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -198,16 +211,23 @@ export function MembersList({
       <AlertDialog open={removeDialogOpen} onOpenChange={setRemoveDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove Member</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("removeMember") || "Remove Member"}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to remove {selectedMember?.user?.email} from
-              this home? They will lose access to all devices.
+              {t("removeMemberConfirm") || "Are you sure you want to remove"}{" "}
+              {selectedMember?.user?.email}{" "}
+              {t("fromThisHome") || "from this home"}?{" "}
+              {t("loseAccessToDevices") ||
+                "They will lose access to all devices."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t("cancel") || "Cancel"}</AlertDialogCancel>
             <AlertDialogAction onClick={handleRemove} disabled={isLoading}>
-              {isLoading ? "Removing..." : "Remove"}
+              {isLoading
+                ? t("removing") || "Removing..."
+                : t("remove") || "Remove"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

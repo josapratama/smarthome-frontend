@@ -6,6 +6,8 @@ import { UserInvites } from "@/components/invites/user-invites";
 import { SensorCard } from "@/components/user/sensor-card";
 import { homesApi, Home } from "@/lib/api/client/homes";
 import { devicesApi, DeviceWithDetails } from "@/lib/api/client/devices";
+import { devicesApi as devicesApiV1 } from "@/lib/api/devices";
+import type { SensorData } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
@@ -21,11 +23,25 @@ import {
 import { toast } from "sonner";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/hooks/use-translation";
+
+interface SensorDevice {
+  id: string;
+  type: "power" | "temperature" | "humidity";
+  deviceName: string;
+  value: number;
+  unit: string;
+  status: "safe" | "warning" | "danger";
+  trend: "up" | "down" | "stable";
+  lastUpdate: Date;
+}
 
 export default function UserDashboardPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [homes, setHomes] = useState<Home[]>([]);
   const [devices, setDevices] = useState<DeviceWithDetails[]>([]);
+  const [sensorDevices, setSensorDevices] = useState<SensorDevice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -44,11 +60,113 @@ export default function UserDashboardPage() {
       ]);
       setHomes(homesData);
       setDevices(devicesData);
+
+      // Load telemetry data for all devices
+      if (devicesData.length > 0) {
+        const telemetryMap = await devicesApiV1.getAllLatestTelemetry();
+        const sensors = convertTelemetryToSensors(devicesData, telemetryMap);
+        setSensorDevices(sensors);
+      }
     } catch (error: any) {
-      toast.error(error.message || "Failed to load dashboard data");
+      toast.error(
+        error.message ||
+          t("failedToLoadDashboard") ||
+          "Failed to load dashboard data",
+      );
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const convertTelemetryToSensors = (
+    devices: DeviceWithDetails[],
+    telemetryMap: Record<number, SensorData>,
+  ): SensorDevice[] => {
+    const sensors: SensorDevice[] = [];
+
+    devices.forEach((device) => {
+      const telemetry = telemetryMap[device.id];
+      if (!telemetry) return;
+
+      // Power sensor (using powerW)
+      if (telemetry.powerW !== null && telemetry.powerW !== undefined) {
+        const powerValue = telemetry.powerW / 1000; // Convert W to kW
+        sensors.push({
+          id: `${device.id}-power`,
+          type: "power",
+          deviceName: `${device.name} - ${t("power") || "Power"}`,
+          value: Number(powerValue.toFixed(2)),
+          unit: "kW",
+          status:
+            powerValue > 3.5 ? "danger" : powerValue > 2.0 ? "warning" : "safe",
+          trend: "stable",
+          lastUpdate: new Date(telemetry.timestamp),
+        });
+      }
+
+      // Current sensor (can be used as temperature alternative)
+      if (telemetry.current !== null && telemetry.current !== undefined) {
+        const currentValue = telemetry.current;
+        sensors.push({
+          id: `${device.id}-current`,
+          type: "temperature", // Using temperature type for display
+          deviceName: `${device.name} - ${t("current") || "Current"}`,
+          value: Number(currentValue.toFixed(2)),
+          unit: "A",
+          status: currentValue > 30 || currentValue < 1 ? "warning" : "safe",
+          trend: "stable",
+          lastUpdate: new Date(telemetry.timestamp),
+        });
+      }
+
+      // Gas sensor (can be used as humidity alternative)
+      if (telemetry.gasPpm !== null && telemetry.gasPpm !== undefined) {
+        const gasValue = telemetry.gasPpm;
+        sensors.push({
+          id: `${device.id}-gas`,
+          type: "humidity", // Using humidity type for display
+          deviceName: `${device.name} - ${t("gas") || "Gas"}`,
+          value: Number(gasValue.toFixed(0)),
+          unit: "ppm",
+          status:
+            gasValue > 1000 ? "danger" : gasValue > 500 ? "warning" : "safe",
+          trend: "stable",
+          lastUpdate: new Date(telemetry.timestamp),
+        });
+      }
+
+      // Distance sensor
+      if (telemetry.distanceCm !== null && telemetry.distanceCm !== undefined) {
+        const distanceValue = telemetry.distanceCm;
+        sensors.push({
+          id: `${device.id}-distance`,
+          type: "humidity", // Using humidity type for display
+          deviceName: `${device.name} - ${t("distance") || "Distance"}`,
+          value: Number(distanceValue.toFixed(1)),
+          unit: "cm",
+          status: distanceValue < 10 ? "warning" : "safe",
+          trend: "stable",
+          lastUpdate: new Date(telemetry.timestamp),
+        });
+      }
+
+      // Voltage sensor
+      if (telemetry.voltageV !== null && telemetry.voltageV !== undefined) {
+        const voltageValue = telemetry.voltageV;
+        sensors.push({
+          id: `${device.id}-voltage`,
+          type: "temperature", // Using temperature type for display
+          deviceName: `${device.name} - ${t("voltage") || "Voltage"}`,
+          value: Number(voltageValue.toFixed(1)),
+          unit: "V",
+          status: voltageValue > 250 || voltageValue < 200 ? "warning" : "safe",
+          trend: "stable",
+          lastUpdate: new Date(telemetry.timestamp),
+        });
+      }
+    });
+
+    return sensors.slice(0, 8); // Limit to 8 sensors for dashboard
   };
 
   const onlineDevices = devices.filter((d) => d.status === "ONLINE");
@@ -58,59 +176,16 @@ export default function UserDashboardPage() {
   const homesCount = homes?.length || 0;
   const devicesCount = devices?.length || 0;
 
-  // Mock sensor data - TODO: Replace with real telemetry data
-  const sensorDevices = [
-    {
-      id: "1",
-      type: "power" as const,
-      deviceName: "Living Room Power",
-      value: 2.5,
-      unit: "kW",
-      status: "warning" as const,
-      trend: "up" as const,
-      lastUpdate: new Date(Date.now() - 30000),
-    },
-    {
-      id: "2",
-      type: "temperature" as const,
-      deviceName: "Bedroom Temp",
-      value: 24.5,
-      unit: "°C",
-      status: "safe" as const,
-      trend: "stable" as const,
-      lastUpdate: new Date(Date.now() - 15000),
-    },
-    {
-      id: "3",
-      type: "humidity" as const,
-      deviceName: "Kitchen Humidity",
-      value: 65,
-      unit: "%",
-      status: "safe" as const,
-      trend: "down" as const,
-      lastUpdate: new Date(Date.now() - 45000),
-    },
-    {
-      id: "4",
-      type: "power" as const,
-      deviceName: "AC Power Meter",
-      value: 3.8,
-      unit: "kW",
-      status: "danger" as const,
-      trend: "up" as const,
-      lastUpdate: new Date(Date.now() - 10000),
-    },
-  ];
-
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-2xl md:text-3xl font-bold mb-1">
-          Welcome Back! 👋
+          {t("welcomeBack") || "Welcome Back"} 👋
         </h1>
         <p className="text-sm md:text-base text-muted-foreground">
-          Monitor and control your smart home devices
+          {t("monitorAndControl") ||
+            "Monitor and control your smart home devices"}
         </p>
       </div>
 
@@ -130,7 +205,7 @@ export default function UserDashboardPage() {
               <Card className="hover:shadow-lg transition-all hover:scale-[1.02] cursor-pointer border-2">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-xs md:text-sm font-medium">
-                    Homes
+                    {t("homes") || "Homes"}
                   </CardTitle>
                   <HomeIcon className="h-4 w-4 text-blue-600" />
                 </CardHeader>
@@ -139,7 +214,9 @@ export default function UserDashboardPage() {
                     {homesCount}
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {homesCount === 0 ? "Add home" : "Active"}
+                    {homesCount === 0
+                      ? t("addHome") || "Add home"
+                      : t("active") || "Active"}
                   </p>
                 </CardContent>
               </Card>
@@ -149,7 +226,7 @@ export default function UserDashboardPage() {
               <Card className="hover:shadow-lg transition-all hover:scale-[1.02] cursor-pointer border-2">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-xs md:text-sm font-medium">
-                    Devices
+                    {t("devices") || "Devices"}
                   </CardTitle>
                   <Smartphone className="h-4 w-4 text-purple-600" />
                 </CardHeader>
@@ -158,7 +235,9 @@ export default function UserDashboardPage() {
                     {devicesCount}
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {devicesCount === 0 ? "Pair device" : "Registered"}
+                    {devicesCount === 0
+                      ? t("pairDevice") || "Pair device"
+                      : t("registered") || "Registered"}
                   </p>
                 </CardContent>
               </Card>
@@ -167,7 +246,7 @@ export default function UserDashboardPage() {
             <Card className="border-2 border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-950/20">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-xs md:text-sm font-medium">
-                  Online
+                  {t("online") || "Online"}
                 </CardTitle>
                 <Wifi className="h-4 w-4 text-green-600" />
               </CardHeader>
@@ -176,7 +255,7 @@ export default function UserDashboardPage() {
                   {onlineDevices.length}
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {offlineDevices.length} offline
+                  {offlineDevices.length} {t("offline") || "offline"}
                 </p>
               </CardContent>
             </Card>
@@ -191,7 +270,7 @@ export default function UserDashboardPage() {
               >
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-xs md:text-sm font-medium">
-                    Alerts
+                    {t("alerts") || "Alerts"}
                   </CardTitle>
                   <AlertCircle
                     className={`h-4 w-4 ${errorDevices.length > 0 ? "text-red-600" : "text-gray-600"}`}
@@ -204,7 +283,9 @@ export default function UserDashboardPage() {
                     {errorDevices.length}
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {errorDevices.length === 0 ? "All good" : "Need attention"}
+                    {errorDevices.length === 0
+                      ? t("allGood") || "All good"
+                      : t("needAttention") || "Need attention"}
                   </p>
                 </CardContent>
               </Card>
@@ -217,15 +298,16 @@ export default function UserDashboardPage() {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="text-xl md:text-2xl font-bold">
-                    Live Monitoring
+                    {t("liveMonitoring") || "Live Monitoring"}
                   </h2>
                   <p className="text-xs md:text-sm text-muted-foreground">
-                    Real-time sensor data from your devices
+                    {t("realTimeSensorData") ||
+                      "Real-time sensor data from your devices"}
                   </p>
                 </div>
                 <Badge variant="outline" className="gap-1">
                   <Activity className="h-3 w-3 animate-pulse text-green-600" />
-                  <span className="text-xs">Live</span>
+                  <span className="text-xs">{t("live") || "Live"}</span>
                 </Badge>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
@@ -239,7 +321,10 @@ export default function UserDashboardPage() {
                     status={sensor.status}
                     trend={sensor.trend}
                     lastUpdate={sensor.lastUpdate}
-                    onClick={() => router.push(`/user/devices/${sensor.id}`)}
+                    onClick={() => {
+                      const deviceId = sensor.id.split("-")[0];
+                      router.push(`/user/devices/${deviceId}`);
+                    }}
                   />
                 ))}
               </div>
@@ -254,30 +339,34 @@ export default function UserDashboardPage() {
                   <div className="text-6xl">🏠</div>
                   <div className="flex-1 text-center md:text-left">
                     <h3 className="text-lg md:text-xl font-bold mb-2">
-                      Get Started with Smart Home
+                      {t("getStartedSmartHome") ||
+                        "Get Started with Smart Home"}
                     </h3>
                     <ul className="space-y-1.5 text-sm text-muted-foreground mb-4">
                       <li className="flex items-center gap-2">
                         <span className="text-primary">✓</span>
-                        Create a home and add rooms
+                        {t("createHomeAddRooms") ||
+                          "Create a home and add rooms"}
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-primary">✓</span>
-                        Pair your ESP32 IoT devices
+                        {t("pairESP32Devices") || "Pair your ESP32 IoT devices"}
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-primary">✓</span>
-                        Monitor real-time telemetry
+                        {t("monitorRealTimeTelemetry") ||
+                          "Monitor real-time telemetry"}
                       </li>
                       <li className="flex items-center gap-2">
                         <span className="text-primary">✓</span>
-                        Control devices remotely
+                        {t("controlDevicesRemotely") ||
+                          "Control devices remotely"}
                       </li>
                     </ul>
                     <Link href="/user/homes">
                       <Button size="lg" className="gap-2">
                         <HomeIcon className="h-4 w-4" />
-                        Create Your First Home
+                        {t("createFirstHome") || "Create Your First Home"}
                       </Button>
                     </Link>
                   </div>
@@ -290,11 +379,13 @@ export default function UserDashboardPage() {
           {homesCount > 0 && (
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl md:text-2xl font-bold">Your Homes</h2>
+                <h2 className="text-xl md:text-2xl font-bold">
+                  {t("yourHomes") || "Your Homes"}
+                </h2>
                 {homesCount > 3 && (
                   <Link href="/user/homes">
                     <Button variant="ghost" size="sm" className="gap-1">
-                      View All
+                      {t("viewAll") || "View All"}
                       <TrendingUp className="h-3 w-3" />
                     </Button>
                   </Link>
@@ -326,7 +417,7 @@ export default function UserDashboardPage() {
                         <CardContent className="space-y-3">
                           <div className="flex items-center justify-between text-sm">
                             <span className="text-muted-foreground">
-                              Devices
+                              {t("devices") || "Devices"}
                             </span>
                             <span className="font-semibold">
                               {homeDevices.length}
@@ -336,14 +427,15 @@ export default function UserDashboardPage() {
                             <div className="flex items-center gap-1.5">
                               <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
                               <span className="text-muted-foreground">
-                                {homeOnline.length} online
+                                {homeOnline.length} {t("online") || "online"}
                               </span>
                             </div>
                             {homeOffline.length > 0 && (
                               <div className="flex items-center gap-1.5">
                                 <div className="h-2 w-2 rounded-full bg-gray-400" />
                                 <span className="text-muted-foreground">
-                                  {homeOffline.length} offline
+                                  {homeOffline.length}{" "}
+                                  {t("offline") || "offline"}
                                 </span>
                               </div>
                             )}
@@ -368,13 +460,15 @@ export default function UserDashboardPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Zap className="h-5 w-5 text-yellow-600" />
-                  Energy Overview
+                  {t("energyOverview") || "Energy Overview"}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div>
-                    <p className="text-xs text-muted-foreground mb-1">Today</p>
+                    <p className="text-xs text-muted-foreground mb-1">
+                      {t("today") || "Today"}
+                    </p>
                     <p className="text-2xl font-bold">
                       12.5{" "}
                       <span className="text-sm font-normal text-muted-foreground">
@@ -384,7 +478,7 @@ export default function UserDashboardPage() {
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">
-                      This Week
+                      {t("thisWeek") || "This Week"}
                     </p>
                     <p className="text-2xl font-bold">
                       87.3{" "}
@@ -395,7 +489,7 @@ export default function UserDashboardPage() {
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">
-                      This Month
+                      {t("thisMonth") || "This Month"}
                     </p>
                     <p className="text-2xl font-bold">
                       342{" "}
@@ -405,7 +499,9 @@ export default function UserDashboardPage() {
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground mb-1">Cost</p>
+                    <p className="text-xs text-muted-foreground mb-1">
+                      {t("cost") || "Cost"}
+                    </p>
                     <p className="text-2xl font-bold">
                       $45{" "}
                       <span className="text-sm font-normal text-muted-foreground">
@@ -416,7 +512,7 @@ export default function UserDashboardPage() {
                 </div>
                 <Link href="/user/energy">
                   <Button variant="outline" size="sm" className="w-full mt-4">
-                    View Detailed Report
+                    {t("viewDetailedReport") || "View Detailed Report"}
                   </Button>
                 </Link>
               </CardContent>

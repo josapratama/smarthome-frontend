@@ -25,7 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { roomsApi } from "@/lib/api/client/rooms";
 import { toast } from "sonner";
-import { useLanguage } from "@/contexts/language-context";
+import { useTranslation } from "@/hooks/use-translation";
 
 const roomSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
@@ -48,7 +48,7 @@ export function CreateRoomDialog({
   onSuccess,
 }: CreateRoomDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const { t } = useLanguage();
+  const { t } = useTranslation();
 
   const form = useForm<RoomFormData>({
     resolver: zodResolver(roomSchema),

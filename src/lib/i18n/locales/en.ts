@@ -1087,6 +1087,28 @@ export const en = {
   insufficientPermissions:
     "You don't have sufficient permissions for this action",
 
+  // Homes Extended Keys
+  failedToLoadHomes: "Failed to load homes",
+  homeDeletedSuccess: "Home deleted successfully",
+  manageHomesLocations: "Manage your homes and locations",
+  createFirstHomeDescription:
+    "Create your first home to organize your devices by location",
+  deleteHome: "Delete Home",
+  deleteHomeConfirmation: "Are you sure you want to delete",
+  deleteHomeWarning:
+    "This action cannot be undone and will remove all associated devices and rooms",
+  cancel: "Cancel",
+  homeNotFound: "Home Not Found",
+  homeNotFoundDesc: "The home you're looking for doesn't exist",
+  failedToLoadHomeDetails: "Failed to load home details",
+  createRoomsDesc: "Create rooms to organize your devices better",
+  inviteMember: "Invite Member",
+  description: "Description",
+  messagesDescription: "Chat with other users and home members",
+  selectConversationDescription:
+    "Choose a conversation from the list to start chatting",
+  failedToLoadMessages: "Failed to load messages",
+
   // Messaging
   messages: "Messages",
   directMessages: "Direct Messages",

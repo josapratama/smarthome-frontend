@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslation } from "@/hooks/use-translation";
 import { homesApi, Home } from "@/lib/api/client/homes";
 import { CreateHomeDialog } from "@/components/user/create-home-dialog";
 import { HomeCard } from "@/components/user/home-card";
@@ -20,6 +21,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export default function UserHomesPage() {
+  const { t } = useTranslation();
   const [homes, setHomes] = useState<Home[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -47,7 +49,9 @@ export default function UserHomesPage() {
       const data = await homesApi.list();
       setHomes(data);
     } catch (error: any) {
-      toast.error(error.message || "Failed to load homes");
+      toast.error(
+        error.message || t("failedToLoadHomes") || "Failed to load homes",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -58,12 +62,14 @@ export default function UserHomesPage() {
 
     try {
       await homesApi.delete(selectedHome.id);
-      toast.success("Home deleted successfully");
+      toast.success(t("homeDeletedSuccess") || "Home deleted successfully");
       setDeleteDialogOpen(false);
       setSelectedHome(null);
       loadHomes();
     } catch (error: any) {
-      toast.error(error.message || "Failed to delete home");
+      toast.error(
+        error.message || t("failedToDeleteHome") || "Failed to delete home",
+      );
     }
   };
 
@@ -71,14 +77,14 @@ export default function UserHomesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Homes</h1>
+          <h1 className="text-3xl font-bold">{t("homes") || "Homes"}</h1>
           <p className="text-muted-foreground mt-1">
-            Manage your homes and locations
+            {t("manageHomesLocations") || "Manage your homes and locations"}
           </p>
         </div>
         <Button onClick={() => setCreateDialogOpen(true)} disabled={!userId}>
           <Plus className="h-4 w-4 mr-2" />
-          Create Home
+          {t("createHome") || "Create Home"}
         </Button>
       </div>
 
@@ -91,13 +97,16 @@ export default function UserHomesPage() {
       ) : (homes?.length ?? 0) === 0 ? (
         <div className="bg-card rounded-lg shadow-md p-8 text-center border border-border">
           <div className="text-6xl mb-4">🏡</div>
-          <h2 className="text-xl font-semibold mb-2">No Homes Yet</h2>
+          <h2 className="text-xl font-semibold mb-2">
+            {t("noHomesYet") || "No Homes Yet"}
+          </h2>
           <p className="text-muted-foreground mb-6">
-            Create your first home to organize your devices by location.
+            {t("createFirstHomeDescription") ||
+              "Create your first home to organize your devices by location."}
           </p>
           <Button onClick={() => setCreateDialogOpen(true)} disabled={!userId}>
             <Plus className="h-4 w-4 mr-2" />
-            Create Home
+            {t("createHome") || "Create Home"}
           </Button>
         </div>
       ) : (
@@ -127,16 +136,21 @@ export default function UserHomesPage() {
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Home</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("deleteHome") || "Delete Home"}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{selectedHome?.name}"? This
-              action cannot be undone and will remove all associated devices and
-              rooms.
+              {t("deleteHomeConfirmation") || "Are you sure you want to delete"}{" "}
+              "{selectedHome?.name}"?{" "}
+              {t("deleteHomeWarning") ||
+                "This action cannot be undone and will remove all associated devices and rooms."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+            <AlertDialogCancel>{t("cancel") || "Cancel"}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>
+              {t("delete") || "Delete"}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

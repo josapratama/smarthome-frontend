@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Home as HomeIcon, MapPin, Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useTranslation } from "@/hooks/use-translation";
 
 interface HomeCardProps {
   home: Home;
@@ -13,6 +14,7 @@ interface HomeCardProps {
 }
 
 export function HomeCard({ home, onEdit, onDelete }: HomeCardProps) {
+  const { t } = useTranslation();
   return (
     <Card className="hover:shadow-lg transition-shadow">
       <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
@@ -54,7 +56,7 @@ export function HomeCard({ home, onEdit, onDelete }: HomeCardProps) {
         )}
         <Link href={`/user/homes/${home.id}`}>
           <Button variant="outline" size="sm" className="w-full">
-            View Details
+            {t("viewDetails") || "View Details"}
           </Button>
         </Link>
       </CardContent>

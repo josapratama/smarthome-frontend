@@ -22,8 +22,10 @@ import { CreateRoomDialog } from "@/components/user/create-room-dialog";
 import { RoomCard } from "@/components/user/room-card";
 import { InviteMemberDialog } from "@/components/user/invite-member-dialog";
 import { MembersList } from "@/components/user/members-list";
+import { useTranslation } from "@/hooks/use-translation";
 
 export default function HomeDetailPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const homeId = Number(params.homeId);
@@ -69,7 +71,11 @@ export default function HomeDetailPage() {
       setDevices(devicesData);
       setMembers(membersData);
     } catch (error: any) {
-      toast.error(error.message || "Failed to load home details");
+      toast.error(
+        error.message ||
+          t("failedToLoadHomeDetails") ||
+          "Failed to load home details",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -91,12 +97,15 @@ export default function HomeDetailPage() {
   if (!home) {
     return (
       <div className="text-center py-12">
-        <h2 className="text-2xl font-bold mb-2">Home Not Found</h2>
+        <h2 className="text-2xl font-bold mb-2">
+          {t("homeNotFound") || "Home Not Found"}
+        </h2>
         <p className="text-muted-foreground mb-4">
-          The home you're looking for doesn't exist.
+          {t("homeNotFoundDesc") ||
+            "The home you're looking for doesn't exist."}
         </p>
         <Link href="/user/homes">
-          <Button>Back to Homes</Button>
+          <Button>{t("backToHomes") || "Back to Homes"}</Button>
         </Link>
       </div>
     );
@@ -128,7 +137,9 @@ export default function HomeDetailPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Rooms</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t("totalRooms") || "Total Rooms"}
+            </CardTitle>
             <DoorOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -138,7 +149,9 @@ export default function HomeDetailPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Devices</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t("totalDevices") || "Total Devices"}
+            </CardTitle>
             <HomeIcon className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -149,7 +162,7 @@ export default function HomeDetailPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Online Devices
+              {t("onlineDevices") || "Online Devices"}
             </CardTitle>
             <div className="h-2 w-2 rounded-full bg-green-500" />
           </CardHeader>
@@ -162,7 +175,9 @@ export default function HomeDetailPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Members</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t("members") || "Members"}
+            </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -174,10 +189,10 @@ export default function HomeDetailPage() {
       {/* Rooms */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold">Rooms</h2>
+          <h2 className="text-2xl font-bold">{t("rooms") || "Rooms"}</h2>
           <Button onClick={() => setCreateRoomDialogOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
-            Add Room
+            {t("addRoom") || "Add Room"}
           </Button>
         </div>
 
@@ -185,13 +200,16 @@ export default function HomeDetailPage() {
           <Card>
             <CardContent className="py-12 text-center">
               <DoorOpen className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-lg font-semibold mb-2">No Rooms Yet</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                {t("noRoomsYet") || "No Rooms Yet"}
+              </h3>
               <p className="text-muted-foreground mb-4">
-                Create rooms to organize your devices better.
+                {t("createRoomsDesc") ||
+                  "Create rooms to organize your devices better."}
               </p>
               <Button onClick={() => setCreateRoomDialogOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
-                Add Room
+                {t("addRoom") || "Add Room"}
               </Button>
             </CardContent>
           </Card>
@@ -215,11 +233,11 @@ export default function HomeDetailPage() {
       {/* Members */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold">Members</h2>
+          <h2 className="text-2xl font-bold">{t("members") || "Members"}</h2>
           {isOwner && (
             <Button onClick={() => setInviteMemberDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
-              Invite Member
+              {t("inviteMember") || "Invite Member"}
             </Button>
           )}
         </div>

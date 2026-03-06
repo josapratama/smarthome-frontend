@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "@/hooks/use-translation";
 import { Room } from "@/lib/api/client/rooms";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ interface RoomCardProps {
 }
 
 export function RoomCard({ room, deviceCount, onDelete }: RoomCardProps) {
+  const { t } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -32,11 +34,13 @@ export function RoomCard({ room, deviceCount, onDelete }: RoomCardProps) {
     setIsDeleting(true);
     try {
       await roomsApi.delete(room.id);
-      toast.success("Room deleted successfully");
+      toast.success(t("roomDeletedSuccess") || "Room deleted successfully");
       setDeleteDialogOpen(false);
       onDelete();
     } catch (error: any) {
-      toast.error(error.message || "Failed to delete room");
+      toast.error(
+        error.message || t("failedToDeleteRoom") || "Failed to delete room",
+      );
     } finally {
       setIsDeleting(false);
     }
@@ -65,7 +69,10 @@ export function RoomCard({ room, deviceCount, onDelete }: RoomCardProps) {
             </p>
           )}
           <div className="text-sm text-muted-foreground">
-            {deviceCount} {deviceCount === 1 ? "device" : "devices"}
+            {deviceCount}{" "}
+            {deviceCount === 1
+              ? t("device") || "device"
+              : t("devices") || "devices"}
           </div>
         </CardContent>
       </Card>
@@ -73,16 +80,24 @@ export function RoomCard({ room, deviceCount, onDelete }: RoomCardProps) {
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Room</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("deleteRoom") || "Delete Room"}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{room.name}"? Devices in this
-              room will not be deleted, but will be unassigned from the room.
+              {t("deleteRoomConfirm") || "Are you sure you want to delete"} "
+              {room.name}"?{" "}
+              {t("devicesWillBeUnassigned") ||
+                "Devices in this room will not be deleted, but will be unassigned from the room."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting}>
+              {t("cancel") || "Cancel"}
+            </AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} disabled={isDeleting}>
-              {isDeleting ? "Deleting..." : "Delete"}
+              {isDeleting
+                ? t("deleting") || "Deleting..."
+                : t("delete") || "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

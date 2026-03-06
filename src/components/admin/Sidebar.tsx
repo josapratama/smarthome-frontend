@@ -39,21 +39,22 @@ export function Sidebar({ className, onClose }: SidebarProps) {
   const router = useRouter();
   const { t } = useLanguage();
 
+  // Menu yang paling sering dipakai di atas
   const navigation = [
     { name: t("dashboard"), href: "/dashboard", icon: LayoutDashboard },
     { name: t("devices"), href: "/devices", icon: Cpu },
     { name: t("homes"), href: "/homes", icon: Home },
-    { name: t("rooms"), href: "/rooms", icon: DoorOpen },
-    { name: t("firmware"), href: "/firmware", icon: Package },
-    { name: t("ota"), href: "/ota", icon: Upload },
     { name: t("monitoring"), href: "/monitoring", icon: Activity },
     { name: t("alarms"), href: "/alarms", icon: AlertTriangle },
     { name: t("energy"), href: "/energy", icon: Zap },
+    { name: t("aiModels"), href: "/ai", icon: Brain },
+    { name: t("rooms"), href: "/rooms", icon: DoorOpen },
     { name: t("commands"), href: "/commands", icon: Terminal },
     { name: t("notifications"), href: "/notifications", icon: Bell },
-    { name: t("invites"), href: "/invites", icon: Mail },
     { name: t("messages"), href: "/messages", icon: MessageSquare },
-    { name: t("aiModels"), href: "/ai", icon: Brain },
+    { name: t("firmware"), href: "/firmware", icon: Package },
+    { name: t("ota"), href: "/ota", icon: Upload },
+    { name: t("invites"), href: "/invites", icon: Mail },
     { name: t("helpCenter"), href: "/help", icon: HelpCircle },
     { name: t("appInformation"), href: "/app-info", icon: Info },
     { name: t("settings"), href: "/settings", icon: Settings },

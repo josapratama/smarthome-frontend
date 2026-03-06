@@ -10,11 +10,12 @@ export function MobileNav() {
   const pathname = usePathname();
   const { t } = useTranslation();
 
+  // Menu yang paling sering dipakai untuk mobile
   const navigation = [
     { name: t("dashboard"), href: "/dashboard", icon: LayoutDashboard },
     { name: t("devices"), href: "/devices", icon: Cpu },
     { name: t("homes"), href: "/homes", icon: Home },
-    { name: "Notif", href: "/notifications", icon: Bell },
+    { name: t("monitoring"), href: "/monitoring", icon: Activity },
     { name: t("settings"), href: "/settings", icon: Settings },
   ];
 

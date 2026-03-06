@@ -1071,6 +1071,29 @@ export const id = {
   contactRoomOwner: "Silakan hubungi pemilik kamar untuk akses",
   insufficientPermissions: "Anda tidak memiliki izin yang cukup untuk aksi ini",
 
+  // Homes Extended Keys
+  failedToLoadHomes: "Gagal memuat rumah",
+  homeDeletedSuccess: "Rumah berhasil dihapus",
+  manageHomesLocations: "Kelola rumah dan lokasi Anda",
+  createFirstHomeDescription:
+    "Buat rumah pertama Anda untuk mengatur perangkat berdasarkan lokasi",
+  deleteHome: "Hapus Rumah",
+  deleteHomeConfirmation: "Apakah Anda yakin ingin menghapus",
+  deleteHomeWarning:
+    "Tindakan ini tidak dapat dibatalkan dan akan menghapus semua perangkat dan ruangan terkait",
+  cancel: "Batal",
+  homeNotFound: "Rumah Tidak Ditemukan",
+  homeNotFoundDesc: "Rumah yang Anda cari tidak ada",
+  failedToLoadHomeDetails: "Gagal memuat detail rumah",
+  createRoomsDesc:
+    "Buat ruangan untuk mengatur perangkat Anda dengan lebih baik",
+  inviteMember: "Undang Anggota",
+  description: "Deskripsi",
+  messagesDescription: "Chat dengan pengguna lain dan anggota rumah",
+  selectConversationDescription:
+    "Pilih percakapan dari daftar untuk mulai chat",
+  failedToLoadMessages: "Gagal memuat pesan",
+
   // Messaging
   messages: "Pesan",
   directMessages: "Pesan Langsung",

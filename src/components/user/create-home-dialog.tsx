@@ -25,7 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { homesApi, CreateHomeInput } from "@/lib/api/client/homes";
 import { toast } from "sonner";
-import { useLanguage } from "@/contexts/language-context";
+import { useTranslation } from "@/hooks/use-translation";
 
 const homeSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
@@ -50,7 +50,7 @@ export function CreateHomeDialog({
   userId,
 }: CreateHomeDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const { t } = useLanguage();
+  const { t } = useTranslation();
 
   const form = useForm<HomeFormData>({
     resolver: zodResolver(homeSchema),

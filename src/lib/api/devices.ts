@@ -46,6 +46,13 @@ export const devicesApi = {
     return data;
   },
 
+  async getLatestTelemetry(deviceId: number): Promise<SensorData | null> {
+    const { data } = await api.get<{ data: SensorData | null }>(
+      `/api/v1/devices/${deviceId}/telemetry/latest`,
+    );
+    return data.data;
+  },
+
   async sendCommand(
     deviceId: number,
     type: string,
@@ -71,5 +78,39 @@ export const devicesApi = {
       `/api/v1/devices/${deviceId}/commands`,
     );
     return data;
+  },
+
+  async getAllLatestTelemetry(
+    homeId?: number,
+  ): Promise<Record<number, SensorData>> {
+    try {
+      const devicesResponse = await this.getDevices(
+        homeId ? { homeId } : undefined,
+      );
+      const devices = devicesResponse.data || [];
+
+      const telemetryPromises = devices.map(async (device) => {
+        try {
+          const telemetry = await this.getLatestTelemetry(device.id);
+          return { deviceId: device.id, telemetry };
+        } catch {
+          return { deviceId: device.id, telemetry: null };
+        }
+      });
+
+      const results = await Promise.all(telemetryPromises);
+      const telemetryMap: Record<number, SensorData> = {};
+
+      results.forEach(({ deviceId, telemetry }) => {
+        if (telemetry) {
+          telemetryMap[deviceId] = telemetry;
+        }
+      });
+
+      return telemetryMap;
+    } catch (error) {
+      console.error("Failed to get all latest telemetry:", error);
+      return {};
+    }
   },
 };

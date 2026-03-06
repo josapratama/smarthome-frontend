@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useTranslation } from "@/hooks/use-translation";
 import {
   Dialog,
   DialogContent,
@@ -53,6 +54,7 @@ export function InviteMemberDialog({
   homeId,
   onSuccess,
 }: InviteMemberDialogProps) {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<InviteFormData>({
@@ -67,12 +69,18 @@ export function InviteMemberDialog({
     setIsLoading(true);
     try {
       await membersApi.invite(homeId, data);
-      toast.success("Invitation sent successfully");
+      toast.success(
+        t("invitationSentSuccess") || "Invitation sent successfully",
+      );
       form.reset();
       onOpenChange(false);
       onSuccess();
     } catch (error: any) {
-      toast.error(error.message || "Failed to send invitation");
+      toast.error(
+        error.message ||
+          t("failedToSendInvitation") ||
+          "Failed to send invitation",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -82,9 +90,10 @@ export function InviteMemberDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Invite Member</DialogTitle>
+          <DialogTitle>{t("inviteMember") || "Invite Member"}</DialogTitle>
           <DialogDescription>
-            Send an invitation to add a new member to your home.
+            {t("inviteMemberDescription") ||
+              "Send an invitation to add a new member to your home."}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -94,7 +103,9 @@ export function InviteMemberDialog({
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email Address *</FormLabel>
+                  <FormLabel>
+                    {t("emailAddress") || "Email Address"} *
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="email"
@@ -112,27 +123,32 @@ export function InviteMemberDialog({
               name="roleInHome"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Role *</FormLabel>
+                  <FormLabel>{t("role") || "Role"} *</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a role" />
+                        <SelectValue
+                          placeholder={t("selectRole") || "Select a role"}
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       <SelectItem value="MEMBER">
-                        Member - Full access to devices
+                        {t("memberRole") || "Member"} -{" "}
+                        {t("memberRoleDesc") || "Full access to devices"}
                       </SelectItem>
                       <SelectItem value="GUEST">
-                        Guest - Read-only access
+                        {t("guestRole") || "Guest"} -{" "}
+                        {t("guestRoleDesc") || "Read-only access"}
                       </SelectItem>
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    Members can control devices, guests can only view.
+                    {t("roleDescription") ||
+                      "Members can control devices, guests can only view."}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -146,10 +162,12 @@ export function InviteMemberDialog({
                 onClick={() => onOpenChange(false)}
                 disabled={isLoading}
               >
-                Cancel
+                {t("cancel") || "Cancel"}
               </Button>
               <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Sending..." : "Send Invitation"}
+                {isLoading
+                  ? t("sending") || "Sending..."
+                  : t("sendInvitation") || "Send Invitation"}
               </Button>
             </DialogFooter>
           </form>
