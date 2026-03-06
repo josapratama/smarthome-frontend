@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "@/hooks/use-translation";
 import { homesApi, Home } from "@/lib/api/client/homes";
-import { CreateHomeDialog } from "@/components/user/create-home-dialog";
-import { HomeCard } from "@/components/user/home-card";
+import { CreateHomeDialog } from "@/components/homes/create-home-dialog";
+import { HomeCard } from "@/components/homes/home-card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus } from "lucide-react";

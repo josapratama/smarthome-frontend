@@ -17,8 +17,8 @@ import {
   Activity,
 } from "lucide-react";
 import { toast } from "sonner";
-import { DeviceControl } from "@/components/user/device-control";
-import { SensorCard } from "@/components/user/sensor-card";
+import { DeviceControl } from "@/components/devices/device-control";
+import { SensorCard } from "@/components/devices/sensor-card";
 import { useTranslation } from "@/hooks/use-translation";
 
 interface TelemetryData {

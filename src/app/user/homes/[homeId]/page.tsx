@@ -18,10 +18,10 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
-import { CreateRoomDialog } from "@/components/user/create-room-dialog";
-import { RoomCard } from "@/components/user/room-card";
-import { InviteMemberDialog } from "@/components/user/invite-member-dialog";
-import { MembersList } from "@/components/user/members-list";
+import { CreateRoomDialog } from "@/components/rooms/create-room-dialog";
+import { RoomCard } from "@/components/rooms/room-card";
+import { InviteMemberDialog } from "@/components/members/invite-member-dialog";
+import { MembersList } from "@/components/members/members-list";
 import { useTranslation } from "@/hooks/use-translation";
 
 export default function HomeDetailPage() {
