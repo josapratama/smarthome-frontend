@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useLanguage } from "@/contexts/language-context";
 
 import {
   Dialog,
@@ -51,6 +52,7 @@ interface InviteDialogProps {
 }
 
 export function InviteDialog({ children, homes = [] }: InviteDialogProps) {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
 
@@ -78,14 +80,16 @@ export function InviteDialog({ children, homes = [] }: InviteDialogProps) {
       return response;
     },
     onSuccess: () => {
-      toast.success("Invitation sent successfully!");
+      toast.success(t("inviteSent"));
       form.reset();
       setOpen(false);
       queryClient.invalidateQueries({ queryKey: ["invites"] });
       queryClient.invalidateQueries({ queryKey: ["home-members"] });
+      queryClient.invalidateQueries({ queryKey: ["pending-invites"] });
+      queryClient.invalidateQueries({ queryKey: ["invite-stats"] });
     },
     onError: (error: any) => {
-      const message = error?.message || "Failed to send invitation";
+      const message = error?.message || t("failedSendInvite");
       toast.error(message);
     },
   });
@@ -100,7 +104,7 @@ export function InviteDialog({ children, homes = [] }: InviteDialogProps) {
         {children || (
           <Button>
             <Plus className="h-4 w-4" />
-            Send Invite
+            {t("sendInvite")}
           </Button>
         )}
       </DialogTrigger>
@@ -108,11 +112,9 @@ export function InviteDialog({ children, homes = [] }: InviteDialogProps) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Mail className="h-5 w-5" />
-            Send Home Invitation
+            {t("sendHomeInvitation")}
           </DialogTitle>
-          <DialogDescription>
-            Invite someone to join a home as a member or guest.
-          </DialogDescription>
+          <DialogDescription>{t("inviteUserDescription")}</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -122,14 +124,14 @@ export function InviteDialog({ children, homes = [] }: InviteDialogProps) {
               name="homeId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Home</FormLabel>
+                  <FormLabel>{t("home")}</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a home" />
+                        <SelectValue placeholder={t("selectHome")} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -150,11 +152,11 @@ export function InviteDialog({ children, homes = [] }: InviteDialogProps) {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email Address</FormLabel>
+                  <FormLabel>{t("emailAddress")}</FormLabel>
                   <FormControl>
                     <Input
                       type="email"
-                      placeholder="user@example.com"
+                      placeholder={t("emailPlaceholder")}
                       {...field}
                     />
                   </FormControl>
@@ -168,19 +170,19 @@ export function InviteDialog({ children, homes = [] }: InviteDialogProps) {
               name="roleInHome"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Role</FormLabel>
+                  <FormLabel>{t("role")}</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a role" />
+                        <SelectValue placeholder={t("selectRole")} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="MEMBER">Member</SelectItem>
-                      <SelectItem value="GUEST">Guest</SelectItem>
+                      <SelectItem value="MEMBER">{t("member")}</SelectItem>
+                      <SelectItem value="GUEST">{t("guest")}</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -195,13 +197,13 @@ export function InviteDialog({ children, homes = [] }: InviteDialogProps) {
                 onClick={() => setOpen(false)}
                 disabled={inviteMutation.isPending}
               >
-                Cancel
+                {t("cancel")}
               </Button>
               <Button type="submit" disabled={inviteMutation.isPending}>
                 {inviteMutation.isPending && (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 )}
-                Send Invitation
+                {t("sendInvitation")}
               </Button>
             </div>
           </form>

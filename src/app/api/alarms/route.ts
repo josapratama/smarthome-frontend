@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { backendFetch } from "@/lib/api/server/backend";
 import { handleApiError } from "@/lib/api/server/error-handler";
-import type { AlarmEventDTO } from "@/lib/api/dto/alarms.dto";
+import type { AlarmDTO } from "@/lib/api/dto/alarm.dto";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
       ? `/api/v1/alarms?${queryString}`
       : "/api/v1/alarms";
 
-    const data = await backendFetch<{ data: AlarmEventDTO[] }>(url);
+    const data = await backendFetch<{ data: AlarmDTO[] }>(url);
     return Response.json(data);
   } catch (error) {
     return handleApiError(error);

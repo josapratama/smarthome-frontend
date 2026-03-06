@@ -9,6 +9,7 @@ import { qk } from "@/lib/api/queries";
 import { apiFetchBrowser } from "@/lib/api/client.browser";
 import type { DeviceDTO } from "@/lib/api/dto/devices.dto";
 import type { OtaJobDTO } from "@/lib/api/dto/ota.dto";
+import { useTranslation } from "@/hooks/use-translation";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -20,12 +21,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 
-function statusBadge(online?: boolean | null) {
-  if (online === true) return <Badge>Online</Badge>;
-  if (online === false) return <Badge variant="secondary">Offline</Badge>;
-  return <Badge variant="outline">Unknown</Badge>;
+function statusBadge(online?: boolean | null, t?: any) {
+  if (online === true) return <Badge>{t?.("online") || "Online"}</Badge>;
+  if (online === false)
+    return <Badge variant="secondary">{t?.("offline") || "Offline"}</Badge>;
+  return <Badge variant="outline">{t?.("unknown") || "Unknown"}</Badge>;
 }
 
 function fmtLastSeen(v?: string | null) {
@@ -42,6 +45,8 @@ export default function OtaClientPage({
 }) {
   const router = useRouter();
   const qc = useQueryClient();
+  const { t } = useTranslation();
+  const { toast } = useToast();
 
   const [deviceId, setDeviceId] = React.useState<number | undefined>(
     initialDeviceId,
@@ -89,7 +94,7 @@ export default function OtaClientPage({
   const triggerM = useMutation({
     mutationFn: async () => {
       if (!deviceId || !releaseId)
-        throw new Error("Device & release must be selected");
+        throw new Error(t("deviceAndReleaseRequired"));
       return apiFetchBrowser(`/api/v1/ota/devices/${deviceId}`, {
         method: "POST",
         body: JSON.stringify({ releaseId }),
@@ -99,6 +104,14 @@ export default function OtaClientPage({
       if (deviceId) {
         await qc.invalidateQueries({ queryKey: qk.ota.deviceJobs(deviceId) });
       }
+      toast({ title: t("otaTriggered") });
+    },
+    onError: (error: any) => {
+      toast({
+        title: t("failedTriggerOta"),
+        description: error.message || t("unknownError"),
+        variant: "destructive",
+      });
     },
   });
 
@@ -113,19 +126,17 @@ export default function OtaClientPage({
   return (
     <div className="space-y-4">
       <div className="space-y-1">
-        <h1 className="text-xl font-semibold">OTA</h1>
-        <p className="text-sm text-muted-foreground">
-          Trigger OTA + monitoring jobs (polling via TanStack Query)
-        </p>
+        <h1 className="text-xl font-semibold">{t("ota")}</h1>
+        <p className="text-sm text-muted-foreground">{t("otaDescription")}</p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Trigger OTA</CardTitle>
+          <CardTitle>{t("triggerOta")}</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-3">
           <div className="space-y-2">
-            <div className="text-sm text-muted-foreground">Device</div>
+            <div className="text-sm text-muted-foreground">{t("device")}</div>
             {devicesQ.isLoading ? (
               <Skeleton className="h-10 w-full" />
             ) : (
@@ -134,7 +145,7 @@ export default function OtaClientPage({
                 onValueChange={(v) => setDeviceId(Number(v))}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Pilih device" />
+                  <SelectValue placeholder={t("selectDevice")} />
                 </SelectTrigger>
                 <SelectContent>
                   {(devicesQ.data ?? []).map((d) => (
@@ -149,16 +160,16 @@ export default function OtaClientPage({
 
             {selectedDevice ? (
               <div className="flex items-center gap-2 text-xs">
-                {statusBadge(selectedDevice.status)}
+                {statusBadge(selectedDevice.status, t)}
                 <span className="text-muted-foreground">
-                  last seen: {fmtLastSeen(selectedDevice.lastSeenAt)}
+                  {t("lastSeen")}: {fmtLastSeen(selectedDevice.lastSeenAt)}
                 </span>
               </div>
             ) : null}
           </div>
 
           <div className="space-y-2">
-            <div className="text-sm text-muted-foreground">Release</div>
+            <div className="text-sm text-muted-foreground">{t("release")}</div>
             {releasesQ.isLoading ? (
               <Skeleton className="h-10 w-full" />
             ) : (
@@ -167,7 +178,7 @@ export default function OtaClientPage({
                 onValueChange={(v) => setReleaseId(Number(v))}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select firmware" />
+                  <SelectValue placeholder={t("selectFirmware")} />
                 </SelectTrigger>
                 <SelectContent>
                   {(releasesQ.data ?? []).map((r: any) => (
@@ -186,7 +197,7 @@ export default function OtaClientPage({
               disabled={triggerM.isPending || !deviceId || !releaseId}
               onClick={() => triggerM.mutate()}
             >
-              {triggerM.isPending ? "Triggering…" : "Trigger OTA"}
+              {triggerM.isPending ? t("triggering") : t("triggerOta")}
             </Button>
           </div>
 
@@ -200,15 +211,15 @@ export default function OtaClientPage({
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between gap-2">
-          <CardTitle>Jobs</CardTitle>
+          <CardTitle>{t("jobs")}</CardTitle>
           <div className="text-xs text-muted-foreground">
-            {jobsQ.isFetching ? "Updating…" : "Idle"}
+            {jobsQ.isFetching ? t("updating") : t("idle")}
           </div>
         </CardHeader>
         <CardContent className="space-y-3">
           {!deviceId ? (
             <div className="text-sm text-muted-foreground">
-              Select a device to view jobs.
+              {t("selectDeviceToViewJobs")}
             </div>
           ) : jobsQ.isLoading ? (
             <div className="space-y-2">
@@ -220,7 +231,9 @@ export default function OtaClientPage({
               {(jobsQ.error as Error).message}
             </div>
           ) : (jobsQ.data ?? []).length === 0 ? (
-            <div className="text-sm text-muted-foreground">No jobs yet.</div>
+            <div className="text-sm text-muted-foreground">
+              {t("noJobsYet")}
+            </div>
           ) : (
             <div className="divide-y rounded-md border">
               {(jobsQ.data ?? []).map((j) => (
@@ -230,7 +243,9 @@ export default function OtaClientPage({
                 >
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium">Job #{j.id}</span>
+                      <span className="font-medium">
+                        {t("job")} #{j.id}
+                      </span>
                       <Badge variant="secondary">{j.status}</Badge>
                       {typeof j.progress === "number" ? (
                         <span className="text-xs text-muted-foreground">
@@ -239,7 +254,8 @@ export default function OtaClientPage({
                       ) : null}
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      device {j.deviceId} • release {j.firmwareReleaseId}
+                      {t("device")} {j.deviceId} • {t("release")}{" "}
+                      {j.firmwareReleaseId}
                     </div>
                   </div>
 
@@ -247,7 +263,7 @@ export default function OtaClientPage({
                     className="text-sm underline underline-offset-4 hover:opacity-80"
                     href={`/ota/jobs/${j.id}`}
                   >
-                    View
+                    {t("view")}
                   </Link>
                 </div>
               ))}

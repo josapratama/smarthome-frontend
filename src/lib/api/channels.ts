@@ -1,4 +1,4 @@
-import { apiClient } from "./client";
+import { api } from "./client";
 import type {
   ChannelDTO,
   CreateChannelDTO,
@@ -10,19 +10,19 @@ import type {
 export async function getDeviceChannels(
   deviceId: number,
 ): Promise<ChannelDTO[]> {
-  const res = await apiClient.get(`/v1/channels/device/${deviceId}`);
+  const res = await api.get(`/v1/channels/device/${deviceId}`);
   return res.data;
 }
 
 export async function getChannel(channelId: number): Promise<ChannelDTO> {
-  const res = await apiClient.get(`/v1/channels/${channelId}`);
+  const res = await api.get(`/v1/channels/${channelId}`);
   return res.data;
 }
 
 export async function createChannel(
   data: CreateChannelDTO,
 ): Promise<ChannelDTO> {
-  const res = await apiClient.post("/v1/channels", data);
+  const res = await api.post("/v1/channels", data);
   return res.data;
 }
 
@@ -30,19 +30,19 @@ export async function updateChannel(
   channelId: number,
   data: UpdateChannelDTO,
 ): Promise<ChannelDTO> {
-  const res = await apiClient.patch(`/v1/channels/${channelId}`, data);
+  const res = await api.patch(`/v1/channels/${channelId}`, data);
   return res.data;
 }
 
 export async function deleteChannel(channelId: number): Promise<void> {
-  await apiClient.delete(`/v1/channels/${channelId}`);
+  await api.delete(`/v1/channels/${channelId}`);
 }
 
 export async function setChannelState(
   channelId: number,
   data: ChannelStateDTO,
 ): Promise<void> {
-  await apiClient.post(`/v1/channels/${channelId}/state`, data);
+  await api.post(`/v1/channels/${channelId}/state`, data);
 }
 
 export async function getChannelHistory(
@@ -50,7 +50,7 @@ export async function getChannelHistory(
   limit?: number,
 ): Promise<ChannelStateHistoryDTO[]> {
   const params = limit ? { limit: limit.toString() } : {};
-  const res = await apiClient.get(`/v1/channels/${channelId}/history`, {
+  const res = await api.get(`/v1/channels/${channelId}/history`, {
     params,
   });
   return res.data;

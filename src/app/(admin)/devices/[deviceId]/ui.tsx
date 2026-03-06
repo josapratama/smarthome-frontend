@@ -53,6 +53,7 @@ import {
   Clock,
   Power,
   Key,
+  Settings,
 } from "lucide-react";
 
 function statusBadge(status: boolean, t: any) {
@@ -269,6 +270,12 @@ export function DeviceDetailClient({ deviceId }: { deviceId: number }) {
         </div>
 
         <div className="flex gap-2">
+          <Button variant="outline" asChild>
+            <Link href={`/devices/${deviceId}/config`}>
+              <Settings className="mr-2 h-4 w-4" />
+              {t("configuration")}
+            </Link>
+          </Button>
           <Button variant="outline" onClick={handleEdit}>
             <Pencil className="mr-2 h-4 w-4" />
             {t("edit")}

@@ -65,7 +65,7 @@ export function SendNotificationDialog({
       const data = await res.json();
       if (res.ok) {
         toast.success(
-          `${t("notificationSent")}: ${data.data.sent} ${t("users")}`,
+          `${t("notificationSent")}: ${data.data.sent} ${t("usersNotified")}`,
         );
         onOpenChange(false);
         setSendForm({

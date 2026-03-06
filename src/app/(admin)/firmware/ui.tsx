@@ -156,7 +156,7 @@ function UploadFirmwareDialog() {
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, version: e.target.value }))
               }
-              placeholder="e.g., 1.0.4"
+              placeholder={t("versionPlaceholder")}
             />
           </div>
 
@@ -430,8 +430,8 @@ export function FirmwareClient() {
                     </div>
 
                     <div className="mt-1 text-sm text-muted-foreground">
-                      {t("size")}: {formatFileSize(firmware.sizeBytes)} •
-                      SHA256: {firmware.sha256.substring(0, 12)}...
+                      {t("size")}: {formatFileSize(firmware.sizeBytes)} •{" "}
+                      {t("sha256")}: {firmware.sha256.substring(0, 12)}...
                     </div>
 
                     {firmware.notes && (

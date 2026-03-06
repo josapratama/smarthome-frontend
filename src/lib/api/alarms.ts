@@ -1,40 +1,42 @@
-import { api } from "./client";
+import { apiFetchBrowser } from "./client.browser";
 import type {
-  AlarmEvent,
-  AlarmFilters,
-  PaginatedResponse,
-  AlarmStats,
-} from "../types";
+  AlarmDTO,
+  AlarmCreateRequest,
+  AlarmsQuery,
+} from "./dto/alarm.dto";
 
-export const alarmsApi = {
-  async getAlarms(
-    filters?: AlarmFilters,
-  ): Promise<PaginatedResponse<AlarmEvent>> {
-    const { data } = await api.get<PaginatedResponse<AlarmEvent>>("/alarms", {
-      params: filters,
-    });
-    return data;
-  },
+export async function listHomeAlarms(homeId: number, query?: AlarmsQuery) {
+  const params = new URLSearchParams();
+  if (query?.from) params.append("from", query.from);
+  if (query?.to) params.append("to", query.to);
+  if (query?.status) params.append("status", query.status);
+  if (query?.limit) params.append("limit", query.limit.toString());
 
-  async getAlarm(id: number): Promise<AlarmEvent> {
-    const { data } = await api.get<AlarmEvent>(`/alarms/${id}`);
-    return data;
-  },
+  const url = `/api/v1/homes/${homeId}/alarms${params.toString() ? `?${params.toString()}` : ""}`;
+  return apiFetchBrowser<{ data: AlarmDTO[] }>(url);
+}
 
-  async acknowledgeAlarm(id: number): Promise<AlarmEvent> {
-    const { data } = await api.post<AlarmEvent>(`/alarms/${id}/acknowledge`);
-    return data;
-  },
+export async function createHomeAlarm(
+  homeId: number,
+  data: AlarmCreateRequest,
+) {
+  return apiFetchBrowser<{ data: AlarmDTO }>(`/api/v1/homes/${homeId}/alarms`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+}
 
-  async resolveAlarm(id: number): Promise<AlarmEvent> {
-    const { data } = await api.post<AlarmEvent>(`/alarms/${id}/resolve`);
-    return data;
-  },
+export async function acknowledgeAlarm(homeId: number, alarmId: number) {
+  return apiFetchBrowser<{ data: AlarmDTO }>(
+    `/api/v1/homes/${homeId}/alarms/${alarmId}/ack`,
+    { method: "POST" },
+  );
+}
 
-  async getAlarmStats(homeId?: number): Promise<AlarmStats> {
-    const { data } = await api.get<AlarmStats>("/alarms/stats", {
-      params: { homeId },
-    });
-    return data;
-  },
-};
+export async function resolveAlarm(homeId: number, alarmId: number) {
+  return apiFetchBrowser<{ data: AlarmDTO }>(
+    `/api/v1/homes/${homeId}/alarms/${alarmId}/resolve`,
+    { method: "POST" },
+  );
+}

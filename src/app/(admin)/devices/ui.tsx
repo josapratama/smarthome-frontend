@@ -85,7 +85,7 @@ export default function DevicesClient() {
 
   const [qText, setQText] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [homeIdFilter, setHomeIdFilter] = useState<string>("");
+  const [homeIdFilter, setHomeIdFilter] = useState<string>("all");
 
   // Edit dialog state
   const [editDevice, setEditDevice] = useState<DeviceDTO | null>(null);
@@ -95,11 +95,22 @@ export default function DevicesClient() {
   // Delete dialog state
   const [deleteDevice, setDeleteDevice] = useState<DeviceDTO | null>(null);
 
+  // Fetch homes for filter dropdown
+  const homesQuery = useQuery({
+    queryKey: ["homes"],
+    queryFn: async () => {
+      const response = await apiFetchBrowser<{ data: any[] }>("/api/v1/homes");
+      return response.data ?? [];
+    },
+  });
+
   const q = useQuery({
-    queryKey: qk.devices.list(homeIdFilter ? Number(homeIdFilter) : undefined),
+    queryKey: qk.devices.list(
+      homeIdFilter !== "all" ? Number(homeIdFilter) : undefined,
+    ),
     queryFn: async () => {
       const params: Record<string, string> = {};
-      if (homeIdFilter) params.homeId = homeIdFilter;
+      if (homeIdFilter !== "all") params.homeId = homeIdFilter;
       if (statusFilter !== "all") params.status = statusFilter;
 
       const response = await apiFetchBrowser<{ data: DeviceDTO[] }>(
@@ -254,12 +265,19 @@ export default function DevicesClient() {
 
         <div className="flex items-center gap-2">
           <label className="text-sm font-medium">{t("homeId")}:</label>
-          <Input
-            value={homeIdFilter}
-            onChange={(e) => setHomeIdFilter(e.target.value)}
-            placeholder={t("filterByHome")}
-            className="w-32"
-          />
+          <Select value={homeIdFilter} onValueChange={setHomeIdFilter}>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder={t("filterByHome")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{t("allHomes")}</SelectItem>
+              {homesQuery.data?.map((home) => (
+                <SelectItem key={home.id} value={String(home.id)}>
+                  {home.homeName} (#{home.id})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 

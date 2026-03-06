@@ -12,6 +12,7 @@ import {
   RefreshCw,
   Trash2,
 } from "lucide-react";
+import { useLanguage } from "@/contexts/language-context";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,7 @@ interface PendingInvite {
 }
 
 export function InviteList() {
+  const { t } = useLanguage();
   const queryClient = useQueryClient();
 
   const { data: invites, isLoading } = useQuery({
@@ -66,11 +68,11 @@ export function InviteList() {
       );
     },
     onSuccess: () => {
-      toast.success("Invitation resent successfully!");
+      toast.success(t("inviteResent"));
       queryClient.invalidateQueries({ queryKey: ["pending-invites"] });
     },
     onError: (error: any) => {
-      toast.error(error?.message || "Failed to resend invitation");
+      toast.error(error?.message || t("failedResendInvite"));
     },
   });
 
@@ -87,11 +89,12 @@ export function InviteList() {
       });
     },
     onSuccess: () => {
-      toast.success("Invitation revoked successfully!");
+      toast.success(t("inviteRevoked"));
       queryClient.invalidateQueries({ queryKey: ["pending-invites"] });
+      queryClient.invalidateQueries({ queryKey: ["invite-stats"] });
     },
     onError: (error: any) => {
-      toast.error(error?.message || "Failed to revoke invitation");
+      toast.error(error?.message || t("failedRevokeInvite"));
     },
   });
 
@@ -125,7 +128,7 @@ export function InviteList() {
     return (
       <Card className="rounded-2xl shadow-sm">
         <CardHeader>
-          <CardTitle className="text-base">Pending Invitations</CardTitle>
+          <CardTitle className="text-base">{t("pendingInvitations")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {[...Array(3)].map((_, i) => (
@@ -149,16 +152,16 @@ export function InviteList() {
     return (
       <Card className="rounded-2xl shadow-sm">
         <CardHeader>
-          <CardTitle className="text-base">Pending Invitations</CardTitle>
+          <CardTitle className="text-base">{t("pendingInvitations")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <Mail className="h-10 w-10 text-muted-foreground/50" />
             <h3 className="mt-3 text-sm font-semibold">
-              No pending invitations
+              {t("noPendingInvitations")}
             </h3>
             <p className="mt-1 text-xs text-muted-foreground">
-              Sent invitations will appear here
+              {t("sentInvitationsWillAppear")}
             </p>
           </div>
         </CardContent>
@@ -169,7 +172,7 @@ export function InviteList() {
   return (
     <Card className="rounded-2xl shadow-sm">
       <CardHeader>
-        <CardTitle className="text-base">Pending Invitations</CardTitle>
+        <CardTitle className="text-base">{t("pendingInvitations")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {invites.map((invite) => (
@@ -185,7 +188,8 @@ export function InviteList() {
                   {invite.homeName} • {invite.roleInHome.toLowerCase()}
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  Invited {format(new Date(invite.invitedAt), "MMM d, yyyy")}
+                  {t("invited")}{" "}
+                  {format(new Date(invite.invitedAt), "MMM d, yyyy")}
                 </div>
               </div>
             </div>
@@ -216,7 +220,7 @@ export function InviteList() {
                       disabled={resendMutation.isPending}
                     >
                       <RefreshCw className="h-4 w-4" />
-                      Resend Invitation
+                      {t("resendInvitation")}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() =>
@@ -229,7 +233,7 @@ export function InviteList() {
                       className="text-red-600"
                     >
                       <Trash2 className="h-4 w-4" />
-                      Revoke Invitation
+                      {t("revokeInvitation")}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

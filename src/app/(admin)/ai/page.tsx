@@ -1,141 +1,259 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Plus, Sparkles, Brain, TrendingUp, Zap } from "lucide-react";
+import { Plus, Sparkles, Brain, TrendingUp, Settings } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
+import { useToast } from "@/hooks/use-toast";
+import {
+  getAIStats,
+  getEnergyPredictions,
+  getAnomalies,
+  getAIRules,
+  createAIRule,
+  updateAIRule,
+  deleteAIRule,
+  type AIStats,
+  type EnergyPrediction,
+  type Anomaly,
+  type AIRule,
+} from "@/lib/api/ai";
+import { AIStatsCards } from "./ai-stats-cards";
+import { PredictionsTab } from "./predictions-tab";
+import { AnomaliesTab } from "./anomalies-tab";
+import { RulesTab } from "./rules-tab";
+import { ModelsTab } from "./models-tab";
+import { CreateRuleDialog } from "./create-rule-dialog";
+import type { AITab, CreateRuleFormData } from "./types";
 
 export default function AIPage() {
   const { t } = useLanguage();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [selectedTab, setSelectedTab] = useState<AITab>("predictions");
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [formData, setFormData] = useState<CreateRuleFormData>({
+    name: "",
+    description: "",
+    type: "automation",
+    conditions: {
+      trigger: "sensor_value",
+      operator: "gt",
+      value: 0,
+    },
+    actions: {
+      actionType: "control_device",
+      command: "OFF",
+    },
+    priority: 50,
+  });
+
+  // Fetch AI stats
+  const { data: stats, isLoading: statsLoading } = useQuery<AIStats>({
+    queryKey: ["ai-stats"],
+    queryFn: getAIStats,
+  });
+
+  // Fetch energy predictions
+  const { data: predictions, isLoading: predictionsLoading } = useQuery<
+    EnergyPrediction[]
+  >({
+    queryKey: ["energy-predictions"],
+    queryFn: () => getEnergyPredictions({ limit: 10 }),
+  });
+
+  // Fetch anomalies
+  const { data: anomalies, isLoading: anomaliesLoading } = useQuery<Anomaly[]>({
+    queryKey: ["ai-anomalies"],
+    queryFn: () => getAnomalies({ status: "ALL", limit: 20 }),
+  });
+
+  // Fetch AI rules
+  const { data: rules, isLoading: rulesLoading } = useQuery<AIRule[]>({
+    queryKey: ["ai-rules"],
+    queryFn: () => getAIRules({ type: "all", isActive: "all" }),
+  });
+
+  // Create rule mutation
+  const createRuleMutation = useMutation({
+    mutationFn: createAIRule,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["ai-rules"] });
+      queryClient.invalidateQueries({ queryKey: ["ai-stats"] });
+      toast({
+        title: t("success"),
+        description: t("aiRuleCreated"),
+      });
+      setIsCreateDialogOpen(false);
+      resetForm();
+    },
+    onError: () => {
+      toast({
+        title: t("error"),
+        description: t("failedToCreateRule"),
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Toggle rule mutation
+  const toggleRuleMutation = useMutation({
+    mutationFn: ({ id, isActive }: { id: number; isActive: boolean }) =>
+      updateAIRule(id, { isActive }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["ai-rules"] });
+      toast({
+        title: t("success"),
+        description: t("ruleStatusUpdated"),
+      });
+    },
+  });
+
+  // Delete rule mutation
+  const deleteRuleMutation = useMutation({
+    mutationFn: deleteAIRule,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["ai-rules"] });
+      queryClient.invalidateQueries({ queryKey: ["ai-stats"] });
+      toast({
+        title: t("success"),
+        description: t("ruleDeleted"),
+      });
+    },
+  });
+
+  const handleCreateAiRule = () => {
+    setIsCreateDialogOpen(true);
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      description: "",
+      type: "automation",
+      conditions: {
+        trigger: "sensor_value",
+        operator: "gt",
+        value: 0,
+      },
+      actions: {
+        actionType: "control_device",
+        command: "OFF",
+      },
+      priority: 50,
+    });
+  };
+
+  const handleSubmitRule = () => {
+    if (!formData.name.trim()) {
+      toast({
+        title: t("error"),
+        description: t("ruleNameRequired"),
+        variant: "destructive",
+      });
+      return;
+    }
+    createRuleMutation.mutate(formData);
+  };
+
+  const handleToggleRule = (id: number, isActive: boolean) => {
+    toggleRuleMutation.mutate({ id, isActive });
+  };
+
+  const handleDeleteRule = (id: number) => {
+    deleteRuleMutation.mutate(id);
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">{t("aiAutomation")}</h1>
+          <h1 className="text-2xl font-semibold dark:text-white">
+            {t("aiAutomation")}
+          </h1>
           <p className="text-sm text-muted-foreground">
             {t("intelligentAutomation")}
           </p>
         </div>
-        <Button>
+        <Button onClick={handleCreateAiRule}>
           <Plus className="h-4 w-4" />
           {t("createAiRule")}
         </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">
-              {t("aiModels")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold">0</div>
-          </CardContent>
-        </Card>
+      {/* Stats Cards */}
+      <AIStatsCards stats={stats} isLoading={statsLoading} />
 
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">
-              {t("predictions")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-blue-500" />
-              <div className="text-3xl font-semibold">0</div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">
-              {t("automations")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <Zap className="h-5 w-5 text-yellow-500" />
-              <div className="text-3xl font-semibold">0</div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">
-              {t("anomalies")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <Brain className="h-5 w-5 text-purple-500" />
-              <div className="text-3xl font-semibold">0</div>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Tab Navigation */}
+      <div className="flex gap-2 border-b dark:border-gray-800">
+        <Button
+          variant={selectedTab === "predictions" ? "default" : "ghost"}
+          onClick={() => setSelectedTab("predictions")}
+          className="rounded-b-none"
+        >
+          <TrendingUp className="h-4 w-4" />
+          {t("energyPredictions")}
+        </Button>
+        <Button
+          variant={selectedTab === "anomalies" ? "default" : "ghost"}
+          onClick={() => setSelectedTab("anomalies")}
+          className="rounded-b-none"
+        >
+          <Brain className="h-4 w-4" />
+          {t("anomalyDetection")}
+        </Button>
+        <Button
+          variant={selectedTab === "rules" ? "default" : "ghost"}
+          onClick={() => setSelectedTab("rules")}
+          className="rounded-b-none"
+        >
+          <Settings className="h-4 w-4" />
+          {t("aiRules")}
+        </Button>
+        <Button
+          variant={selectedTab === "models" ? "default" : "ghost"}
+          onClick={() => setSelectedTab("models")}
+          className="rounded-b-none"
+        >
+          <Sparkles className="h-4 w-4" />
+          {t("aiModels")}
+        </Button>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-base">
-              {t("energyPredictions")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <TrendingUp className="h-10 w-10 text-muted-foreground/50" />
-              <h3 className="mt-3 text-sm font-semibold">
-                {t("noPredictionsAvailable")}
-              </h3>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {t("aiEnergyPredictions")}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Content Area */}
+      {selectedTab === "predictions" && (
+        <PredictionsTab
+          predictions={predictions}
+          isLoading={predictionsLoading}
+        />
+      )}
 
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-base">{t("anomalyDetection")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <Brain className="h-10 w-10 text-muted-foreground/50" />
-              <h3 className="mt-3 text-sm font-semibold">
-                {t("noAnomaliesDetected")}
-              </h3>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {t("systemOperatingNormally")}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {selectedTab === "anomalies" && (
+        <AnomaliesTab anomalies={anomalies} isLoading={anomaliesLoading} />
+      )}
 
-      <Card className="rounded-2xl shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-base">{t("aiFeatures")}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <Sparkles className="h-12 w-12 text-muted-foreground/50" />
-            <h3 className="mt-4 text-lg font-semibold">
-              {t("aiFeaturesComing")}
-            </h3>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {t("aiDescription")}
-            </p>
-            <Button className="mt-4" variant="outline">
-              <Brain className="h-4 w-4" />
-              {t("learnMore")}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      {selectedTab === "rules" && (
+        <RulesTab
+          rules={rules}
+          isLoading={rulesLoading}
+          onCreateRule={handleCreateAiRule}
+          onToggleRule={handleToggleRule}
+          onDeleteRule={handleDeleteRule}
+        />
+      )}
+
+      {selectedTab === "models" && <ModelsTab />}
+
+      {/* Create AI Rule Dialog */}
+      <CreateRuleDialog
+        open={isCreateDialogOpen}
+        onOpenChange={setIsCreateDialogOpen}
+        formData={formData}
+        onFormDataChange={setFormData}
+        onSubmit={handleSubmitRule}
+        isSubmitting={createRuleMutation.isPending}
+      />
     </div>
   );
 }

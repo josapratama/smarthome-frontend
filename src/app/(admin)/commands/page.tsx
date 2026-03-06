@@ -61,11 +61,11 @@ export default function CommandsPage() {
       if (res.ok) {
         setCommands(data.data || []);
       } else {
-        toast.error(data.error || "Failed to load commands");
+        toast.error(data.error || t("failedLoadCommands"));
       }
     } catch (error) {
       console.error("Error loading commands:", error);
-      toast.error("Failed to load commands");
+      toast.error(t("failedLoadCommands"));
     } finally {
       setIsLoading(false);
     }
@@ -251,10 +251,11 @@ export default function CommandsPage() {
                   {commands.map((command) => (
                     <TableRow key={command.id}>
                       <TableCell className="font-mono text-sm">
-                        #{command.id}
+                        {t("commandId")}: {command.id}
                       </TableCell>
                       <TableCell>
-                        {command.deviceName || `Device ${command.deviceId}`}
+                        {command.deviceName ||
+                          `${t("device")} ${command.deviceId}`}
                       </TableCell>
                       <TableCell>
                         <code className="rounded bg-muted px-2 py-1 text-xs">
