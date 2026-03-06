@@ -66,42 +66,22 @@ export async function grantRoomAccess(
   accessLevel: RoomAccessLevel,
   expiresAt?: string,
 ) {
-  const response = await apiFetchBrowser(
-    `/api/v1/rooms/${roomId}/access/grant`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, accessLevel, expiresAt }),
-    },
-  );
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || "Failed to grant access");
-  }
-
-  return response.json();
+  return apiFetchBrowser(`/api/v1/rooms/${roomId}/access/grant`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId, accessLevel, expiresAt }),
+  });
 }
 
 /**
  * Revoke access from a user for a room
  */
 export async function revokeRoomAccess(roomId: number, userId: number) {
-  const response = await apiFetchBrowser(
-    `/api/v1/rooms/${roomId}/access/revoke`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId }),
-    },
-  );
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || "Failed to revoke access");
-  }
-
-  return response.json();
+  return apiFetchBrowser(`/api/v1/rooms/${roomId}/access/revoke`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId }),
+  });
 }
 
 /**
@@ -110,16 +90,9 @@ export async function revokeRoomAccess(roomId: number, userId: number) {
 export async function getRoomGrants(
   roomId: number,
 ): Promise<RoomAccessGrant[]> {
-  const response = await apiFetchBrowser(
+  const data = await apiFetchBrowser<{ data: RoomAccessGrant[] }>(
     `/api/v1/rooms/${roomId}/access/grants`,
   );
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || "Failed to get access grants");
-  }
-
-  const data = await response.json();
   return data.data;
 }
 
@@ -142,16 +115,9 @@ export async function getRoomAccessLogs(
   if (options?.allowed !== undefined)
     params.append("allowed", options.allowed.toString());
 
-  const response = await apiFetchBrowser(
+  const data = await apiFetchBrowser<{ data: RoomAccessLog[] }>(
     `/api/v1/rooms/${roomId}/access/logs?${params.toString()}`,
   );
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || "Failed to get access logs");
-  }
-
-  const data = await response.json();
   return data.data;
 }
 
@@ -162,36 +128,22 @@ export async function updateRoomPrivacy(
   roomId: number,
   privacyLevel: RoomPrivacy,
 ) {
-  const response = await apiFetchBrowser(`/api/v1/rooms/${roomId}/privacy`, {
+  return apiFetchBrowser(`/api/v1/rooms/${roomId}/privacy`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ privacyLevel }),
   });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || "Failed to update room privacy");
-  }
-
-  return response.json();
 }
 
 /**
  * Set room owner
  */
 export async function setRoomOwner(roomId: number, ownerId: number) {
-  const response = await apiFetchBrowser(`/api/v1/rooms/${roomId}/owner`, {
+  return apiFetchBrowser(`/api/v1/rooms/${roomId}/owner`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ ownerId }),
   });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || "Failed to set room owner");
-  }
-
-  return response.json();
 }
 
 /**
@@ -201,15 +153,8 @@ export async function checkRoomAccess(
   roomId: number,
   level: RoomAccessLevel = "CONTROL",
 ): Promise<AccessCheckResult> {
-  const response = await apiFetchBrowser(
+  const data = await apiFetchBrowser<{ data: AccessCheckResult }>(
     `/api/v1/rooms/${roomId}/access/check?level=${level}`,
   );
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || "Failed to check access");
-  }
-
-  const data = await response.json();
   return data.data;
 }
