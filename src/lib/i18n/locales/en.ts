@@ -11,6 +11,7 @@ export const en = {
   energy: "Energy",
   settings: "Settings",
   logout: "Logout",
+  faq: "FAQ",
 
   // Dashboard
   overview: "Overview",
@@ -26,6 +27,7 @@ export const en = {
   quickActions: "Quick Actions",
   viewAll: "View All",
   noActivity: "No recent activity",
+  monitorAndControl: "Monitor and control your IoT devices",
 
   // Rooms
   manageRooms: "Manage rooms across all homes",
@@ -42,10 +44,13 @@ export const en = {
   noRoomsFound: "No rooms found",
   getStartedRoom: "Get started by creating your first room",
   deleteRoom: "Are you sure you want to delete",
+  deleteRoomConfirm: "Are you sure you want to delete",
   roomDeleted: "Room deleted successfully",
+  roomDeletedSuccess: "Room deleted successfully",
   roomCreated: "Room created successfully",
   failedDeleteRoom: "Failed to delete room",
   failedCreateRoom: "Failed to create room",
+  failedToDeleteRoom: "Failed to delete room",
   validationError: "Validation error",
   fillAllFields: "Please fill in all required fields",
   backToHomes: "Back to Homes",
@@ -58,6 +63,9 @@ export const en = {
   createNewRoom: "Create New Room",
   deleted: "Deleted",
   created: "Created",
+  device: "device",
+  devicesWillBeUnassigned:
+    "Devices in this room will not be deleted, but will be unassigned from the room",
 
   // Homes
   manageHomes: "Manage your homes and properties",
@@ -177,10 +185,12 @@ export const en = {
   // Notifications
   manageNotifications: "Manage your notifications",
   allNotifications: "All Notifications",
+  unread: "Unread",
   unreadNotifications: "Unread",
   markAsRead: "Mark as Read",
   markAllAsRead: "Mark All as Read",
   noNotifications: "No notifications",
+  notificationsWillAppear: "Notifications will appear here",
   notificationSettings: "Notification Settings",
   emailNotifications: "Email Notifications",
   pushNotifications: "Push Notifications",
@@ -987,22 +997,30 @@ export const en = {
   tryDifferentFAQSearch: "Try different search keywords",
   viewCount: "Views",
   helpfulVotes: "Helpful Votes",
+  stillNeedHelp: "Still need help?",
+  contactSupportMessage:
+    "Can't find what you're looking for? Contact our support team or use the AI chat assistant",
+  chatWithAIAssistant: "Chat with AI Assistant",
 
   // Chat
   aiAssistant: "AI Assistant",
-  aiAssistantDescription: "Ask anything about your smart home system",
+  chatAIDescription: "Get instant help and answers from our AI assistant",
   startChatting: "Start asking about the app",
   clickChatButton: "Click the chat button in the bottom right corner",
   chatWithAI: "Chat with AI Assistant",
   askMeAnything: "Ask me anything about the smart home system",
+  askAnything:
+    "Ask me anything about your smart home, devices, energy usage, or troubleshooting",
   typeMessage: "Type a message...",
   sendMessage: "Send",
   newConversation: "New Conversation",
+  conversations: "Conversations",
   conversationHistory: "Conversation History",
   deleteConversation: "Delete Conversation",
   confirmDeleteConversation:
     "Are you sure you want to delete this conversation?",
   thinking: "Thinking...",
+  noConversations: "No conversations yet",
   noConversationsYet: "No conversations yet",
   startNewConversation: "Start a new conversation with AI",
   conversationDeleted: "Conversation deleted successfully",
@@ -1115,6 +1133,7 @@ export const en = {
   failedToLoadHomeDetails: "Failed to load home details",
   createRoomsDesc: "Create rooms to organize your devices better",
   inviteMember: "Invite Member",
+  inviteMemberDescription: "Invite someone to join a home as a member or guest",
   description: "Description",
   messagesDescription: "Chat with other users and home members",
   selectConversationDescription:
@@ -1123,6 +1142,8 @@ export const en = {
   noMembersYet: "No members yet",
   inviteMembersToHome: "Invite members to join this home",
   chatAI: "Chat AI",
+  memberRole: "Member Role",
+  memberRoleDesc: "Select a role for the invited member",
 
   // Messaging
   messages: "Messages",
@@ -1142,7 +1163,6 @@ export const en = {
   typing: "typing...",
   you: "You",
   selectConversation: "Select a conversation to start messaging",
-  noConversations: "No conversations yet",
   searchMessages: "Search messages...",
   attachFile: "Attach file",
   addEmoji: "Add emoji",

@@ -4,7 +4,7 @@ import { useTranslation } from "@/hooks/use-translation";
 import { Room } from "@/lib/api/client/rooms";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { DoorOpen, Trash2 } from "lucide-react";
+import { DoorOpen, Trash2, Shield } from "lucide-react";
 import { roomsApi } from "@/lib/api/client/rooms";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -18,6 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { RoomAccessDialog } from "@/components/rooms/room-access-dialog";
 
 interface RoomCardProps {
   room: Room;
@@ -28,6 +29,7 @@ interface RoomCardProps {
 export function RoomCard({ room, deviceCount, onDelete }: RoomCardProps) {
   const { t } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [accessDialogOpen, setAccessDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
@@ -54,13 +56,23 @@ export function RoomCard({ room, deviceCount, onDelete }: RoomCardProps) {
             <DoorOpen className="h-5 w-5 text-primary" />
             <CardTitle className="text-lg">{room.name}</CardTitle>
           </div>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={() => setDeleteDialogOpen(true)}
-          >
-            <Trash2 className="h-4 w-4 text-destructive" />
-          </Button>
+          <div className="flex gap-1">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setAccessDialogOpen(true)}
+              title={t("accessControl") || "Access Control"}
+            >
+              <Shield className="h-4 w-4 text-blue-600" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setDeleteDialogOpen(true)}
+            >
+              <Trash2 className="h-4 w-4 text-destructive" />
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           {room.description && (
@@ -102,6 +114,15 @@ export function RoomCard({ room, deviceCount, onDelete }: RoomCardProps) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <RoomAccessDialog
+        isOpen={accessDialogOpen}
+        onClose={() => setAccessDialogOpen(false)}
+        roomId={room.id}
+        roomName={room.name}
+        homeId={room.homeId}
+        currentPrivacy={room.privacyLevel || "PUBLIC"}
+      />
     </>
   );
 }

@@ -11,6 +11,7 @@ export const id = {
   energy: "Energi",
   settings: "Pengaturan",
   logout: "Keluar",
+  faq: "FAQ",
 
   // Dashboard
   overview: "Ringkasan",
@@ -32,6 +33,7 @@ export const id = {
   unknownError: "Kesalahan tidak diketahui",
   goToLogin: "Ke halaman login",
   commonHome: "Beranda",
+  monitorAndControl: "Monitor dan kontrol perangkat IoT Anda",
 
   // Guest
   guestPanel: "Panel Tamu",
@@ -72,10 +74,13 @@ export const id = {
   noRoomsFound: "Tidak ada ruangan ditemukan",
   getStartedRoom: "Mulai dengan membuat ruangan pertama Anda",
   deleteRoom: "Apakah Anda yakin ingin menghapus",
+  deleteRoomConfirm: "Apakah Anda yakin ingin menghapus",
   roomDeleted: "Ruangan berhasil dihapus",
+  roomDeletedSuccess: "Ruangan berhasil dihapus",
   roomCreated: "Ruangan berhasil dibuat",
   failedDeleteRoom: "Gagal menghapus ruangan",
   failedCreateRoom: "Gagal membuat ruangan",
+  failedToDeleteRoom: "Gagal menghapus ruangan",
   validationError: "Kesalahan validasi",
   fillAllFields: "Mohon isi semua field yang diperlukan",
   backToHomes: "Kembali ke Rumah",
@@ -88,6 +93,9 @@ export const id = {
   createNewRoom: "Buat Ruangan Baru",
   deleted: "Dihapus",
   created: "Dibuat",
+  device: "perangkat",
+  devicesWillBeUnassigned:
+    "Perangkat di ruangan ini tidak akan dihapus, tetapi akan dilepas dari ruangan",
 
   // Homes
   manageHomes: "Kelola rumah dan properti Anda",
@@ -207,10 +215,12 @@ export const id = {
   // Notifications
   manageNotifications: "Kelola notifikasi Anda",
   allNotifications: "Semua Notifikasi",
+  unread: "Belum Dibaca",
   unreadNotifications: "Belum Dibaca",
   markAsRead: "Tandai Sudah Dibaca",
   markAllAsRead: "Tandai Semua Sudah Dibaca",
   noNotifications: "Tidak ada notifikasi",
+  notificationsWillAppear: "Notifikasi akan muncul di sini",
   notificationSettings: "Pengaturan Notifikasi",
   emailNotifications: "Notifikasi Email",
   pushNotifications: "Notifikasi Push",
@@ -972,22 +982,30 @@ export const id = {
   tryDifferentFAQSearch: "Coba kata kunci pencarian yang berbeda",
   viewCount: "Dilihat",
   helpfulVotes: "Vote Membantu",
+  stillNeedHelp: "Masih butuh bantuan?",
+  contactSupportMessage:
+    "Tidak menemukan yang Anda cari? Hubungi tim support kami atau gunakan asisten chat AI",
+  chatWithAIAssistant: "Chat dengan Asisten AI",
 
   // Chat
   aiAssistant: "Asisten AI",
-  aiAssistantDescription: "Tanyakan apa saja tentang sistem smart home Anda",
+  chatAIDescription: "Dapatkan bantuan instan dan jawaban dari asisten AI kami",
   startChatting: "Mulai bertanya tentang aplikasi",
   clickChatButton: "Klik tombol chat di pojok kanan bawah",
   chatWithAI: "Chat dengan Asisten AI",
   askMeAnything: "Tanyakan apa saja tentang sistem smart home",
+  askAnything:
+    "Tanyakan apa saja tentang smart home, perangkat, penggunaan energi, atau troubleshooting Anda",
   typeMessage: "Ketik pesan...",
   sendMessage: "Kirim",
   newConversation: "Percakapan Baru",
+  conversations: "Percakapan",
   conversationHistory: "Riwayat Percakapan",
   deleteConversation: "Hapus Percakapan",
   confirmDeleteConversation:
     "Apakah Anda yakin ingin menghapus percakapan ini?",
   thinking: "Sedang berpikir...",
+  noConversations: "Belum ada percakapan",
   noConversationsYet: "Belum ada percakapan",
   startNewConversation: "Mulai percakapan baru dengan AI",
   conversationDeleted: "Percakapan berhasil dihapus",
@@ -1100,6 +1118,8 @@ export const id = {
   createRoomsDesc:
     "Buat ruangan untuk mengatur perangkat Anda dengan lebih baik",
   inviteMember: "Undang Anggota",
+  inviteMemberDescription:
+    "Undang seseorang untuk bergabung ke rumah sebagai anggota atau tamu",
   description: "Deskripsi",
   messagesDescription: "Chat dengan pengguna lain dan anggota rumah",
   selectConversationDescription:
@@ -1108,6 +1128,8 @@ export const id = {
   noMembersYet: "Belum ada anggota",
   inviteMembersToHome: "Undang anggota untuk bergabung ke rumah ini",
   chatAI: "Chat AI",
+  memberRole: "Peran Anggota",
+  memberRoleDesc: "Pilih peran untuk anggota yang diundang",
 
   // Messaging
   messages: "Pesan",
@@ -1127,7 +1149,6 @@ export const id = {
   typing: "mengetik...",
   you: "Anda",
   selectConversation: "Pilih percakapan untuk mulai berkirim pesan",
-  noConversations: "Belum ada percakapan",
   searchMessages: "Cari pesan...",
   attachFile: "Lampirkan file",
   addEmoji: "Tambah emoji",

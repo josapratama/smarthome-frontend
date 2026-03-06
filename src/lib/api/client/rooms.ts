@@ -5,6 +5,7 @@ export interface Room {
   id: number;
   name: string;
   description?: string;
+  privacyLevel?: "PUBLIC" | "PRIVATE" | "SHARED" | "RESTRICTED";
   createdAt: string;
   updatedAt: string;
 }
