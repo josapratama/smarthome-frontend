@@ -967,12 +967,17 @@ export const en = {
   helpCenter: "Help Center",
   searchFAQ: "Search questions...",
   frequentlyAskedQuestions: "Frequently Asked Questions",
+  faqDescription:
+    "Find answers to common questions about the smart home system",
   categories: "Categories",
   allCategories: "All Categories",
   faqGeneral: "General",
+  faqDevices: "Devices",
   faqAiModels: "AI Models",
   faqAutomation: "Automation",
   faqAccount: "Account",
+  faqEnergy: "Energy",
+  faqAlarms: "Alarms",
   faqTroubleshooting: "Troubleshooting",
   wasThisHelpful: "Was this helpful?",
   helpful: "Helpful",
@@ -985,6 +990,7 @@ export const en = {
 
   // Chat
   aiAssistant: "AI Assistant",
+  aiAssistantDescription: "Ask anything about your smart home system",
   startChatting: "Start asking about the app",
   clickChatButton: "Click the chat button in the bottom right corner",
   chatWithAI: "Chat with AI Assistant",
@@ -997,6 +1003,12 @@ export const en = {
   confirmDeleteConversation:
     "Are you sure you want to delete this conversation?",
   thinking: "Thinking...",
+  noConversationsYet: "No conversations yet",
+  startNewConversation: "Start a new conversation with AI",
+  conversationDeleted: "Conversation deleted successfully",
+  failedToDeleteConversation: "Failed to delete conversation",
+  failedToSendMessage: "Failed to send message",
+  failedToLoadConversations: "Failed to load conversations",
 
   // FAQ Management (Admin)
   faqManagement: "FAQ Management",
@@ -1108,6 +1120,9 @@ export const en = {
   selectConversationDescription:
     "Choose a conversation from the list to start chatting",
   failedToLoadMessages: "Failed to load messages",
+  noMembersYet: "No members yet",
+  inviteMembersToHome: "Invite members to join this home",
+  chatAI: "Chat AI",
 
   // Messaging
   messages: "Messages",

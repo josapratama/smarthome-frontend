@@ -6,6 +6,7 @@ import { Bell, Menu } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { getUnreadAlarmCount } from "@/lib/api/alarms";
 
 interface UserTopbarProps {
   onMenuClick?: () => void;
@@ -17,9 +18,21 @@ export function UserTopbar({ onMenuClick }: UserTopbarProps) {
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
-    // TODO: Fetch real notification count from API
-    setUnreadCount(2);
+    loadUnreadCount();
+
+    // Refresh count every 30 seconds
+    const interval = setInterval(loadUnreadCount, 30000);
+    return () => clearInterval(interval);
   }, []);
+
+  const loadUnreadCount = async () => {
+    try {
+      const count = await getUnreadAlarmCount();
+      setUnreadCount(count);
+    } catch (error) {
+      console.error("Failed to load unread count:", error);
+    }
+  };
 
   const handleNotificationClick = () => {
     router.push("/user/notifications");

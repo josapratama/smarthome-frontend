@@ -40,3 +40,25 @@ export async function resolveAlarm(homeId: number, alarmId: number) {
     { method: "POST" },
   );
 }
+
+export async function getUnreadAlarmCount(): Promise<number> {
+  try {
+    // Get all homes for the user
+    const homesResponse = await apiFetchBrowser<{ data: any[] }>(
+      "/api/v1/homes",
+    );
+    const homes = homesResponse.data || [];
+
+    // Get unread alarms (OPEN status) from all homes
+    let totalUnread = 0;
+    for (const home of homes) {
+      const alarmsResponse = await listHomeAlarms(home.id, { status: "OPEN" });
+      totalUnread += alarmsResponse.data?.length || 0;
+    }
+
+    return totalUnread;
+  } catch (error) {
+    console.error("Failed to get unread alarm count:", error);
+    return 0;
+  }
+}

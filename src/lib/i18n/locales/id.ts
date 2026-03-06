@@ -952,12 +952,17 @@ export const id = {
   helpCenter: "Pusat Bantuan",
   searchFAQ: "Cari pertanyaan...",
   frequentlyAskedQuestions: "Pertanyaan yang Sering Diajukan",
+  faqDescription:
+    "Temukan jawaban untuk pertanyaan umum tentang sistem smart home",
   categories: "Kategori",
   allCategories: "Semua Kategori",
   faqGeneral: "Umum",
+  faqDevices: "Perangkat",
   faqAiModels: "Model AI",
   faqAutomation: "Automasi",
   faqAccount: "Akun",
+  faqEnergy: "Energi",
+  faqAlarms: "Alarm",
   faqTroubleshooting: "Pemecahan Masalah",
   wasThisHelpful: "Apakah ini membantu?",
   helpful: "Membantu",
@@ -970,6 +975,7 @@ export const id = {
 
   // Chat
   aiAssistant: "Asisten AI",
+  aiAssistantDescription: "Tanyakan apa saja tentang sistem smart home Anda",
   startChatting: "Mulai bertanya tentang aplikasi",
   clickChatButton: "Klik tombol chat di pojok kanan bawah",
   chatWithAI: "Chat dengan Asisten AI",
@@ -982,6 +988,12 @@ export const id = {
   confirmDeleteConversation:
     "Apakah Anda yakin ingin menghapus percakapan ini?",
   thinking: "Sedang berpikir...",
+  noConversationsYet: "Belum ada percakapan",
+  startNewConversation: "Mulai percakapan baru dengan AI",
+  conversationDeleted: "Percakapan berhasil dihapus",
+  failedToDeleteConversation: "Gagal menghapus percakapan",
+  failedToSendMessage: "Gagal mengirim pesan",
+  failedToLoadConversations: "Gagal memuat percakapan",
 
   // FAQ Management (Admin)
   faqManagement: "Manajemen FAQ",
@@ -1093,6 +1105,9 @@ export const id = {
   selectConversationDescription:
     "Pilih percakapan dari daftar untuk mulai chat",
   failedToLoadMessages: "Gagal memuat pesan",
+  noMembersYet: "Belum ada anggota",
+  inviteMembersToHome: "Undang anggota untuk bergabung ke rumah ini",
+  chatAI: "Chat AI",
 
   // Messaging
   messages: "Pesan",
