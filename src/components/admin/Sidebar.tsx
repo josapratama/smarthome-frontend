@@ -22,6 +22,7 @@ import {
   User,
   Zap,
   HelpCircle,
+  MessageSquare,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 import { cn } from "@/lib/utils";
@@ -51,6 +52,7 @@ export function Sidebar({ className, onClose }: SidebarProps) {
     { name: t("commands"), href: "/commands", icon: Terminal },
     { name: t("notifications"), href: "/notifications", icon: Bell },
     { name: t("invites"), href: "/invites", icon: Mail },
+    { name: t("messages"), href: "/messages", icon: MessageSquare },
     { name: t("aiModels"), href: "/ai", icon: Brain },
     { name: t("helpCenter"), href: "/help", icon: HelpCircle },
     { name: t("appInformation"), href: "/app-info", icon: Info },

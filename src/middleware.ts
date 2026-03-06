@@ -8,10 +8,12 @@ export function middleware(request: NextRequest) {
 
   // Public routes
   const publicRoutes = [
+    "/",
     "/login",
     "/register",
     "/forgot-password",
     "/reset-password",
+    "/public", // Allow all /public/* routes
   ];
   const isPublicRoute = publicRoutes.some((route) =>
     pathname.startsWith(route),
@@ -36,8 +38,16 @@ export function middleware(request: NextRequest) {
   // User routes
   const isUserRoute = pathname.startsWith("/user");
 
-  // If user is authenticated and trying to access public routes, redirect based on role
-  if (token && isPublicRoute) {
+  // If user is authenticated and trying to access auth pages (login/register), redirect based on role
+  const authPages = [
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/reset-password",
+  ];
+  const isAuthPage = authPages.some((route) => pathname.startsWith(route));
+
+  if (token && isAuthPage) {
     if (userRole === "ADMIN") {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     } else {

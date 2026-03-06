@@ -1,26 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { alarmsApi } from "../api/alarms";
-import type { AlarmFilters } from "../types";
+import * as alarmsApi from "../api/alarms";
+import type { AlarmsQuery, AlarmCreateRequest } from "../api/dto/alarm.dto";
 
-export function useAlarms(filters?: AlarmFilters) {
+export function useHomeAlarms(homeId: number, query?: AlarmsQuery) {
   return useQuery({
-    queryKey: ["alarms", filters],
-    queryFn: () => alarmsApi.getAlarms(filters),
-  });
-}
-
-export function useAlarm(id: number) {
-  return useQuery({
-    queryKey: ["alarm", id],
-    queryFn: () => alarmsApi.getAlarm(id),
-    enabled: !!id,
-  });
-}
-
-export function useAlarmStats(homeId?: number) {
-  return useQuery({
-    queryKey: ["alarms", "stats", homeId],
-    queryFn: () => alarmsApi.getAlarmStats(homeId),
+    queryKey: ["alarms", homeId, query],
+    queryFn: () => alarmsApi.listHomeAlarms(homeId, query),
+    enabled: !!homeId,
   });
 }
 
@@ -28,11 +14,10 @@ export function useAcknowledgeAlarm() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: alarmsApi.acknowledgeAlarm,
-    onSuccess: (_, alarmId) => {
-      queryClient.invalidateQueries({ queryKey: ["alarm", alarmId] });
-      queryClient.invalidateQueries({ queryKey: ["alarms"] });
-      queryClient.invalidateQueries({ queryKey: ["alarms", "stats"] });
+    mutationFn: ({ homeId, alarmId }: { homeId: number; alarmId: number }) =>
+      alarmsApi.acknowledgeAlarm(homeId, alarmId),
+    onSuccess: (_, { homeId }) => {
+      queryClient.invalidateQueries({ queryKey: ["alarms", homeId] });
     },
   });
 }
@@ -41,11 +26,27 @@ export function useResolveAlarm() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: alarmsApi.resolveAlarm,
-    onSuccess: (_, alarmId) => {
-      queryClient.invalidateQueries({ queryKey: ["alarm", alarmId] });
-      queryClient.invalidateQueries({ queryKey: ["alarms"] });
-      queryClient.invalidateQueries({ queryKey: ["alarms", "stats"] });
+    mutationFn: ({ homeId, alarmId }: { homeId: number; alarmId: number }) =>
+      alarmsApi.resolveAlarm(homeId, alarmId),
+    onSuccess: (_, { homeId }) => {
+      queryClient.invalidateQueries({ queryKey: ["alarms", homeId] });
+    },
+  });
+}
+
+export function useCreateHomeAlarm() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      homeId,
+      data,
+    }: {
+      homeId: number;
+      data: AlarmCreateRequest;
+    }) => alarmsApi.createHomeAlarm(homeId, data),
+    onSuccess: (_, { homeId }) => {
+      queryClient.invalidateQueries({ queryKey: ["alarms", homeId] });
     },
   });
 }

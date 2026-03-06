@@ -9,6 +9,8 @@ export interface RoomDTO {
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;
+  ownerId?: number | null;
+  privacyLevel?: "PUBLIC" | "PRIVATE" | "SHARED" | "RESTRICTED";
 }
 
 export interface RoomCreateRequest {

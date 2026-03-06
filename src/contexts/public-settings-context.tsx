@@ -50,6 +50,16 @@ const translations = {
     alreadyHaveAccount: "Sudah punya akun?",
     login: "Masuk",
 
+    // Public Pages
+    publicHomes: "Rumah Publik",
+    publicDevices: "Perangkat Publik",
+    noPublicHomes: "Tidak ada rumah publik tersedia",
+    noPublicDevices: "Tidak ada perangkat publik tersedia",
+    noPublicHomesDescription:
+      "Rumah publik akan muncul di sini ketika tersedia",
+    noPublicDevicesDescription:
+      "Perangkat publik akan muncul di sini ketika tersedia",
+
     // Auth Pages
     signIn: "Masuk",
     signInSubtitle: "Masuk ke akun Anda untuk melanjutkan",
@@ -151,6 +161,15 @@ const translations = {
     signUp: "Sign Up Free",
     alreadyHaveAccount: "Already have an account?",
     login: "Sign In",
+
+    // Public Pages
+    publicHomes: "Public Homes",
+    publicDevices: "Public Devices",
+    noPublicHomes: "No public homes available",
+    noPublicDevices: "No public devices available",
+    noPublicHomesDescription: "Public homes will appear here when available",
+    noPublicDevicesDescription:
+      "Public devices will appear here when available",
 
     // Auth Pages
     signIn: "Sign In",

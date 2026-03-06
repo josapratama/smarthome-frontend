@@ -29,7 +29,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Home, MapPin, Trash2 } from "lucide-react";
+import {
+  Plus,
+  Home,
+  MapPin,
+  Trash2,
+  Shield,
+  Lock,
+  Users,
+  UserCheck,
+  ShieldAlert,
+} from "lucide-react";
+import { RoomAccessDialog } from "@/components/rooms/room-access-dialog";
 
 function AddRoomDialog() {
   const [open, setOpen] = useState(false);
@@ -162,6 +173,8 @@ export function RoomsClient() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { t } = useTranslation();
+  const [selectedRoom, setSelectedRoom] = useState<RoomDTO | null>(null);
+  const [isAccessDialogOpen, setIsAccessDialogOpen] = useState(false);
 
   const roomsQuery = useQuery({
     queryKey: qk.rooms.all,
@@ -205,6 +218,36 @@ export function RoomsClient() {
   const getHomeName = (homeId: number) => {
     const home = homesQuery.data?.find((h) => h.id === homeId);
     return home?.name || `${t("home")} #${homeId}`;
+  };
+
+  const getPrivacyIcon = (privacy: string) => {
+    switch (privacy) {
+      case "PRIVATE":
+        return <Lock className="h-4 w-4 text-red-600 dark:text-red-400" />;
+      case "SHARED":
+        return (
+          <UserCheck className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+        );
+      case "RESTRICTED":
+        return (
+          <ShieldAlert className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+        );
+      default:
+        return <Users className="h-4 w-4 text-green-600 dark:text-green-400" />;
+    }
+  };
+
+  const getPrivacyColor = (privacy: string) => {
+    switch (privacy) {
+      case "PRIVATE":
+        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
+      case "SHARED":
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
+      case "RESTRICTED":
+        return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200";
+      default:
+        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
+    }
   };
 
   const activeHomes = new Set(roomsQuery.data?.map((r) => r.homeId) || []);
@@ -287,14 +330,23 @@ export function RoomsClient() {
               {roomsQuery.data.map((room) => (
                 <div
                   key={room.id}
-                  className="flex items-center justify-between p-4"
+                  className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                 >
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-muted-foreground" />
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       <span className="font-medium">{room.name}</span>
                       <Badge variant="outline">
                         {getHomeName(room.homeId)}
+                      </Badge>
+                      {/* Privacy Badge */}
+                      <Badge
+                        className={`flex items-center gap-1 ${getPrivacyColor(room.privacyLevel || "PUBLIC")}`}
+                      >
+                        {getPrivacyIcon(room.privacyLevel || "PUBLIC")}
+                        <span className="text-xs">
+                          {t(`privacy${room.privacyLevel || "PUBLIC"}` as any)}
+                        </span>
                       </Badge>
                     </div>
                     <div className="mt-1 text-xs text-muted-foreground">
@@ -303,18 +355,34 @@ export function RoomsClient() {
                     </div>
                   </div>
 
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      if (confirm(`${t("deleteRoom")} "${room.name}"?`)) {
-                        deleteMutation.mutate(room.id);
-                      }
-                    }}
-                    disabled={deleteMutation.isPending}
-                  >
-                    <Trash2 className="h-4 w-4 text-red-600" />
-                  </Button>
+                  <div className="flex items-center gap-2 ml-4">
+                    {/* Access Control Button */}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedRoom(room);
+                        setIsAccessDialogOpen(true);
+                      }}
+                      title={t("accessControl")}
+                    >
+                      <Shield className="h-4 w-4" />
+                    </Button>
+
+                    {/* Delete Button */}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        if (confirm(`${t("deleteRoom")} "${room.name}"?`)) {
+                          deleteMutation.mutate(room.id);
+                        }
+                      }}
+                      disabled={deleteMutation.isPending}
+                    >
+                      <Trash2 className="h-4 w-4 text-red-600" />
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -327,6 +395,22 @@ export function RoomsClient() {
           ) : null}
         </CardContent>
       </Card>
+
+      {/* Access Control Dialog */}
+      {selectedRoom && (
+        <RoomAccessDialog
+          isOpen={isAccessDialogOpen}
+          onClose={() => {
+            setIsAccessDialogOpen(false);
+            setSelectedRoom(null);
+            queryClient.invalidateQueries({ queryKey: qk.rooms.all });
+          }}
+          roomId={selectedRoom.id}
+          roomName={selectedRoom.name}
+          homeId={selectedRoom.homeId}
+          currentPrivacy={selectedRoom.privacyLevel || "PUBLIC"}
+        />
+      )}
     </div>
   );
 }
