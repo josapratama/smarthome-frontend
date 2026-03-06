@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { qk } from "@/lib/api/queries";
 import { apiFetchBrowser } from "@/lib/api/client.browser";
 import type { OtaJobDTO } from "@/lib/api/dto/ota.dto";
+import { useLanguage } from "@/contexts/language-context";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -36,6 +36,8 @@ function getStatusColor(status: string) {
 }
 
 export function OtaJobDetailClient({ jobId }: { jobId: number }) {
+  const { t } = useLanguage();
+
   const q = useQuery({
     queryKey: ["ota", "job", jobId],
     queryFn: async () => {
@@ -53,23 +55,25 @@ export function OtaJobDetailClient({ jobId }: { jobId: number }) {
         <Button variant="ghost" size="sm" asChild>
           <Link href="/ota">
             <ArrowLeft className="h-4 w-4" />
-            Back to OTA
+            {t("backToOta")}
           </Link>
         </Button>
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">OTA Job #{jobId}</h1>
+          <h1 className="text-2xl font-semibold">
+            {t("otaJobDetails")} #{jobId}
+          </h1>
           <p className="text-sm text-muted-foreground">
-            Over-the-air update job details and progress.
+            {t("otaJobDescription")}
           </p>
         </div>
       </div>
 
       <Card className="rounded-2xl shadow-sm">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Job Details</CardTitle>
+          <CardTitle className="text-base">{t("jobDetails")}</CardTitle>
         </CardHeader>
 
         <CardContent>
@@ -85,13 +89,15 @@ export function OtaJobDetailClient({ jobId }: { jobId: number }) {
               {(q.error as Error).message}
             </div>
           ) : !q.data ? (
-            <div className="text-sm text-muted-foreground">Job not found.</div>
+            <div className="text-sm text-muted-foreground">
+              {t("jobNotFound")}
+            </div>
           ) : (
             <div className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <div className="text-sm font-medium text-muted-foreground">
-                    Status
+                    {t("status")}
                   </div>
                   <Badge className={getStatusColor(q.data.status)}>
                     {q.data.status}
@@ -100,7 +106,7 @@ export function OtaJobDetailClient({ jobId }: { jobId: number }) {
 
                 <div>
                   <div className="text-sm font-medium text-muted-foreground">
-                    Progress
+                    {t("progress")}
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="flex-1 bg-gray-200 rounded-full h-2">
@@ -119,14 +125,14 @@ export function OtaJobDetailClient({ jobId }: { jobId: number }) {
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <div className="text-sm font-medium text-muted-foreground">
-                    Device ID
+                    {t("deviceId")}
                   </div>
                   <div className="text-sm">{q.data.deviceId}</div>
                 </div>
 
                 <div>
                   <div className="text-sm font-medium text-muted-foreground">
-                    Firmware Release ID
+                    {t("firmwareReleaseId")}
                   </div>
                   <div className="text-sm">{q.data.firmwareReleaseId}</div>
                 </div>
@@ -135,14 +141,14 @@ export function OtaJobDetailClient({ jobId }: { jobId: number }) {
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <div className="text-sm font-medium text-muted-foreground">
-                    Started At
+                    {t("startedAt")}
                   </div>
                   <div className="text-sm">{fmtDateTime(q.data.sentAt)}</div>
                 </div>
 
                 <div>
                   <div className="text-sm font-medium text-muted-foreground">
-                    Completed At
+                    {t("completedAt")}
                   </div>
                   <div className="text-sm">
                     {fmtDateTime(q.data.appliedAt || q.data.failedAt)}
@@ -152,7 +158,7 @@ export function OtaJobDetailClient({ jobId }: { jobId: number }) {
 
               <div>
                 <div className="text-sm font-medium text-muted-foreground">
-                  Created At
+                  {t("createdAt")}
                 </div>
                 <div className="text-sm">{fmtDateTime(q.data.createdAt)}</div>
               </div>
@@ -160,7 +166,7 @@ export function OtaJobDetailClient({ jobId }: { jobId: number }) {
               {q.data.lastError && (
                 <div>
                   <div className="text-sm font-medium text-muted-foreground">
-                    Error Message
+                    {t("errorMessage")}
                   </div>
                   <div className="text-sm text-red-600 bg-red-50 p-2 rounded border">
                     {q.data.lastError}
@@ -171,7 +177,9 @@ export function OtaJobDetailClient({ jobId }: { jobId: number }) {
           )}
 
           {q.isFetching && !q.isLoading ? (
-            <div className="mt-3 text-xs text-muted-foreground">Updating…</div>
+            <div className="mt-3 text-xs text-muted-foreground">
+              {t("updating")}
+            </div>
           ) : null}
         </CardContent>
       </Card>

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useTranslation } from "@/hooks/use-translation";
 
 function getErrorMessage(payload: unknown): string | null {
   if (!payload || typeof payload !== "object") return null;
@@ -19,6 +20,7 @@ function getErrorMessage(payload: unknown): string | null {
 
 export function UploadFirmwareForm() {
   const router = useRouter();
+  const { t } = useTranslation();
 
   const [platform, setPlatform] = useState("esp32");
   const [version, setVersion] = useState("");
@@ -35,9 +37,13 @@ export function UploadFirmwareForm() {
     setOk(null);
 
     if (!platform.trim())
-      return setErr("Platform wajib diisi (contoh: esp32).");
-    if (!version.trim()) return setErr("Version wajib diisi.");
-    if (!file) return setErr("File firmware wajib dipilih.");
+      return setErr(
+        t("validationError") + ": Platform wajib diisi (contoh: esp32).",
+      );
+    if (!version.trim())
+      return setErr(t("validationError") + ": Version wajib diisi.");
+    if (!file)
+      return setErr(t("validationError") + ": File firmware wajib dipilih.");
 
     const fd = new FormData();
     fd.append("platform", platform.trim());
@@ -61,12 +67,13 @@ export function UploadFirmwareForm() {
         const msg =
           typeof payload === "string"
             ? payload
-            : (getErrorMessage(payload) ?? `Upload gagal (HTTP ${res.status})`);
+            : (getErrorMessage(payload) ??
+              `${t("failedUploadFirmware")} (HTTP ${res.status})`);
 
         throw new Error(msg);
       }
 
-      setOk("Upload berhasil.");
+      setOk(t("firmwareUploaded"));
       setPlatform("esp32");
       setVersion("");
       setNotes("");
@@ -76,7 +83,9 @@ export function UploadFirmwareForm() {
       router.refresh();
     } catch (e: unknown) {
       setErr(
-        e instanceof Error ? e.message || "Upload gagal." : "Upload gagal.",
+        e instanceof Error
+          ? e.message || t("failedUploadFirmware")
+          : t("failedUploadFirmware"),
       );
     } finally {
       setLoading(false);
@@ -86,7 +95,7 @@ export function UploadFirmwareForm() {
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="platform">Platform</Label>
+        <Label htmlFor="platform">{t("platform")}</Label>
         <Input
           id="platform"
           value={platform}
@@ -96,7 +105,7 @@ export function UploadFirmwareForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="version">Version</Label>
+        <Label htmlFor="version">{t("version")}</Label>
         <Input
           id="version"
           value={version}
@@ -106,17 +115,19 @@ export function UploadFirmwareForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="notes">Notes (optional)</Label>
+        <Label htmlFor="notes">
+          {t("releaseNotes")} ({t("optional")})
+        </Label>
         <Input
           id="notes"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder="Release notes singkat"
+          placeholder={t("whatsNew")}
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="file">Firmware file</Label>
+        <Label htmlFor="file">{t("firmwareFile")}</Label>
         <Input
           id="file"
           type="file"
@@ -129,7 +140,7 @@ export function UploadFirmwareForm() {
       {ok ? <div className="text-sm text-green-600">{ok}</div> : null}
 
       <Button type="submit" disabled={loading}>
-        {loading ? "Uploading..." : "Upload"}
+        {loading ? t("uploading") : t("upload")}
       </Button>
     </form>
   );

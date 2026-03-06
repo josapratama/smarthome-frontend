@@ -10,6 +10,7 @@ import type {
   HomesListResponse,
   HomeCreateRequest,
 } from "@/lib/api/dto/homes.dto";
+import { useTranslation } from "@/hooks/use-translation";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -33,6 +34,7 @@ function fmtDateTime(v?: string | null) {
 }
 
 function CreateHomeDialog() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<HomeCreateRequest>({
     name: "",
@@ -62,12 +64,12 @@ function CreateHomeDialog() {
         city: "",
         postalCode: "",
       });
-      toast({ title: "Home created successfully" });
+      toast({ title: t("homeCreatedSuccessfully") });
     },
     onError: (error: any) => {
       toast({
-        title: "Failed to create home",
-        description: error.message || "Unknown error",
+        title: t("failedToCreateHome"),
+        description: error.message || t("unknownError"),
         variant: "destructive",
       });
     },
@@ -76,15 +78,15 @@ function CreateHomeDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Create Home</Button>
+        <Button>{t("createHome")}</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create New Home</DialogTitle>
+          <DialogTitle>{t("createNewHome")}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div>
-            <Label htmlFor="name">Name *</Label>
+            <Label htmlFor="name">{t("name")} *</Label>
             <Input
               id="name"
               value={formData.name}
@@ -94,11 +96,11 @@ function CreateHomeDialog() {
                   name: e.target.value,
                 }))
               }
-              placeholder="Home name"
+              placeholder={t("homeName")}
             />
           </div>
           <div>
-            <Label htmlFor="addressText">Address</Label>
+            <Label htmlFor="addressText">{t("address")}</Label>
             <Input
               id="addressText"
               value={formData.addressText}
@@ -108,12 +110,12 @@ function CreateHomeDialog() {
                   addressText: e.target.value,
                 }))
               }
-              placeholder="Full address"
+              placeholder={t("fullAddress")}
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="city">City</Label>
+              <Label htmlFor="city">{t("city")}</Label>
               <Input
                 id="city"
                 value={formData.city}
@@ -123,11 +125,11 @@ function CreateHomeDialog() {
                     city: e.target.value,
                   }))
                 }
-                placeholder="City"
+                placeholder={t("city")}
               />
             </div>
             <div>
-              <Label htmlFor="postalCode">Postal Code</Label>
+              <Label htmlFor="postalCode">{t("postalCode")}</Label>
               <Input
                 id="postalCode"
                 value={formData.postalCode}
@@ -137,19 +139,19 @@ function CreateHomeDialog() {
                     postalCode: e.target.value,
                   }))
                 }
-                placeholder="Postal code"
+                placeholder={t("postalCode")}
               />
             </div>
           </div>
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setOpen(false)}>
-              Cancel
+              {t("cancel")}
             </Button>
             <Button
               onClick={() => createMutation.mutate(formData)}
               disabled={!formData.name || createMutation.isPending}
             >
-              {createMutation.isPending ? "Creating..." : "Create"}
+              {createMutation.isPending ? t("creating") : t("create")}
             </Button>
           </div>
         </div>
@@ -159,6 +161,7 @@ function CreateHomeDialog() {
 }
 
 export function HomesClient() {
+  const { t } = useTranslation();
   const [searchText, setSearchText] = useState("");
 
   const q = useQuery({
@@ -182,9 +185,9 @@ export function HomesClient() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Homes</h1>
+          <h1 className="text-2xl font-semibold">{t("homes")}</h1>
           <p className="text-sm text-muted-foreground">
-            Manage homes and their settings.
+            {t("manageHomesAndSettings")}
           </p>
         </div>
 
@@ -192,7 +195,7 @@ export function HomesClient() {
           <Input
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            placeholder="Search homes..."
+            placeholder={t("searchHomes")}
             className="sm:w-[300px]"
           />
           <Button
@@ -200,7 +203,7 @@ export function HomesClient() {
             onClick={() => q.refetch()}
             disabled={q.isFetching}
           >
-            Refresh
+            {t("refresh")}
           </Button>
           <CreateHomeDialog />
         </div>
@@ -208,7 +211,7 @@ export function HomesClient() {
 
       <Card className="rounded-2xl shadow-sm">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Homes List</CardTitle>
+          <CardTitle className="text-base">{t("homesList")}</CardTitle>
         </CardHeader>
 
         <CardContent>
@@ -224,7 +227,7 @@ export function HomesClient() {
             </div>
           ) : filtered.length === 0 ? (
             <div className="text-sm text-muted-foreground">
-              {searchText ? "No homes match your search." : "No homes found."}
+              {searchText ? t("noHomesMatchSearch") : t("noHomesFound")}
             </div>
           ) : (
             <div className="divide-y rounded-xl border">
@@ -238,18 +241,20 @@ export function HomesClient() {
                       <span className="font-medium">
                         #{home.id} • {home.name}
                       </span>
-                      <Badge variant="outline">Owner: {home.ownerUserId}</Badge>
+                      <Badge variant="outline">
+                        {t("owner")}: {home.ownerUserId}
+                      </Badge>
                     </div>
 
                     <div className="mt-1 text-sm text-muted-foreground">
-                      {home.addressText || "No address"}
+                      {home.addressText || t("noAddress")}
                       {home.city && ` • ${home.city}`}
                       {home.postalCode && ` • ${home.postalCode}`}
                     </div>
 
                     <div className="mt-1 text-xs text-muted-foreground">
-                      Created: {fmtDateTime(home.createdAt)} • Updated:{" "}
-                      {fmtDateTime(home.updatedAt)}
+                      {t("created")}: {fmtDateTime(home.createdAt)} •{" "}
+                      {t("updated")}: {fmtDateTime(home.updatedAt)}
                     </div>
                   </div>
 
@@ -258,13 +263,13 @@ export function HomesClient() {
                       className="text-sm underline underline-offset-4 hover:opacity-80"
                       href={`/homes/${home.id}/rooms`}
                     >
-                      Rooms
+                      {t("rooms")}
                     </Link>
                     <Link
                       className="text-sm underline underline-offset-4 hover:opacity-80"
                       href={`/devices?homeId=${home.id}`}
                     >
-                      Devices
+                      {t("devices")}
                     </Link>
                   </div>
                 </div>
@@ -273,7 +278,9 @@ export function HomesClient() {
           )}
 
           {q.isFetching && !q.isLoading ? (
-            <div className="mt-3 text-xs text-muted-foreground">Updating…</div>
+            <div className="mt-3 text-xs text-muted-foreground">
+              {t("updating")}…
+            </div>
           ) : null}
         </CardContent>
       </Card>

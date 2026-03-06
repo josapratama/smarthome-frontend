@@ -414,13 +414,10 @@ export function DeviceDetailClient({ deviceId }: { deviceId: number }) {
             <Button
               variant="outline"
               className="justify-start"
-              onClick={() => sendCredentialsMutation.mutate()}
-              disabled={sendCredentialsMutation.isPending}
+              onClick={() => router.push(`/devices/${deviceId}/channels`)}
             >
-              <Key className="mr-2 h-4 w-4" />
-              {sendCredentialsMutation.isPending
-                ? "Sending..."
-                : "Send Credentials"}
+              <Zap className="mr-2 h-4 w-4" />
+              Manage Channels
             </Button>
             <Button
               variant="outline"
@@ -429,6 +426,17 @@ export function DeviceDetailClient({ deviceId }: { deviceId: number }) {
             >
               <Activity className="mr-2 h-4 w-4" />
               View Telemetry Data
+            </Button>
+            <Button
+              variant="outline"
+              className="justify-start"
+              onClick={() => sendCredentialsMutation.mutate()}
+              disabled={sendCredentialsMutation.isPending}
+            >
+              <Key className="mr-2 h-4 w-4" />
+              {sendCredentialsMutation.isPending
+                ? "Sending..."
+                : "Send Credentials"}
             </Button>
             <Button
               variant="outline"

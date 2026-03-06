@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
+import { useLanguage } from "@/contexts/language-context";
 
 type Device = { id: number; name?: string | null; status?: boolean | null };
 type Release = { id: number; version: string };
@@ -45,6 +46,8 @@ export function OtaTriggerPanel({
   devices: Device[];
   releases: Release[];
 }) {
+  const { t } = useLanguage();
+
   // default selection: first item
   const [deviceId, setDeviceId] = useState<number>(() => devices[0]?.id ?? 0);
   const [releaseId, setReleaseId] = useState<number>(
@@ -89,17 +92,17 @@ export function OtaTriggerPanel({
 
       if (!res.ok) {
         throw new Error(
-          getMsg(payload) ?? `Trigger OTA gagal (HTTP ${res.status})`,
+          getMsg(payload) ?? `${t("failedTriggerOta")} (HTTP ${res.status})`,
         );
       }
 
-      setOk("OTA triggered.");
+      setOk(t("otaTriggered"));
       await jobsQuery.refetch();
     } catch (e: unknown) {
       setErr(
         e instanceof Error
-          ? e.message || "Trigger OTA gagal."
-          : "Trigger OTA gagal.",
+          ? e.message || t("failedTriggerOta")
+          : t("failedTriggerOta"),
       );
     } finally {
       setLoading(false);
@@ -112,7 +115,9 @@ export function OtaTriggerPanel({
     <div className="space-y-4 rounded-lg border p-4">
       <div className="flex flex-col gap-3 md:flex-row md:items-end">
         <div className="flex-1">
-          <label className="text-sm text-muted-foreground">Device</label>
+          <label className="text-sm text-muted-foreground">
+            {t("selectDevice")}
+          </label>
           <select
             className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
             value={deviceId}
@@ -121,7 +126,7 @@ export function OtaTriggerPanel({
             {devices.map((d) => (
               <option key={d.id} value={d.id}>
                 #{d.id} {d.name ? `- ${d.name}` : ""}{" "}
-                {d.status ? "(ONLINE)" : "(OFFLINE)"}
+                {d.status ? `(${t("online")})` : `(${t("offline")})`}
               </option>
             ))}
           </select>
@@ -129,7 +134,7 @@ export function OtaTriggerPanel({
 
         <div className="flex-1">
           <label className="text-sm text-muted-foreground">
-            Firmware Release
+            {t("selectFirmwareVersion")}
           </label>
           <select
             className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
@@ -145,7 +150,7 @@ export function OtaTriggerPanel({
         </div>
 
         <Button onClick={trigger} disabled={!canSubmit || loading}>
-          {loading ? "Triggering..." : "Trigger OTA"}
+          {loading ? t("triggering") : t("triggerOta")}
         </Button>
       </div>
 
@@ -154,7 +159,7 @@ export function OtaTriggerPanel({
 
       {jobsQuery.isError ? (
         <div className="text-sm text-red-600">
-          {(jobsQuery.error as Error)?.message ?? "Failed to load OTA jobs."}
+          {(jobsQuery.error as Error)?.message ?? t("error")}
         </div>
       ) : null}
 
@@ -162,10 +167,10 @@ export function OtaTriggerPanel({
         <table className="w-full text-sm">
           <thead className="text-left text-muted-foreground">
             <tr className="border-b">
-              <th className="py-2 pr-4">Job</th>
-              <th className="py-2 pr-4">Status</th>
-              <th className="py-2 pr-4">Progress</th>
-              <th className="py-2 pr-4">Error</th>
+              <th className="py-2 pr-4">{t("jobs")}</th>
+              <th className="py-2 pr-4">{t("status")}</th>
+              <th className="py-2 pr-4">{t("progress")}</th>
+              <th className="py-2 pr-4">{t("errorMessage")}</th>
             </tr>
           </thead>
           <tbody>
@@ -188,7 +193,7 @@ export function OtaTriggerPanel({
             {jobsQuery.isLoading ? (
               <tr>
                 <td colSpan={4} className="py-6 text-muted-foreground">
-                  Loading OTA jobs...
+                  {t("loading")}
                 </td>
               </tr>
             ) : null}
@@ -196,7 +201,7 @@ export function OtaTriggerPanel({
             {!jobsQuery.isLoading && jobs.length === 0 ? (
               <tr>
                 <td colSpan={4} className="py-6 text-muted-foreground">
-                  No OTA jobs for this device.
+                  {t("noJobsYet")}
                 </td>
               </tr>
             ) : null}

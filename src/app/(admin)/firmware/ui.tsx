@@ -448,7 +448,7 @@ export function FirmwareClient() {
                   <div className="flex shrink-0 items-center gap-2">
                     <Button variant="outline" size="sm" asChild>
                       <a
-                        href={`http://192.168.100.11:3000/api/v1/firmware/releases/${firmware.id}/download`}
+                        href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/api/v1/firmware/releases/${firmware.id}/download`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
