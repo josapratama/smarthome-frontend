@@ -8,7 +8,7 @@ import type {
 
 export const energyApi = {
   async getEnergyUsage(filters: EnergyFilters): Promise<EnergyUsageDaily[]> {
-    const { data } = await api.get<EnergyUsageDaily[]>("/energy/usage", {
+    const { data } = await api.get<EnergyUsageDaily[]>("/v1/energy/usage", {
       params: filters,
     });
     return data;
@@ -19,14 +19,14 @@ export const energyApi = {
     days = 7,
   ): Promise<EnergyPrediction[]> {
     const { data } = await api.get<EnergyPrediction[]>(
-      `/energy/predictions/${deviceId}`,
+      `/v1/energy/predictions/${deviceId}`,
       { params: { days } },
     );
     return data;
   },
 
   async getEnergyStats(homeId?: number): Promise<EnergyStats> {
-    const { data } = await api.get<EnergyStats>("/energy/stats", {
+    const { data } = await api.get<EnergyStats>("/v1/energy/stats", {
       params: { homeId },
     });
     return data;
@@ -37,7 +37,7 @@ export const energyApi = {
     startDate: string,
     endDate: string,
   ): Promise<EnergyUsageDaily[]> {
-    const { data } = await api.get<EnergyUsageDaily[]>("/energy/daily", {
+    const { data } = await api.get<EnergyUsageDaily[]>("/v1/energy/daily", {
       params: { homeId, startDate, endDate },
     });
     return data;

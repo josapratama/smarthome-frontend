@@ -29,14 +29,14 @@ export const devicesApi = {
   list: async (homeId?: number) => {
     const params = homeId ? `?homeId=${homeId}` : "";
     const res = await api.get<{ data: DeviceWithDetails[] }>(
-      `/devices${params}`,
+      `/v1/devices${params}`,
     );
     return res.data.data;
   },
 
   getById: async (deviceId: number) => {
     const res = await api.get<{ data: DeviceWithDetails }>(
-      `/devices/${deviceId}`,
+      `/v1/devices/${deviceId}`,
     );
     return res.data.data;
   },
@@ -46,13 +46,13 @@ export const devicesApi = {
     input: { name?: string; roomId?: number | null },
   ) => {
     const res = await api.patch<{ data: Device }>(
-      `/devices/${deviceId}`,
+      `/v1/devices/${deviceId}`,
       input,
     );
     return res.data.data;
   },
 
   delete: async (deviceId: number) => {
-    await api.delete(`/devices/${deviceId}`);
+    await api.delete(`/v1/devices/${deviceId}`);
   },
 };
