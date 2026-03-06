@@ -4,10 +4,18 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Search, MessageCircle, HelpCircle } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 import { getFAQs, getCategories, type FAQ } from "@/lib/api/faq";
 import { FAQList } from "./faq-list";
+import { ChatContent } from "@/components/chat/chat-content";
+import { v4 as uuidv4 } from "uuid";
 
 const CATEGORIES = [
   "GENERAL",
@@ -29,6 +37,18 @@ export default function HelpPage() {
   const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>(
     {},
   );
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [sessionId] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      let sid = localStorage.getItem("chat_session_id");
+      if (!sid) {
+        sid = uuidv4();
+        localStorage.setItem("chat_session_id", sid);
+      }
+      return sid;
+    }
+    return "";
+  });
 
   useEffect(() => {
     loadFAQs();
@@ -146,9 +166,32 @@ export default function HelpPage() {
           <MessageCircle className="h-12 w-12 mx-auto mb-4 text-primary" />
           <h3 className="text-xl font-semibold mb-2">{t("chatWithAI")}</h3>
           <p className="text-muted-foreground mb-4">{t("askMeAnything")}</p>
-          <p className="text-sm text-muted-foreground">{t("startChatting")}</p>
+          <Button onClick={() => setIsChatOpen(true)} className="md:hidden">
+            <MessageCircle className="h-4 w-4 mr-2" />
+            {t("startChatting")}
+          </Button>
+          <p className="text-sm text-muted-foreground hidden md:block">
+            {t("clickChatButton")}
+          </p>
         </CardContent>
       </Card>
+
+      {/* Mobile Chat Dialog */}
+      <Dialog open={isChatOpen} onOpenChange={setIsChatOpen}>
+        <DialogContent className="p-0 max-w-full h-[90vh] sm:max-w-md flex flex-col">
+          <DialogHeader className="p-4 border-b">
+            <DialogTitle className="flex items-center gap-2">
+              <MessageCircle className="h-5 w-5" />
+              {t("aiAssistant")}
+            </DialogTitle>
+          </DialogHeader>
+          {sessionId && (
+            <div className="flex-1 overflow-hidden">
+              <ChatContent sessionId={sessionId} />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -23,10 +23,10 @@ export function ChatWidget() {
 
   return (
     <>
-      {/* Floating Button */}
+      {/* Floating Button - Hidden on mobile (< 768px) */}
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-50"
+        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-50 hidden md:flex"
         size="icon"
       >
         {isOpen ? (
@@ -36,7 +36,7 @@ export function ChatWidget() {
         )}
       </Button>
 
-      {/* Chat Window */}
+      {/* Chat Window - Responsive positioning */}
       {isOpen && sessionId && (
         <ChatWindow sessionId={sessionId} onClose={() => setIsOpen(false)} />
       )}

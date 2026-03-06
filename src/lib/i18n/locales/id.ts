@@ -969,8 +969,11 @@ export const id = {
   helpfulVotes: "Vote Membantu",
 
   // Chat
-  chatWithAI: "Chat dengan AI",
-  askMeAnything: "Tanya apa saja tentang aplikasi...",
+  aiAssistant: "Asisten AI",
+  startChatting: "Mulai bertanya tentang aplikasi",
+  clickChatButton: "Klik tombol chat di pojok kanan bawah",
+  chatWithAI: "Chat dengan Asisten AI",
+  askMeAnything: "Tanyakan apa saja tentang sistem smart home",
   typeMessage: "Ketik pesan...",
   sendMessage: "Kirim",
   newConversation: "Percakapan Baru",
@@ -978,8 +981,6 @@ export const id = {
   deleteConversation: "Hapus Percakapan",
   confirmDeleteConversation:
     "Apakah Anda yakin ingin menghapus percakapan ini?",
-  aiAssistant: "Asisten AI",
-  startChatting: "Mulai bertanya tentang aplikasi",
   thinking: "Sedang berpikir...",
 
   // FAQ Management (Admin)

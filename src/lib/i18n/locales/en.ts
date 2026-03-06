@@ -984,8 +984,11 @@ export const en = {
   helpfulVotes: "Helpful Votes",
 
   // Chat
-  chatWithAI: "Chat with AI",
-  askMeAnything: "Ask me anything about the app...",
+  aiAssistant: "AI Assistant",
+  startChatting: "Start asking about the app",
+  clickChatButton: "Click the chat button in the bottom right corner",
+  chatWithAI: "Chat with AI Assistant",
+  askMeAnything: "Ask me anything about the smart home system",
   typeMessage: "Type a message...",
   sendMessage: "Send",
   newConversation: "New Conversation",
@@ -993,8 +996,6 @@ export const en = {
   deleteConversation: "Delete Conversation",
   confirmDeleteConversation:
     "Are you sure you want to delete this conversation?",
-  aiAssistant: "AI Assistant",
-  startChatting: "Start asking about the app",
   thinking: "Thinking...",
 
   // FAQ Management (Admin)
