@@ -23,6 +23,7 @@ import {
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/language-context";
 import type { NotificationTemplate } from "./types";
+import { apiFetchBrowser } from "@/lib/api/client.browser";
 
 interface EditTemplateDialogProps {
   template: NotificationTemplate | null;
@@ -55,7 +56,7 @@ export function EditTemplateDialog({
 
     setIsSaving(true);
     try {
-      const res = await fetch(
+      const res = await apiFetchBrowser(
         `/api/v1/notifications/templates/${template.type}`,
         {
           method: "PATCH",

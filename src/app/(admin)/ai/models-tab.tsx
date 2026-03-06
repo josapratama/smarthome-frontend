@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -32,6 +33,7 @@ import {
   TrendingUp,
   CheckCircle,
   Clock,
+  Shield,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 import { useToast } from "@/hooks/use-toast";
@@ -40,25 +42,28 @@ import {
   type AIModel,
   type CreateAIModelInput,
   type AIModelAlgorithm,
+  type AIModelType,
 } from "@/lib/api/ai-models";
 
 export function ModelsTab() {
   const { t } = useLanguage();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [selectedTab, setSelectedTab] = useState<AIModelType>("prediction");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [formData, setFormData] = useState<CreateAIModelInput>({
     name: "",
     version: "1.0.0",
+    modelType: "prediction",
     algorithm: "moving_average",
     parameters: {},
     description: "",
   });
 
-  // Fetch AI models
+  // Fetch AI models based on selected tab
   const { data: models, isLoading: modelsLoading } = useQuery<AIModel[]>({
-    queryKey: ["ai-models"],
-    queryFn: () => aiModelsApi.getModels(),
+    queryKey: ["ai-models", selectedTab],
+    queryFn: () => aiModelsApi.getModels({ modelType: selectedTab }),
   });
 
   // Create model mutation
@@ -85,12 +90,19 @@ export function ModelsTab() {
   // Activate model mutation
   const activateModelMutation = useMutation({
     mutationFn: aiModelsApi.activateModel,
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["ai-models"] });
-      toast({
-        title: t("success"),
-        description: t("modelActivated"),
-      });
+      if (data.action === "deactivated") {
+        toast({
+          title: t("success"),
+          description: t("modelDeactivated"),
+        });
+      } else {
+        toast({
+          title: t("success"),
+          description: t("modelActivated"),
+        });
+      }
     },
   });
 
@@ -117,7 +129,9 @@ export function ModelsTab() {
     setFormData({
       name: "",
       version: "1.0.0",
-      algorithm: "moving_average",
+      modelType: selectedTab,
+      algorithm:
+        selectedTab === "prediction" ? "moving_average" : "isolation_forest",
       parameters: {},
       description: "",
     });
@@ -127,130 +141,191 @@ export function ModelsTab() {
     createModelMutation.mutate(formData);
   };
 
+  const handleOpenCreateDialog = () => {
+    setFormData({
+      ...formData,
+      modelType: selectedTab,
+      algorithm:
+        selectedTab === "prediction" ? "moving_average" : "isolation_forest",
+    });
+    setIsCreateDialogOpen(true);
+  };
+
   const getAlgorithmLabel = (algorithm: AIModelAlgorithm) => {
     const labels: Record<AIModelAlgorithm, string> = {
       moving_average: t("movingAverage"),
       linear_regression: t("linearRegression"),
       seasonal_decomposition: t("seasonalDecomposition"),
+      isolation_forest: t("isolationForest"),
+      one_class_svm: t("oneClassSvm"),
+      local_outlier_factor: t("localOutlierFactor"),
     };
     return labels[algorithm] || algorithm;
+  };
+
+  const renderModelsList = () => {
+    if (modelsLoading) {
+      return (
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-24 w-full" />
+          ))}
+        </div>
+      );
+    }
+
+    if (!models || models.length === 0) {
+      return (
+        <div className="text-center py-12">
+          <p className="text-gray-500 dark:text-gray-400">
+            {t("noModelsFound")}
+          </p>
+          <Button
+            onClick={handleOpenCreateDialog}
+            className="mt-4"
+            variant="outline"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            {t("createFirstModel")}
+          </Button>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-4">
+        {models.map((model) => (
+          <Card key={model.id} className="border-gray-200 dark:border-gray-700">
+            <CardContent className="p-4">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="font-semibold text-gray-900 dark:text-white">
+                      {model.name}
+                    </h3>
+                    <Badge variant="outline" className="text-xs">
+                      v{model.version}
+                    </Badge>
+                    {model.isActive ? (
+                      <Badge
+                        className="border-0"
+                        style={{
+                          backgroundColor: "#16a34a",
+                          color: "white",
+                        }}
+                      >
+                        <CheckCircle className="h-3 w-3 mr-1" />
+                        {t("active")} • {t("inUse")}
+                      </Badge>
+                    ) : (
+                      <Badge variant="secondary">
+                        <Clock className="h-3 w-3 mr-1" />
+                        {t("inactive")}
+                      </Badge>
+                    )}
+                  </div>
+
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    {model.description || t("noDescription")}
+                  </p>
+
+                  <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+                    <span>
+                      {t("algorithm")}: {getAlgorithmLabel(model.algorithm)}
+                    </span>
+                    <span>
+                      <TrendingUp className="h-3 w-3 inline mr-1" />
+                      {t("accuracy")}: {(model.avgAccuracy * 100).toFixed(1)}%
+                    </span>
+                    <span>
+                      {t("predictions")}: {model.totalPredictions}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  {model.isActive ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => activateModelMutation.mutate(model.name)}
+                      disabled={activateModelMutation.isPending}
+                      className="border-red-300 text-red-600 hover:bg-red-50 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-950"
+                    >
+                      <PowerOff className="h-4 w-4 mr-1" />
+                      {t("deactivate")}
+                    </Button>
+                  ) : (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => activateModelMutation.mutate(model.name)}
+                      disabled={activateModelMutation.isPending}
+                      className="border-green-300 text-green-600 hover:bg-green-50 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-950"
+                    >
+                      <Power className="h-4 w-4 mr-1" />
+                      {t("activate")}
+                    </Button>
+                  )}
+                  {!model.isActive && (
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => deleteModelMutation.mutate(model.name)}
+                      disabled={deleteModelMutation.isPending}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
   };
 
   return (
     <>
       <Card className="rounded-2xl shadow-sm border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-xl font-semibold text-gray-900 dark:text-white">
-            {t("aiModels")}
-          </CardTitle>
-          <Button onClick={() => setIsCreateDialogOpen(true)} size="sm">
-            <Plus className="h-4 w-4" />
+          <div>
+            <CardTitle className="text-xl font-semibold text-gray-900 dark:text-white">
+              {t("aiModels")}
+            </CardTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              {t("selectActiveModelDescription")}
+            </p>
+          </div>
+          <Button onClick={handleOpenCreateDialog} size="sm">
+            <Plus className="h-4 w-4 mr-2" />
             {t("createModel")}
           </Button>
         </CardHeader>
         <CardContent>
-          {modelsLoading ? (
-            <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-24 w-full" />
-              ))}
-            </div>
-          ) : !models || models.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-500 dark:text-gray-400">
-                {t("noModelsFound")}
-              </p>
-              <Button
-                onClick={() => setIsCreateDialogOpen(true)}
-                className="mt-4"
-                variant="outline"
+          <Tabs
+            value={selectedTab}
+            onValueChange={(v) => setSelectedTab(v as AIModelType)}
+          >
+            <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsTrigger
+                value="prediction"
+                className="flex items-center gap-2"
               >
-                <Plus className="h-4 w-4" />
-                {t("createFirstModel")}
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {models.map((model) => (
-                <Card
-                  key={model.id}
-                  className="border-gray-200 dark:border-gray-700"
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <h3 className="font-semibold text-gray-900 dark:text-white">
-                            {model.name}
-                          </h3>
-                          <Badge variant="outline" className="text-xs">
-                            v{model.version}
-                          </Badge>
-                          {model.isActive ? (
-                            <Badge className="bg-green-500 text-white">
-                              <CheckCircle className="h-3 w-3 mr-1" />
-                              {t("active")}
-                            </Badge>
-                          ) : (
-                            <Badge variant="secondary">
-                              <Clock className="h-3 w-3 mr-1" />
-                              {t("inactive")}
-                            </Badge>
-                          )}
-                        </div>
+                <TrendingUp className="h-4 w-4" />
+                {t("predictionModels")}
+              </TabsTrigger>
+              <TabsTrigger value="anomaly" className="flex items-center gap-2">
+                <Shield className="h-4 w-4" />
+                {t("anomalyModels")}
+              </TabsTrigger>
+            </TabsList>
 
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                          {model.description || t("noDescription")}
-                        </p>
+            <TabsContent value="prediction">{renderModelsList()}</TabsContent>
 
-                        <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-                          <span>
-                            {t("algorithm")}:{" "}
-                            {getAlgorithmLabel(model.algorithm)}
-                          </span>
-                          <span>
-                            <TrendingUp className="h-3 w-3 inline mr-1" />
-                            {t("accuracy")}:{" "}
-                            {(model.avgAccuracy * 100).toFixed(1)}%
-                          </span>
-                          <span>
-                            {t("predictions")}: {model.totalPredictions}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex gap-2">
-                        {!model.isActive && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() =>
-                              activateModelMutation.mutate(model.name)
-                            }
-                            disabled={activateModelMutation.isPending}
-                          >
-                            <Power className="h-4 w-4" />
-                          </Button>
-                        )}
-                        {!model.isActive && (
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() =>
-                              deleteModelMutation.mutate(model.name)
-                            }
-                            disabled={deleteModelMutation.isPending}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
+            <TabsContent value="anomaly">{renderModelsList()}</TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
 
@@ -258,9 +333,15 @@ export function ModelsTab() {
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>{t("createAIModel")}</DialogTitle>
+            <DialogTitle>
+              {selectedTab === "prediction"
+                ? t("createPredictionModel")
+                : t("createAnomalyModel")}
+            </DialogTitle>
             <DialogDescription>
-              {t("createAIModelDescription")}
+              {selectedTab === "prediction"
+                ? t("createAIModelDescription")
+                : t("createAnomalyModelDescription")}
             </DialogDescription>
           </DialogHeader>
 
@@ -273,7 +354,11 @@ export function ModelsTab() {
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
-                placeholder="moving-avg-v1"
+                placeholder={
+                  selectedTab === "prediction"
+                    ? "moving-avg-v1"
+                    : "isolation-forest-v1"
+                }
               />
             </div>
 
@@ -301,15 +386,31 @@ export function ModelsTab() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="moving_average">
-                    {t("movingAverage")}
-                  </SelectItem>
-                  <SelectItem value="linear_regression">
-                    {t("linearRegression")}
-                  </SelectItem>
-                  <SelectItem value="seasonal_decomposition">
-                    {t("seasonalDecomposition")}
-                  </SelectItem>
+                  {selectedTab === "prediction" ? (
+                    <>
+                      <SelectItem value="moving_average">
+                        {t("movingAverage")}
+                      </SelectItem>
+                      <SelectItem value="linear_regression">
+                        {t("linearRegression")}
+                      </SelectItem>
+                      <SelectItem value="seasonal_decomposition">
+                        {t("seasonalDecomposition")}
+                      </SelectItem>
+                    </>
+                  ) : (
+                    <>
+                      <SelectItem value="isolation_forest">
+                        {t("isolationForest")}
+                      </SelectItem>
+                      <SelectItem value="one_class_svm">
+                        {t("oneClassSvm")}
+                      </SelectItem>
+                      <SelectItem value="local_outlier_factor">
+                        {t("localOutlierFactor")}
+                      </SelectItem>
+                    </>
+                  )}
                 </SelectContent>
               </Select>
             </div>
@@ -340,7 +441,11 @@ export function ModelsTab() {
                     // Invalid JSON, ignore
                   }
                 }}
-                placeholder='{"windowSize": 24, "smoothingFactor": 0.3}'
+                placeholder={
+                  selectedTab === "prediction"
+                    ? '{"windowSize": 24, "smoothingFactor": 0.3}'
+                    : '{"n_estimators": 100, "contamination": 0.1}'
+                }
                 rows={4}
                 className="font-mono text-sm"
               />

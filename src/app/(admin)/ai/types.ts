@@ -1,4 +1,9 @@
-export type AITab = "predictions" | "anomalies" | "rules" | "models";
+export type AITab =
+  | "predictions"
+  | "anomalies"
+  | "rules"
+  | "models"
+  | "homeModels";
 
 export interface CreateRuleFormData {
   name: string;

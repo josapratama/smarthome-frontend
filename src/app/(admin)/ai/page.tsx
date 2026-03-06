@@ -24,6 +24,7 @@ import { PredictionsTab } from "./predictions-tab";
 import { AnomaliesTab } from "./anomalies-tab";
 import { RulesTab } from "./rules-tab";
 import { ModelsTab } from "./models-tab";
+import { HomeModelsTab } from "./home-models-tab";
 import { CreateRuleDialog } from "./create-rule-dialog";
 import type { AITab, CreateRuleFormData } from "./types";
 
@@ -186,38 +187,59 @@ export default function AIPage() {
       <AIStatsCards stats={stats} isLoading={statsLoading} />
 
       {/* Tab Navigation */}
-      <div className="flex gap-2 border-b dark:border-gray-800">
+      <div
+        className="flex gap-2 border-b dark:border-gray-800 overflow-x-auto pb-px -mx-1 px-1"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
         <Button
           variant={selectedTab === "predictions" ? "default" : "ghost"}
           onClick={() => setSelectedTab("predictions")}
-          className="rounded-b-none"
+          className="rounded-b-none whitespace-nowrap flex-shrink-0 text-xs sm:text-sm px-3 sm:px-4"
+          size="sm"
         >
-          <TrendingUp className="h-4 w-4" />
-          {t("energyPredictions")}
+          <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+          <span className="hidden xs:inline">{t("energyPredictions")}</span>
+          <span className="xs:hidden">{t("predictions")}</span>
         </Button>
         <Button
           variant={selectedTab === "anomalies" ? "default" : "ghost"}
           onClick={() => setSelectedTab("anomalies")}
-          className="rounded-b-none"
+          className="rounded-b-none whitespace-nowrap flex-shrink-0 text-xs sm:text-sm px-3 sm:px-4"
+          size="sm"
         >
-          <Brain className="h-4 w-4" />
-          {t("anomalyDetection")}
+          <Brain className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+          <span className="hidden xs:inline">{t("anomalyDetection")}</span>
+          <span className="xs:hidden">{t("anomalies")}</span>
         </Button>
         <Button
           variant={selectedTab === "rules" ? "default" : "ghost"}
           onClick={() => setSelectedTab("rules")}
-          className="rounded-b-none"
+          className="rounded-b-none whitespace-nowrap flex-shrink-0 text-xs sm:text-sm px-3 sm:px-4"
+          size="sm"
         >
-          <Settings className="h-4 w-4" />
-          {t("aiRules")}
+          <Settings className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+          <span className="hidden xs:inline">{t("aiRules")}</span>
+          <span className="xs:hidden">{t("rules")}</span>
         </Button>
         <Button
           variant={selectedTab === "models" ? "default" : "ghost"}
           onClick={() => setSelectedTab("models")}
-          className="rounded-b-none"
+          className="rounded-b-none whitespace-nowrap flex-shrink-0 text-xs sm:text-sm px-3 sm:px-4"
+          size="sm"
         >
-          <Sparkles className="h-4 w-4" />
-          {t("aiModels")}
+          <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+          <span className="hidden xs:inline">{t("aiModels")}</span>
+          <span className="xs:hidden">{t("models")}</span>
+        </Button>
+        <Button
+          variant={selectedTab === "homeModels" ? "default" : "ghost"}
+          onClick={() => setSelectedTab("homeModels")}
+          className="rounded-b-none whitespace-nowrap flex-shrink-0 text-xs sm:text-sm px-3 sm:px-4"
+          size="sm"
+        >
+          <Settings className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+          <span className="hidden xs:inline">{t("homeAIModels")}</span>
+          <span className="xs:hidden">{t("homeModels")}</span>
         </Button>
       </div>
 
@@ -244,6 +266,8 @@ export default function AIPage() {
       )}
 
       {selectedTab === "models" && <ModelsTab />}
+
+      {selectedTab === "homeModels" && <HomeModelsTab />}
 
       {/* Create AI Rule Dialog */}
       <CreateRuleDialog

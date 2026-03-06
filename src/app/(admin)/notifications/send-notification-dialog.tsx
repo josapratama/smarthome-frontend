@@ -25,6 +25,7 @@ import { Send } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/language-context";
 import type { SendNotificationForm } from "./types";
+import { apiFetchBrowser } from "@/lib/api/client.browser";
 
 interface SendNotificationDialogProps {
   open: boolean;
@@ -47,7 +48,7 @@ export function SendNotificationDialog({
 
   const handleSendNotification = async () => {
     try {
-      const res = await fetch("/api/v1/notifications/send", {
+      const res = await apiFetchBrowser("/api/v1/notifications/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

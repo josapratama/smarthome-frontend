@@ -819,6 +819,7 @@ export const es = {
   alarmTypeOvercurrent: "Sobrecorriente",
   alarmTypeSensorMalfunction: "Sensor Defectuoso",
   alarmTypeEnergyAnomaly: "Anomalía de Energía",
+  alarmTypeMlDetection: "Detección de Anomalías IA",
 
   // Alarm Severity
   severityCritical: "Crítico",

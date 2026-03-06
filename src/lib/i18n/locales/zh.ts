@@ -797,6 +797,7 @@ export const zh = {
   alarmTypeOvercurrent: "过流",
   alarmTypeSensorMalfunction: "传感器故障",
   alarmTypeEnergyAnomaly: "能源异常",
+  alarmTypeMlDetection: "AI异常检测",
 
   // Alarm Severity
   severityCritical: "严重",

@@ -10,6 +10,7 @@ import type { NotificationTemplate } from "./types";
 import { SendNotificationDialog } from "./send-notification-dialog";
 import { TemplateCard } from "./template-card";
 import { EditTemplateDialog } from "./edit-template-dialog";
+import { apiFetchBrowser } from "@/lib/api/client.browser";
 
 export default function NotificationsPage() {
   const { t } = useLanguage();
@@ -27,12 +28,12 @@ export default function NotificationsPage() {
   const loadTemplates = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/v1/notifications/templates");
-      const data = await res.json();
-      if (res.ok) {
-        setTemplates(data.data.templates);
-      }
+      const data = await apiFetchBrowser<{
+        data: { templates: NotificationTemplate[] };
+      }>("/api/v1/notifications/templates");
+      setTemplates(data.data.templates);
     } catch (error) {
+      console.error("Error loading templates:", error);
       toast.error(t("failedLoadNotifications"));
     } finally {
       setIsLoading(false);
@@ -43,17 +44,13 @@ export default function NotificationsPage() {
     if (!confirm(t("deleteTemplateConfirm"))) return;
 
     try {
-      const res = await fetch(`/api/v1/notifications/templates/${type}`, {
+      await apiFetchBrowser(`/api/v1/notifications/templates/${type}`, {
         method: "DELETE",
       });
-
-      if (res.ok) {
-        toast.success(t("templateDeleted"));
-        loadTemplates();
-      } else {
-        toast.error(t("failedDeleteTemplate"));
-      }
+      toast.success(t("templateDeleted"));
+      loadTemplates();
     } catch (error) {
+      console.error("Error deleting template:", error);
       toast.error(t("failedDeleteTemplate"));
     }
   };
@@ -71,17 +68,34 @@ export default function NotificationsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">{t("notifications")}</h1>
-          <p className="text-muted-foreground mt-1">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex-1">
+          <h1 className="text-2xl sm:text-3xl font-bold">
+            {t("notifications")}
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
             {t("manageNotificationTemplates")}
           </p>
         </div>
-        <SendNotificationDialog
-          open={isSendDialogOpen}
-          onOpenChange={setIsSendDialogOpen}
-        />
+        <div className="flex gap-2">
+          <Button
+            onClick={() => setIsSendDialogOpen(true)}
+            variant="outline"
+            size="sm"
+            className="flex-1 sm:flex-none"
+          >
+            <Bell className="h-4 w-4 mr-2" />
+            <span className="sm:inline">{t("sendNotification")}</span>
+          </Button>
+          <Button
+            onClick={() => setIsTemplateDialogOpen(true)}
+            size="sm"
+            className="flex-1 sm:flex-none"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            <span className="sm:inline">{t("createTemplate")}</span>
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -118,6 +132,11 @@ export default function NotificationsPage() {
         open={isTemplateDialogOpen}
         onOpenChange={setIsTemplateDialogOpen}
         onSuccess={handleTemplateSuccess}
+      />
+
+      <SendNotificationDialog
+        open={isSendDialogOpen}
+        onOpenChange={setIsSendDialogOpen}
       />
     </div>
   );

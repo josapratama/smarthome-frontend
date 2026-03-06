@@ -812,6 +812,7 @@ export const ja = {
   alarmTypeOvercurrent: "過電流",
   alarmTypeSensorMalfunction: "センサー故障",
   alarmTypeEnergyAnomaly: "エネルギー異常",
+  alarmTypeMlDetection: "AI異常検出",
 
   // Alarm Severity
   severityCritical: "重大",

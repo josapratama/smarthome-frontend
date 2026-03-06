@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { MobileNav } from "./MobileNav";
+import { ChatWidget } from "@/components/chat/chat-widget";
 import { ThemeProvider } from "@/contexts/theme-context";
 import { LanguageProvider } from "@/contexts/language-context";
 
@@ -44,6 +45,9 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
 
           {/* Mobile Bottom Navigation */}
           <MobileNav />
+
+          {/* Chat Widget */}
+          <ChatWidget />
         </div>
       </LanguageProvider>
     </ThemeProvider>

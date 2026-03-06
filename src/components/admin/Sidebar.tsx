@@ -20,6 +20,8 @@ import {
   X,
   LogOut,
   User,
+  Zap,
+  HelpCircle,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 import { cn } from "@/lib/utils";
@@ -45,10 +47,12 @@ export function Sidebar({ className, onClose }: SidebarProps) {
     { name: t("ota"), href: "/ota", icon: Upload },
     { name: t("monitoring"), href: "/monitoring", icon: Activity },
     { name: t("alarms"), href: "/alarms", icon: AlertTriangle },
+    { name: t("energy"), href: "/energy", icon: Zap },
     { name: t("commands"), href: "/commands", icon: Terminal },
     { name: t("notifications"), href: "/notifications", icon: Bell },
     { name: t("invites"), href: "/invites", icon: Mail },
     { name: t("aiModels"), href: "/ai", icon: Brain },
+    { name: t("helpCenter"), href: "/help", icon: HelpCircle },
     { name: t("appInformation"), href: "/app-info", icon: Info },
     { name: t("settings"), href: "/settings", icon: Settings },
   ];

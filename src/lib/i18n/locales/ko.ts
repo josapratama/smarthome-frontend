@@ -805,6 +805,7 @@ export const ko = {
   alarmTypeOvercurrent: "과전류",
   alarmTypeSensorMalfunction: "센서 오작동",
   alarmTypeEnergyAnomaly: "에너지 이상",
+  alarmTypeMlDetection: "AI 이상 감지",
 
   // Alarm Severity
   severityCritical: "치명적",

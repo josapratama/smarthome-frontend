@@ -2,15 +2,21 @@ import { api } from "./client";
 
 // ===== TYPES =====
 
+export type AIModelType = "prediction" | "anomaly";
+
 export type AIModelAlgorithm =
   | "moving_average"
   | "linear_regression"
-  | "seasonal_decomposition";
+  | "seasonal_decomposition"
+  | "isolation_forest"
+  | "one_class_svm"
+  | "local_outlier_factor";
 
 export interface AIModel {
   id: number;
   name: string;
   version: string;
+  modelType: AIModelType;
   algorithm: AIModelAlgorithm;
   parameters: Record<string, any>;
   isActive: boolean;
@@ -52,6 +58,7 @@ export interface BestModelResult {
 export interface CreateAIModelInput {
   name: string;
   version: string;
+  modelType?: AIModelType;
   algorithm: AIModelAlgorithm;
   parameters: Record<string, any>;
   description?: string;
@@ -72,6 +79,7 @@ export const aiModelsApi = {
   getModels: async (params?: {
     isActive?: boolean;
     algorithm?: string;
+    modelType?: AIModelType;
     limit?: number;
   }) => {
     const response = await api.get<{ models: AIModel[] }>("/v1/ai-models", {
@@ -103,10 +111,10 @@ export const aiModelsApi = {
 
   // Activate model (admin only)
   activateModel: async (name: string) => {
-    const response = await api.post<{ model: AIModel }>(
+    const response = await api.post<{ model: AIModel; action?: string }>(
       `/v1/ai-models/${name}/activate`,
     );
-    return response.data.model;
+    return response.data;
   },
 
   // Delete model (admin only)
