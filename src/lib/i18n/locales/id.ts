@@ -1201,4 +1201,12 @@ export const id = {
   noPublicHomes: "Tidak ada rumah publik tersedia",
   noPublicDevices: "Tidak ada perangkat publik tersedia",
   backToHome: "Kembali ke Beranda",
+
+  // Energy Extended
+  timeRange: "Rentang Waktu",
+  thisWeek: "Minggu Ini",
+  fromYesterday: "dari kemarin",
+  perDay: "per hari",
+  dailyAverage: "Rata-rata Harian",
+  total: "Total",
 } as const;

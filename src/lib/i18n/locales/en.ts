@@ -1214,4 +1214,12 @@ export const en = {
   noPublicHomes: "No public homes available",
   noPublicDevices: "No public devices available",
   backToHome: "Back to Home",
+
+  // Energy Extended
+  timeRange: "Time Range",
+  thisWeek: "This Week",
+  fromYesterday: "from yesterday",
+  perDay: "per day",
+  dailyAverage: "Daily Average",
+  total: "Total",
 } as const;
