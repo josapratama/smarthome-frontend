@@ -1213,4 +1213,11 @@ export const id = {
   // Alarms Extended
   allSeverity: "Semua Tingkat",
   severity: "Tingkat Keparahan",
+
+  // Home AI Models Extended
+  aboutHomeAIModels: "Tentang Model AI Rumah",
+  homeAIModelsDescription:
+    "Atur model AI khusus untuk rumah ini untuk menggantikan model global. Jika tidak ada model khusus yang diatur, model global akan digunakan secara otomatis.",
+  removeHomeModelDescription:
+    "Ini akan menghapus model khusus rumah dan menggunakan model global sebagai gantinya.",
 } as const;

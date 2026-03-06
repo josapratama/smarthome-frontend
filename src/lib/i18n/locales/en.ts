@@ -1226,4 +1226,11 @@ export const en = {
   // Alarms Extended
   allSeverity: "All Severity",
   severity: "Severity",
+
+  // Home AI Models Extended
+  aboutHomeAIModels: "About Home AI Models",
+  homeAIModelsDescription:
+    "Set specific AI models for this home to override global models. If no home-specific model is set, the global model will be used automatically.",
+  removeHomeModelDescription:
+    "This will remove the home-specific model and use the global model instead.",
 } as const;

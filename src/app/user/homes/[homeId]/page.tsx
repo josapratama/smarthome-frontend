@@ -22,6 +22,7 @@ import { CreateRoomDialog } from "@/components/rooms/create-room-dialog";
 import { RoomCard } from "@/components/rooms/room-card";
 import { InviteMemberDialog } from "@/components/members/invite-member-dialog";
 import { MembersList } from "@/components/members/members-list";
+import { HomeAIModelsSection } from "@/components/homes/home-ai-models-section";
 import { useTranslation } from "@/hooks/use-translation";
 
 export default function HomeDetailPage() {
@@ -251,6 +252,9 @@ export default function HomeDetailPage() {
           />
         )}
       </div>
+
+      {/* AI Models Section */}
+      <HomeAIModelsSection homeId={homeId} isOwner={isOwner || false} />
 
       <CreateRoomDialog
         open={createRoomDialogOpen}
