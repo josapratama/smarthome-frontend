@@ -162,7 +162,7 @@ function CreateHomeDialog({ open, onOpenChange }: CreateHomeDialogProps) {
   );
 }
 
-export function HomesClient() {
+export default function HomesClient() {
   const { t } = useTranslation();
   const [searchText, setSearchText] = useState("");
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -216,15 +216,6 @@ export function HomesClient() {
     );
   });
 
-  const totalMembers = filtered.reduce(
-    (sum, home) => sum + (home.memberCount || 0),
-    0,
-  );
-  const totalRooms = filtered.reduce(
-    (sum, home) => sum + (home.roomCount || 0),
-    0,
-  );
-
   return (
     <div className="space-y-6">
       {/* Header with Stats */}
@@ -235,18 +226,6 @@ export function HomesClient() {
             value: filtered.length,
             icon: HomeIcon,
             color: "text-blue-500",
-          },
-          {
-            label: t("totalMembers") || "Total Members",
-            value: totalMembers,
-            icon: Users,
-            color: "text-green-500",
-          },
-          {
-            label: t("totalRooms") || "Total Rooms",
-            value: totalRooms,
-            icon: DoorOpen,
-            color: "text-purple-500",
           },
         ]}
       />
@@ -325,7 +304,7 @@ export function HomesClient() {
                   <div className="flex shrink-0 items-center gap-3">
                     <Link
                       className="text-sm underline underline-offset-4 hover:opacity-80"
-                      href={`/homes/${home.id}/rooms`}
+                      href={`/location-management/homes/${home.id}/rooms`}
                     >
                       {t("rooms")}
                     </Link>

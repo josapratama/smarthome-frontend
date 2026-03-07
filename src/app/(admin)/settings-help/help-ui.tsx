@@ -35,7 +35,7 @@ const CATEGORIES = [
   "TROUBLESHOOTING",
 ] as const;
 
-export default function HelpPage() {
+export default function HelpUI() {
   const { t } = useLanguage();
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [isLoading, setIsLoading] = useState(true);

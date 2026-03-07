@@ -151,7 +151,7 @@ export default function DevicesClient() {
     };
 
     const handleAdd = () => {
-      router.push("/devices/register");
+      router.push("/device-management/register");
     };
 
     window.addEventListener("topbar-search", handleSearch);
@@ -402,7 +402,9 @@ export default function DevicesClient() {
                 <Card
                   key={d.id}
                   className="cursor-pointer transition-all hover:shadow-md hover:border-primary/50"
-                  onClick={() => router.push(`/devices/${d.id}`)}
+                  onClick={() =>
+                    router.push(`/device-management/devices/${d.id}`)
+                  }
                 >
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
@@ -460,7 +462,9 @@ export default function DevicesClient() {
                         className="flex-1"
                         onClick={(e) => {
                           e.stopPropagation();
-                          router.push(`/devices/${d.id}/telemetry`);
+                          router.push(
+                            `/device-management/devices/${d.id}/telemetry`,
+                          );
                         }}
                       >
                         <Activity className="mr-1 h-3 w-3" />

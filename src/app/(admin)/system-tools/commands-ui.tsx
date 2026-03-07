@@ -1,12 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PageHeader } from "@/components/ui/page-header";
 import { Input } from "@/components/ui/input";
 import {
-  Plus,
   TerminalSquare,
   Clock,
   CheckCircle,
@@ -14,7 +12,6 @@ import {
   RefreshCw,
   AlertCircle,
   Search,
-  Terminal,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 import { SendCommandDialog } from "@/components/admin/send-command-dialog";
@@ -46,54 +43,15 @@ interface Command {
   updatedAt: string;
 }
 
-export default function CommandsPage() {
+export default function CommandsUI() {
   const { t } = useLanguage();
   const [commands, setCommands] = useState<Command[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const searchSectionRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     loadCommands();
-  }, []);
-
-  useEffect(() => {
-    const handleSearch = () => {
-      let searchInput: HTMLInputElement | null = null;
-      if (searchSectionRef.current) {
-        searchInput = searchSectionRef.current.querySelector(
-          "input",
-        ) as HTMLInputElement;
-      }
-      if (!searchInput) {
-        searchInput = document.querySelector("input") as HTMLInputElement;
-      }
-      if (searchInput) {
-        searchInput.focus();
-        searchInput.select();
-      }
-    };
-
-    const handleRefresh = () => {
-      handleRefreshData();
-    };
-
-    const handleAdd = () => {
-      setDialogOpen(true);
-    };
-
-    window.addEventListener("topbar-search", handleSearch);
-    window.addEventListener("topbar-refresh", handleRefresh);
-    window.addEventListener("topbar-add", handleAdd);
-
-    return () => {
-      window.removeEventListener("topbar-search", handleSearch);
-      window.removeEventListener("topbar-refresh", handleRefresh);
-      window.removeEventListener("topbar-add", handleAdd);
-    };
   }, []);
 
   const loadCommands = async () => {
@@ -112,12 +70,6 @@ export default function CommandsPage() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleRefreshData = async () => {
-    setIsRefreshing(true);
-    await loadCommands();
-    setIsRefreshing(false);
   };
 
   const getStatusBadge = (status: Command["status"]) => {
@@ -159,15 +111,6 @@ export default function CommandsPage() {
     }
   };
 
-  const stats = {
-    total: commands.length,
-    pending: commands.filter((c) => c.status === "PENDING").length,
-    successful: commands.filter((c) => c.status === "ACKED").length,
-    failed: commands.filter(
-      (c) => c.status === "FAILED" || c.status === "TIMEOUT",
-    ).length,
-  };
-
   const filteredCommands = commands.filter((command) => {
     if (!searchQuery) return true;
     const search = searchQuery.toLowerCase();
@@ -180,42 +123,12 @@ export default function CommandsPage() {
   });
 
   return (
-    <div className="space-y-6">
-      {/* Header with Stats */}
-      <PageHeader
-        stats={[
-          {
-            label: t("totalCommands"),
-            value: stats.total,
-            icon: Terminal,
-            color: "text-blue-500",
-          },
-          {
-            label: t("pending"),
-            value: stats.pending,
-            icon: Clock,
-            color: "text-yellow-500",
-          },
-          {
-            label: t("successful"),
-            value: stats.successful,
-            icon: CheckCircle,
-            color: "text-green-500",
-          },
-          {
-            label: t("failed"),
-            value: stats.failed,
-            icon: XCircle,
-            color: "text-red-500",
-          },
-        ]}
-      />
-
+    <div className="space-y-4">
       {/* Search */}
-      <div ref={searchSectionRef}>
-        <Card>
-          <CardContent className="p-4">
-            <div className="relative">
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex gap-2">
+            <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder={t("searchCommands")}
@@ -224,9 +137,12 @@ export default function CommandsPage() {
                 className="pl-9"
               />
             </div>
-          </CardContent>
-        </Card>
-      </div>
+            <Button onClick={() => setDialogOpen(true)}>
+              {t("sendCommand")}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card className="rounded-2xl shadow-sm">
         <CardHeader>
@@ -264,7 +180,7 @@ export default function CommandsPage() {
                   {filteredCommands.map((command) => (
                     <TableRow key={command.id}>
                       <TableCell className="font-mono text-sm">
-                        {t("commandId")}: {command.id}
+                        #{command.id}
                       </TableCell>
                       <TableCell>
                         {command.deviceName ||

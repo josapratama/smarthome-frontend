@@ -66,7 +66,7 @@ function getRelativeTime(dateStr: string | null | undefined): string {
   return `${diffDays}d ago`;
 }
 
-export function MonitoringClient() {
+export default function MonitoringClient() {
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<
@@ -205,7 +205,7 @@ export function MonitoringClient() {
                   {criticalDevices.slice(0, 3).map((device) => (
                     <Link
                       key={device.id}
-                      href={`/devices/${device.id}`}
+                      href={`/device-management/devices/${device.id}`}
                       className="block"
                     >
                       <div className="p-4 rounded-lg bg-orange-50 dark:bg-gray-700 border border-orange-200 dark:border-orange-800 hover:border-orange-300 dark:hover:border-orange-700 hover:shadow-md transition-all">
@@ -340,7 +340,7 @@ export function MonitoringClient() {
                 return (
                   <Link
                     key={device.id}
-                    href={`/devices/${device.id}`}
+                    href={`/device-management/devices/${device.id}`}
                     className="block group"
                   >
                     <div

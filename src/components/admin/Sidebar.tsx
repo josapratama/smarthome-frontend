@@ -6,9 +6,7 @@ import {
   LayoutDashboard,
   Cpu,
   Package,
-  Upload,
   Activity,
-  Bell,
   Mail,
   Terminal,
   Home,
@@ -23,7 +21,6 @@ import {
   Zap,
   HelpCircle,
   MessageSquare,
-  DollarSign,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 import { cn } from "@/lib/utils";
@@ -43,23 +40,15 @@ export function Sidebar({ className, onClose }: SidebarProps) {
   // Menu yang paling sering dipakai di atas
   const navigation = [
     { name: t("dashboard"), href: "/dashboard", icon: LayoutDashboard },
-    { name: t("devices"), href: "/devices", icon: Cpu },
-    { name: t("homes"), href: "/homes", icon: Home },
-    { name: t("monitoring"), href: "/monitoring", icon: Activity },
+    { name: t("deviceManagement"), href: "/device-management", icon: Cpu },
+    { name: t("locationManagement"), href: "/location-management", icon: Home },
     { name: t("alarms"), href: "/alarms", icon: AlertTriangle },
-    { name: t("energy"), href: "/energy", icon: Zap },
-    { name: t("energyCost"), href: "/energy-cost", icon: DollarSign },
+    { name: t("energyManagement"), href: "/energy", icon: Zap },
     { name: t("aiModels"), href: "/ai", icon: Brain },
-    { name: t("rooms"), href: "/rooms", icon: DoorOpen },
-    { name: t("commands"), href: "/commands", icon: Terminal },
-    { name: t("notifications"), href: "/notifications", icon: Bell },
-    { name: t("messages"), href: "/messages", icon: MessageSquare },
-    { name: t("firmware"), href: "/firmware", icon: Package },
-    { name: t("ota"), href: "/ota", icon: Upload },
-    { name: t("invites"), href: "/invites", icon: Mail },
-    { name: t("helpCenter"), href: "/help", icon: HelpCircle },
-    { name: t("appInformation"), href: "/app-info", icon: Info },
-    { name: t("settings"), href: "/settings", icon: Settings },
+    { name: t("communications"), href: "/communications", icon: MessageSquare },
+    { name: t("firmwareManagement"), href: "/firmware", icon: Package },
+    { name: t("systemTools"), href: "/system-tools", icon: Terminal },
+    { name: t("settingsHelp"), href: "/settings-help", icon: Settings },
   ];
 
   const handleLogout = async () => {

@@ -151,35 +151,59 @@ export default function OtaClientPage({
 
   return (
     <div className="space-y-6">
-      {/* Header with Stats */}
-      <PageHeader
-        stats={[
-          {
-            label: t("totalJobs"),
-            value: stats.totalJobs,
-            icon: Zap,
-            color: "text-blue-500",
-          },
-          {
-            label: t("pending"),
-            value: stats.pending,
-            icon: Clock,
-            color: "text-yellow-500",
-          },
-          {
-            label: t("inProgress"),
-            value: stats.inProgress,
-            icon: Activity,
-            color: "text-orange-500",
-          },
-          {
-            label: t("completed"),
-            value: stats.completed,
-            icon: CheckCircle,
-            color: "text-green-500",
-          },
-        ]}
-      />
+      {/* Statistics Cards */}
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card className="rounded-2xl shadow-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  {t("totalJobs")}
+                </p>
+                <p className="text-2xl font-bold">{stats.totalJobs}</p>
+              </div>
+              <Zap className="h-8 w-8 text-blue-500" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="rounded-2xl shadow-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">{t("pending")}</p>
+                <p className="text-2xl font-bold">{stats.pending}</p>
+              </div>
+              <Clock className="h-8 w-8 text-yellow-500" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="rounded-2xl shadow-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  {t("inProgress")}
+                </p>
+                <p className="text-2xl font-bold">{stats.inProgress}</p>
+              </div>
+              <Activity className="h-8 w-8 text-orange-500" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="rounded-2xl shadow-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  {t("completed")}
+                </p>
+                <p className="text-2xl font-bold">{stats.completed}</p>
+              </div>
+              <CheckCircle className="h-8 w-8 text-green-500" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       <Card>
         <CardHeader>
@@ -312,7 +336,7 @@ export default function OtaClientPage({
 
                   <Link
                     className="text-sm underline underline-offset-4 hover:opacity-80"
-                    href={`/ota/jobs/${j.id}`}
+                    href={`/firmware/jobs/${j.id}`}
                   >
                     {t("view")}
                   </Link>

@@ -74,12 +74,24 @@ export interface HomeMember {
 // ============ Direct Messages ============
 
 export async function getDMConversations(): Promise<DirectConversation[]> {
-  const response = await apiFetchBrowser(
-    "/api/v1/direct-messages/conversations",
-  );
-  if (!response.ok) throw new Error("Failed to get conversations");
-  const data = await response.json();
-  return data.data;
+  try {
+    const response = await apiFetchBrowser(
+      "/api/v1/direct-messages/conversations",
+    );
+    if (!response.ok) {
+      // If endpoint doesn't exist (404) or server error, return empty array
+      if (response.status === 404 || response.status >= 500) {
+        console.warn("DM conversations endpoint not available");
+        return [];
+      }
+      throw new Error("Failed to get conversations");
+    }
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    console.warn("DM conversations not available:", error);
+    return [];
+  }
 }
 
 export async function sendDirectMessage(
@@ -151,10 +163,22 @@ export async function getDMUnreadCount(): Promise<number> {
 // ============ Home Chat ============
 
 export async function getHomeConversations(): Promise<HomeConversation[]> {
-  const response = await apiFetchBrowser("/api/v1/home-chat/conversations");
-  if (!response.ok) throw new Error("Failed to get home conversations");
-  const data = await response.json();
-  return data.data;
+  try {
+    const response = await apiFetchBrowser("/api/v1/home-chat/conversations");
+    if (!response.ok) {
+      // If endpoint doesn't exist (404) or server error, return empty array
+      if (response.status === 404 || response.status >= 500) {
+        console.warn("Home conversations endpoint not available");
+        return [];
+      }
+      throw new Error("Failed to get home conversations");
+    }
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    console.warn("Home conversations not available:", error);
+    return [];
+  }
 }
 
 export async function sendHomeMessage(

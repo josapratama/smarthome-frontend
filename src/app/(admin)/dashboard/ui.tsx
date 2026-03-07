@@ -177,7 +177,7 @@ export default function DashboardClient({ data, error }: DashboardClientProps) {
                   {t("checkDeviceConnections")}
                 </p>
               </div>
-              <Link href="/monitoring">
+              <Link href="/device-management">
                 <Button
                   size="sm"
                   variant="outline"
@@ -286,24 +286,28 @@ export default function DashboardClient({ data, error }: DashboardClientProps) {
         </CardHeader>
         <CardContent>
           <div className="grid gap-3 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4">
-            <Link href="/devices" className="block">
+            <Link href="/device-management" className="block">
               <Button
                 variant="outline"
                 className="w-full h-auto py-3 sm:py-4 flex-col gap-1 sm:gap-2"
                 size="sm"
               >
                 <Zap className="h-4 w-4 sm:h-5 sm:w-5" />
-                <span className="text-xs sm:text-sm">{t("devices")}</span>
+                <span className="text-xs sm:text-sm">
+                  {t("deviceManagement")}
+                </span>
               </Button>
             </Link>
-            <Link href="/monitoring" className="block">
+            <Link href="/location-management" className="block">
               <Button
                 variant="outline"
                 className="w-full h-auto py-3 sm:py-4 flex-col gap-1 sm:gap-2"
                 size="sm"
               >
-                <Activity className="h-4 w-4 sm:h-5 sm:w-5" />
-                <span className="text-xs sm:text-sm">{t("monitoring")}</span>
+                <HomeIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="text-xs sm:text-sm">
+                  {t("locationManagement")}
+                </span>
               </Button>
             </Link>
             <Link href="/alarms" className="block">
@@ -323,7 +327,9 @@ export default function DashboardClient({ data, error }: DashboardClientProps) {
                 size="sm"
               >
                 <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />
-                <span className="text-xs sm:text-sm">{t("energy")}</span>
+                <span className="text-xs sm:text-sm">
+                  {t("energyManagement")}
+                </span>
               </Button>
             </Link>
           </div>
@@ -336,7 +342,7 @@ export default function DashboardClient({ data, error }: DashboardClientProps) {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-base">{t("myHomes")}</CardTitle>
-              <Link href="/homes">
+              <Link href="/location-management">
                 <Button variant="ghost" size="sm">
                   {t("viewAll")}
                 </Button>
@@ -346,7 +352,7 @@ export default function DashboardClient({ data, error }: DashboardClientProps) {
           <CardContent className="space-y-3">
             <div className="grid gap-3 md:grid-cols-2">
               {data.homesList.slice(0, 6).map((h) => (
-                <Link key={h.id} href={`/homes/${h.id}`}>
+                <Link key={h.id} href={`/location-management`}>
                   <div className="rounded-xl border p-4 hover:bg-muted/50 transition-colors cursor-pointer">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1">

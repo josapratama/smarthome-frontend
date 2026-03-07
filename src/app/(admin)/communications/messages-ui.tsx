@@ -56,16 +56,29 @@ export default function MessagesPage() {
     setLoading(true);
     setError(null);
     try {
-      const [dm, home] = await Promise.all([
-        getDMConversations(),
-        getHomeConversations(),
-      ]);
+      // Load DM and Home conversations separately to handle errors independently
+      const dmPromise = getDMConversations().catch((err) => {
+        console.warn("Failed to load DM conversations:", err.message);
+        return [];
+      });
+
+      const homePromise = getHomeConversations().catch((err) => {
+        console.warn("Failed to load home conversations:", err.message);
+        return [];
+      });
+
+      const [dm, home] = await Promise.all([dmPromise, homePromise]);
+
       setDmConversations(dm);
       setHomeConversations(home);
+
+      // Only set error if both failed
+      if (dm.length === 0 && home.length === 0) {
+        setError("Unable to load conversations. Please try again later.");
+      }
     } catch (error: any) {
       console.error("Failed to load conversations:", error);
       setError(error.message || "Failed to load conversations");
-      // Don't show toast on initial load, just set error state
       setDmConversations([]);
       setHomeConversations([]);
     } finally {

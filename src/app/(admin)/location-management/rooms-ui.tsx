@@ -173,7 +173,7 @@ function AddRoomDialog() {
   );
 }
 
-export function RoomsClient() {
+export default function RoomsClient() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { t } = useTranslation();

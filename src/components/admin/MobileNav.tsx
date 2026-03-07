@@ -20,10 +20,10 @@ export function MobileNav() {
   // Menu yang paling sering dipakai untuk mobile
   const navigation = [
     { name: t("dashboard"), href: "/dashboard", icon: LayoutDashboard },
-    { name: t("devices"), href: "/devices", icon: Cpu },
-    { name: t("homes"), href: "/homes", icon: Home },
-    { name: t("monitoring"), href: "/monitoring", icon: Activity },
-    { name: t("settings"), href: "/settings", icon: Settings },
+    { name: t("devices"), href: "/device-management", icon: Cpu },
+    { name: t("homes"), href: "/location-management", icon: Home },
+    { name: t("notifications"), href: "/communications", icon: Bell },
+    { name: t("settings"), href: "/settings-help", icon: Settings },
   ];
 
   return (

@@ -4,19 +4,18 @@ import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
-import { Zap, DollarSign } from "lucide-react";
+import { MessageSquare, Bell } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
-import EnergyMonitoringUI from "./monitoring-ui";
-import EnergyCostUI from "./cost-ui";
+import MessagesUI from "./messages-ui";
+import NotificationsUI from "./notifications-ui";
 
-export default function EnergyManagementPage() {
+export default function CommunicationsPage() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState("monitoring");
+  const [activeTab, setActiveTab] = useState("messages");
 
   // Update topbar title when tab changes
   useEffect(() => {
-    const title =
-      activeTab === "monitoring" ? t("energyMonitoring") : t("energyCost");
+    const title = activeTab === "messages" ? t("messages") : t("notifications");
     window.dispatchEvent(
       new CustomEvent("topbar-title-change", { detail: title }),
     );
@@ -41,20 +40,18 @@ export default function EnergyManagementPage() {
           >
             <TabsList className="w-full h-auto bg-transparent p-0 justify-start rounded-none border-b-0 overflow-x-auto">
               <TabsTrigger
-                value="monitoring"
+                value="messages"
                 className="relative rounded-none border-b-2 border-transparent px-4 md:px-6 py-3 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:font-semibold flex-shrink-0"
               >
-                <Zap className="w-4 h-4 md:mr-2" />
-                <span className="hidden md:inline">
-                  {t("energyMonitoring")}
-                </span>
+                <MessageSquare className="w-4 h-4 md:mr-2" />
+                <span className="hidden md:inline">{t("messages")}</span>
               </TabsTrigger>
               <TabsTrigger
-                value="cost"
+                value="notifications"
                 className="relative rounded-none border-b-2 border-transparent px-4 md:px-6 py-3 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:font-semibold flex-shrink-0"
               >
-                <DollarSign className="w-4 h-4 md:mr-2" />
-                <span className="hidden md:inline">{t("energyCost")}</span>
+                <Bell className="w-4 h-4 md:mr-2" />
+                <span className="hidden md:inline">{t("notifications")}</span>
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -62,11 +59,11 @@ export default function EnergyManagementPage() {
 
         <CardContent className="p-4 md:p-6">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsContent value="monitoring" className="m-0">
-              <EnergyMonitoringUI />
+            <TabsContent value="messages" className="m-0">
+              <MessagesUI />
             </TabsContent>
-            <TabsContent value="cost" className="m-0">
-              <EnergyCostUI />
+            <TabsContent value="notifications" className="m-0">
+              <NotificationsUI />
             </TabsContent>
           </Tabs>
         </CardContent>

@@ -26,51 +26,80 @@ export function Topbar({ onMenuClick }: TopbarProps) {
     router.push("/notifications");
   };
 
+  // Listen for custom title change events from pages
+  const [customTitle, setCustomTitle] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleTitleChange = (event: CustomEvent<string>) => {
+      setCustomTitle(event.detail);
+    };
+
+    window.addEventListener(
+      "topbar-title-change",
+      handleTitleChange as EventListener,
+    );
+    return () => {
+      window.removeEventListener(
+        "topbar-title-change",
+        handleTitleChange as EventListener,
+      );
+    };
+  }, []);
+
   // Get page title and action buttons based on current route
   const getPageInfo = () => {
+    // If custom title is set, use it
+    if (customTitle) {
+      return { title: customTitle, actions: ["notification"] };
+    }
+
     if (pathname.includes("/dashboard"))
       return {
         title: t("welcomeBack") || "Welcome Back 👋",
         actions: ["notification"],
       };
-    if (pathname.includes("/devices"))
+
+    // Combined pages
+    if (pathname.includes("/location-management"))
       return {
-        title: t("devices"),
+        title: t("locationManagement") || "Location Management",
+        actions: ["search", "add", "notification"],
+      };
+    if (pathname.includes("/communications"))
+      return {
+        title: t("communications") || "Communications",
+        actions: ["search", "notification"],
+      };
+    if (pathname.includes("/device-management"))
+      return {
+        title: t("deviceManagement") || "Device Management",
         actions: ["search", "filter", "add", "notification"],
-      };
-    if (pathname.includes("/homes"))
-      return {
-        title: t("homes"),
-        actions: ["search", "add", "notification"],
-      };
-    if (pathname.includes("/rooms"))
-      return {
-        title: t("rooms"),
-        actions: ["search", "add", "notification"],
-      };
-    if (pathname.includes("/firmware"))
-      return {
-        title: t("firmware"),
-        actions: ["search", "add", "notification"],
-      };
-    if (pathname.includes("/ota"))
-      return {
-        title: t("ota"),
-        actions: ["refresh", "notification"],
-      };
-    if (pathname.includes("/monitoring"))
-      return {
-        title: t("monitoring"),
-        actions: ["refresh", "filter", "notification"],
-      };
-    if (pathname.includes("/alarms"))
-      return {
-        title: t("alarms"),
-        actions: ["refresh", "filter", "notification"],
       };
     if (pathname.includes("/energy"))
       return {
-        title: t("energy"),
+        title: t("energyManagement") || "Energy Management",
+        actions: ["refresh", "filter", "notification"],
+      };
+    if (pathname.includes("/firmware"))
+      return {
+        title: t("firmwareManagement") || "Firmware Management",
+        actions: ["search", "add", "notification"],
+      };
+    if (pathname.includes("/system-tools"))
+      return {
+        title: t("systemTools") || "System Tools",
+        actions: ["search", "add", "notification"],
+      };
+    if (pathname.includes("/settings-help"))
+      return {
+        title: t("settingsHelp") || "Settings & Help",
+        actions: ["search", "notification"],
+      };
+
+    // Other pages
+    if (pathname.includes("/alarms"))
+      return {
+        title: t("alarms"),
         actions: ["refresh", "filter", "notification"],
       };
     if (pathname.includes("/ai"))
@@ -78,49 +107,14 @@ export function Topbar({ onMenuClick }: TopbarProps) {
         title: t("aiAutomation"),
         actions: ["refresh", "notification"],
       };
-    if (pathname.includes("/commands"))
-      return {
-        title: t("commands"),
-        actions: ["search", "add", "notification"],
-      };
-    if (pathname.includes("/invites"))
-      return {
-        title: t("invites"),
-        actions: ["search", "filter", "notification"],
-      };
     if (pathname.includes("/notifications"))
       return {
         title: t("notifications"),
         actions: ["filter"],
       };
-    if (pathname.includes("/app-info"))
-      return {
-        title: t("appInformation"),
-        actions: ["search", "add", "notification"],
-      };
-    if (pathname.includes("/help"))
-      return {
-        title: t("helpCenter"),
-        actions: ["search", "notification"],
-      };
-    if (pathname.includes("/settings"))
-      return {
-        title: t("settings"),
-        actions: ["notification"],
-      };
     if (pathname.includes("/profile"))
       return {
         title: t("profile"),
-        actions: ["notification"],
-      };
-    if (pathname.includes("/messages"))
-      return {
-        title: t("messages"),
-        actions: ["search", "notification"],
-      };
-    if (pathname.includes("/energy-cost"))
-      return {
-        title: t("energyCost") || "Energy Cost",
         actions: ["notification"],
       };
 

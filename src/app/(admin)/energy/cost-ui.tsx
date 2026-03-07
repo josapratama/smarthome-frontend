@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PageHeader } from "@/components/ui/page-header";
 import {
   DollarSign,
   Save,
@@ -31,7 +32,7 @@ interface HomeWithCost {
   isCustom: boolean;
 }
 
-export default function AdminEnergyCostPage() {
+export default function EnergyCostUI() {
   const { t } = useTranslation();
   const [globalCost, setGlobalCost] = useState<EnergyCostSettings | null>(null);
   const [homesWithCost, setHomesWithCost] = useState<HomeWithCost[]>([]);
@@ -47,15 +48,12 @@ export default function AdminEnergyCostPage() {
   const loadData = async () => {
     setIsLoading(true);
     try {
-      // Load global cost
       const globalSettings = await getEnergyCost();
       setGlobalCost(globalSettings);
       setCostPerKwh(globalSettings.costPerKwh.toString());
 
-      // Load all homes
       const homes = await homesApi.list();
 
-      // Load cost settings for each home
       const homesWithCostData = await Promise.all(
         homes.map(async (home) => {
           try {
@@ -119,85 +117,48 @@ export default function AdminEnergyCostPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
-            <DollarSign className="h-7 w-7 text-green-500" />
-            {t("energyCostManagement")}
-          </h1>
-          <p className="text-sm md:text-base text-muted-foreground mt-1">
-            {t("manageGlobalEnergyCost")}
-          </p>
-        </div>
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={loadData}
-          disabled={isLoading}
-        >
-          <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
-        </Button>
-      </div>
-
       {/* Statistics Cards */}
-      {!isLoading && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">
-                    {t("totalHomes")}
-                  </p>
-                  <p className="text-3xl font-bold mt-1">
-                    {homesWithCost.length}
-                  </p>
-                </div>
-                <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center">
-                  <Home className="h-6 w-6 text-blue-500" />
-                </div>
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card className="rounded-2xl shadow-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  {t("totalHomes")}
+                </p>
+                <p className="text-2xl font-bold">{homesWithCost.length}</p>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">
-                    {t("usingGlobalRate")}
-                  </p>
-                  <p className="text-3xl font-bold mt-1 text-green-600">
-                    {globalHomesCount}
-                  </p>
-                </div>
-                <div className="h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center">
-                  <Globe className="h-6 w-6 text-green-500" />
-                </div>
+              <Home className="h-8 w-8 text-blue-500" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="rounded-2xl shadow-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  {t("usingGlobalRate")}
+                </p>
+                <p className="text-2xl font-bold">{globalHomesCount}</p>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">
-                    {t("customRates")}
-                  </p>
-                  <p className="text-3xl font-bold mt-1 text-orange-600">
-                    {customHomesCount}
-                  </p>
-                </div>
-                <div className="h-12 w-12 rounded-full bg-orange-500/10 flex items-center justify-center">
-                  <TrendingUp className="h-6 w-6 text-orange-500" />
-                </div>
+              <Globe className="h-8 w-8 text-green-500" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="rounded-2xl shadow-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  {t("customRates")}
+                </p>
+                <p className="text-2xl font-bold">{customHomesCount}</p>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+              <TrendingUp className="h-8 w-8 text-orange-500" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Global Energy Cost Settings */}
       <Card>

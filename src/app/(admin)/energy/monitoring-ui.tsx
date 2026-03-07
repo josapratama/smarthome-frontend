@@ -49,7 +49,7 @@ interface EnergyPrediction {
   createdAt: string;
 }
 
-export default function EnergyClient() {
+export default function EnergyMonitoringUI() {
   const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<EnergyStats | null>(null);

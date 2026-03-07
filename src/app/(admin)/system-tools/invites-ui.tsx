@@ -34,7 +34,7 @@ interface InviteStats {
   activeMembers: number;
 }
 
-export default function InvitesPage() {
+export default function InvitesUI() {
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -115,36 +115,6 @@ export default function InvitesPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header with Stats */}
-      <PageHeader
-        stats={[
-          {
-            label: t("totalInvites"),
-            value: stats?.totalInvites || 0,
-            icon: Mail,
-            color: "text-blue-500",
-          },
-          {
-            label: t("pending"),
-            value: stats?.pendingInvites || 0,
-            icon: Clock,
-            color: "text-yellow-500",
-          },
-          {
-            label: t("accepted"),
-            value: stats?.acceptedInvites || 0,
-            icon: CheckCircle,
-            color: "text-green-500",
-          },
-          {
-            label: t("activeMembers"),
-            value: stats?.activeMembers || 0,
-            icon: Users,
-            color: "text-purple-500",
-          },
-        ]}
-      />
-
       {/* Search */}
       <div ref={searchSectionRef}>
         <Card>

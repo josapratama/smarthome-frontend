@@ -370,7 +370,7 @@ function DeleteFirmwareDialog({ firmware }: { firmware: FirmwareReleaseDTO }) {
   );
 }
 
-export function FirmwareClient() {
+export default function FirmwareVersionsUI() {
   const { t } = useTranslation();
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -435,35 +435,57 @@ export function FirmwareClient() {
 
   return (
     <div className="space-y-6">
-      {/* Header with Stats */}
-      <PageHeader
-        stats={[
-          {
-            label: t("totalFirmware"),
-            value: stats.total,
-            icon: Package,
-            color: "text-blue-500",
-          },
-          {
-            label: t("latestVersion"),
-            value: stats.latest,
-            icon: Upload,
-            color: "text-green-500",
-          },
-          {
-            label: "ESP32",
-            value: stats.esp32,
-            icon: Smartphone,
-            color: "text-purple-500",
-          },
-          {
-            label: "ESP8266",
-            value: stats.esp8266,
-            icon: Smartphone,
-            color: "text-orange-500",
-          },
-        ]}
-      />
+      {/* Statistics Cards */}
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card className="rounded-2xl shadow-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  {t("totalFirmware")}
+                </p>
+                <p className="text-2xl font-bold">{stats.total}</p>
+              </div>
+              <Package className="h-8 w-8 text-blue-500" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="rounded-2xl shadow-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  {t("latestVersion")}
+                </p>
+                <p className="text-lg font-bold">{stats.latest}</p>
+              </div>
+              <Upload className="h-8 w-8 text-green-500" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="rounded-2xl shadow-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">ESP32</p>
+                <p className="text-2xl font-bold">{stats.esp32}</p>
+              </div>
+              <Smartphone className="h-8 w-8 text-purple-500" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="rounded-2xl shadow-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">ESP8266</p>
+                <p className="text-2xl font-bold">{stats.esp8266}</p>
+              </div>
+              <Smartphone className="h-8 w-8 text-orange-500" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Search */}
       <div ref={searchSectionRef}>

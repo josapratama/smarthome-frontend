@@ -55,7 +55,7 @@ interface AppInfo {
   updatedAt: string;
 }
 
-export default function AppInfoPage() {
+export default function AppInfoUI() {
   const { t } = useLanguage();
   const [appInfo, setAppInfo] = useState<AppInfo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -238,36 +238,6 @@ export default function AppInfoPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header with Stats */}
-      <PageHeader
-        stats={[
-          {
-            label: t("totalInfo"),
-            value: stats.total,
-            icon: Info,
-            color: "text-blue-500",
-          },
-          {
-            label: t("public"),
-            value: stats.public,
-            icon: Eye,
-            color: "text-green-500",
-          },
-          {
-            label: t("private"),
-            value: stats.private,
-            icon: EyeOff,
-            color: "text-orange-500",
-          },
-          {
-            label: t("categories"),
-            value: stats.categories,
-            icon: FileText,
-            color: "text-purple-500",
-          },
-        ]}
-      />
-
       {/* Search */}
       <div ref={searchSectionRef}>
         <Card>

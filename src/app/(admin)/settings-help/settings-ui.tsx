@@ -42,7 +42,7 @@ import {
   NotificationPreferences,
 } from "@/lib/api/preferences";
 
-export default function SettingsPage() {
+export default function SettingsUI() {
   const { theme, setTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
 
