@@ -1245,4 +1245,21 @@ export const id = {
   aboutEnergyCost: "Tentang Biaya Energi",
   energyCostDescription:
     "Atur tarif listrik khusus untuk rumah ini. Jika tidak diatur, tarif default global akan digunakan. Rumah yang berbeda mungkin memiliki tarif berbeda berdasarkan penyedia listrik atau paket mereka.",
+
+  // Admin Energy Cost Management
+  energyCostManagement: "Manajemen Biaya Energi",
+  manageGlobalEnergyCost: "Kelola tarif biaya listrik default global",
+  globalDefaultRate: "Tarif Default Global",
+  currentGlobalRate: "Tarif Global Saat Ini",
+  newGlobalRate: "Tarif Global Baru",
+  globalRateHint:
+    "Tarif ini akan digunakan sebagai default untuk semua rumah yang tidak memiliki tarif khusus.",
+  globalEnergyCostUpdated: "Biaya energi global berhasil diperbarui",
+  aboutGlobalEnergyCost: "Tentang Biaya Energi Global",
+  globalEnergyCostDescription:
+    "Tarif default global digunakan untuk semua rumah kecuali mereka memiliki tarif khusus yang diatur oleh pemilik rumah. Ini memberikan tarif dasar sambil memungkinkan fleksibilitas untuk rumah individual.",
+  homesEnergyCostOverview: "Ringkasan Biaya Energi Rumah",
+  usingGlobalRate: "Menggunakan Tarif Global",
+  customRates: "Tarif Khusus",
+  perKwh: "per kWh",
 } as const;

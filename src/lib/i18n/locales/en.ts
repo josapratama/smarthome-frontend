@@ -1258,4 +1258,21 @@ export const en = {
   aboutEnergyCost: "About Energy Cost",
   energyCostDescription:
     "Set a custom electricity rate for this home. If not set, the global default rate will be used. Different homes may have different rates based on their electricity provider or plan.",
+
+  // Admin Energy Cost Management
+  energyCostManagement: "Energy Cost Management",
+  manageGlobalEnergyCost: "Manage global default electricity cost rate",
+  globalDefaultRate: "Global Default Rate",
+  currentGlobalRate: "Current Global Rate",
+  newGlobalRate: "New Global Rate",
+  globalRateHint:
+    "This rate will be used as default for all homes that don't have a custom rate set.",
+  globalEnergyCostUpdated: "Global energy cost updated successfully",
+  aboutGlobalEnergyCost: "About Global Energy Cost",
+  globalEnergyCostDescription:
+    "The global default rate is used for all homes unless they have a custom rate set by the home owner. This provides a baseline rate while allowing flexibility for individual homes.",
+  homesEnergyCostOverview: "Homes Energy Cost Overview",
+  usingGlobalRate: "Using Global Rate",
+  customRates: "Custom Rates",
+  perKwh: "per kWh",
 } as const;
