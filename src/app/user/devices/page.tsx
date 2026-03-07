@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { devicesApi, DeviceWithDetails } from "@/lib/api/client/devices";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -24,12 +24,14 @@ import {
   Zap,
   RefreshCw,
   Search,
-  Filter,
   Home as HomeIcon,
   DoorOpen,
+  AlertCircle,
+  Filter,
 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
+import { PageHeader } from "@/components/ui/page-header";
 import { useTranslation } from "@/hooks/use-translation";
 import { homesApi } from "@/lib/api/client/homes";
 
@@ -45,6 +47,9 @@ export default function UserDevicesPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [homeFilter, setHomeFilter] = useState<string>("all");
 
+  // Refs for filter section
+  const filterSectionRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     loadData();
   }, []);
@@ -52,6 +57,73 @@ export default function UserDevicesPage() {
   useEffect(() => {
     filterDevices();
   }, [devices, searchQuery, statusFilter, homeFilter]);
+
+  // Listen to topbar events
+  useEffect(() => {
+    const handleSearch = () => {
+      console.log("[Devices] Search clicked");
+      console.log(
+        "[Devices] filterSectionRef.current:",
+        filterSectionRef.current,
+      );
+
+      let searchInput: HTMLInputElement | null = null;
+
+      if (filterSectionRef.current) {
+        // Try just 'input' without type attribute
+        searchInput = filterSectionRef.current.querySelector(
+          "input",
+        ) as HTMLInputElement;
+        console.log("[Devices] Found input in ref:", searchInput);
+      }
+
+      if (!searchInput) {
+        searchInput = document.querySelector("input") as HTMLInputElement;
+        console.log("[Devices] Found input in document:", searchInput);
+      }
+
+      if (searchInput) {
+        console.log("[Devices] Focusing input");
+        searchInput.focus();
+        searchInput.select();
+      } else {
+        console.log("[Devices] No input found!");
+        console.log(
+          "[Devices] All inputs:",
+          document.querySelectorAll("input"),
+        );
+      }
+    };
+
+    const handleFilter = () => {
+      if (filterSectionRef.current) {
+        filterSectionRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+        filterSectionRef.current.classList.add(
+          "ring-2",
+          "ring-primary",
+          "ring-offset-2",
+        );
+        setTimeout(() => {
+          filterSectionRef.current?.classList.remove(
+            "ring-2",
+            "ring-primary",
+            "ring-offset-2",
+          );
+        }, 2000);
+      }
+    };
+
+    window.addEventListener("topbar-search", handleSearch);
+    window.addEventListener("topbar-filter", handleFilter);
+
+    return () => {
+      window.removeEventListener("topbar-search", handleSearch);
+      window.removeEventListener("topbar-filter", handleFilter);
+    };
+  }, []);
 
   const loadData = async () => {
     setIsLoading(true);
@@ -143,70 +215,45 @@ export default function UserDevicesPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
-            <Smartphone className="h-7 w-7" />
-            {t("devices")}
-          </h1>
-          <p className="text-sm md:text-base text-muted-foreground mt-1">
-            {t("monitorAndControl")}
-          </p>
-        </div>
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={loadData}
-          disabled={isLoading}
-        >
-          <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
-        </Button>
-      </div>
-
-      {/* Stats Cards */}
-      {devices.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold">{devices.length}</div>
-                <div className="text-sm text-muted-foreground mt-1">
-                  {t("totalDevices")}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-green-600">
-                  {onlineCount}
-                </div>
-                <div className="text-sm text-muted-foreground mt-1">
-                  {t("online")}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="col-span-2 md:col-span-1">
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-gray-500">
-                  {offlineCount}
-                </div>
-                <div className="text-sm text-muted-foreground mt-1">
-                  {t("offline")}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+      {/* Header with Stats */}
+      <PageHeader
+        stats={[
+          {
+            label: t("totalDevices"),
+            value: devices.length,
+            icon: Smartphone,
+            color: "text-purple-500",
+          },
+          {
+            label: t("online"),
+            value: onlineCount,
+            icon: Wifi,
+            color: "text-green-500",
+          },
+          {
+            label: t("offline"),
+            value: offlineCount,
+            icon: WifiOff,
+            color: "text-gray-500",
+          },
+        ]}
+        actions={
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={loadData}
+            disabled={isLoading}
+          >
+            <RefreshCw
+              className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
+            />
+          </Button>
+        }
+      />
 
       {/* Filters */}
-      {devices.length > 0 && (
-        <Card>
+      <div ref={filterSectionRef}>
+        <Card className="transition-all duration-300">
           <CardContent className="pt-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Search */}
@@ -223,26 +270,50 @@ export default function UserDevicesPage() {
               {/* Status Filter */}
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder={t("status")} />
+                  <div className="flex items-center gap-2">
+                    <Wifi className="h-4 w-4 text-muted-foreground" />
+                    <SelectValue placeholder={t("status")} />
+                  </div>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">{t("allStatus")}</SelectItem>
-                  <SelectItem value="ONLINE">{t("online")}</SelectItem>
-                  <SelectItem value="OFFLINE">{t("offline")}</SelectItem>
-                  <SelectItem value="ERROR">{t("error")}</SelectItem>
+                  <SelectItem value="ONLINE">
+                    <div className="flex items-center gap-2">
+                      <Wifi className="h-4 w-4 text-green-500" />
+                      {t("online")}
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="OFFLINE">
+                    <div className="flex items-center gap-2">
+                      <WifiOff className="h-4 w-4 text-gray-500" />
+                      {t("offline")}
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="ERROR">
+                    <div className="flex items-center gap-2">
+                      <AlertCircle className="h-4 w-4 text-red-500" />
+                      {t("error")}
+                    </div>
+                  </SelectItem>
                 </SelectContent>
               </Select>
 
               {/* Home Filter */}
               <Select value={homeFilter} onValueChange={setHomeFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder={t("filterByHome")} />
+                  <div className="flex items-center gap-2">
+                    <HomeIcon className="h-4 w-4 text-muted-foreground" />
+                    <SelectValue placeholder={t("filterByHome")} />
+                  </div>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">{t("allHomes")}</SelectItem>
                   {homes.map((home) => (
                     <SelectItem key={home.id} value={home.id.toString()}>
-                      {home.name}
+                      <div className="flex items-center gap-2">
+                        <HomeIcon className="h-4 w-4" />
+                        {home.name}
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -250,7 +321,7 @@ export default function UserDevicesPage() {
             </div>
           </CardContent>
         </Card>
-      )}
+      </div>
 
       {/* Devices Grid */}
       {isLoading ? (
@@ -273,7 +344,7 @@ export default function UserDevicesPage() {
       ) : filteredDevices.length === 0 ? (
         <Card className="border-dashed">
           <CardContent className="p-12 text-center">
-            <Filter className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+            <Search className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
             <h2 className="text-xl font-semibold mb-2">
               {t("noDevicesMatchSearch")}
             </h2>

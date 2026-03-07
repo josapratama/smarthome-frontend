@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useTranslation } from "@/hooks/use-translation";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { MessageSquare, Users, Mail } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { MessageSquare, Users, Mail, Search } from "lucide-react";
+import { PageHeader } from "@/components/ui/page-header";
 import { ChatWindow } from "@/app/user/messages/chat-window";
 import {
   getDMConversations,
@@ -15,7 +17,6 @@ import {
   type DirectConversation,
   type HomeConversation,
 } from "@/lib/api/messaging";
-import { toast } from "sonner";
 import { ConversationList } from "./conversation-list";
 
 export default function UserMessagesPage() {
@@ -31,6 +32,10 @@ export default function UserMessagesPage() {
   const [dmUnreadCount, setDmUnreadCount] = useState(0);
   const [homeUnreadCount, setHomeUnreadCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Ref for search functionality
+  const searchSectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     loadConversations();
@@ -43,6 +48,34 @@ export default function UserMessagesPage() {
     }, 30000);
 
     return () => clearInterval(interval);
+  }, []);
+
+  // Listen to topbar events
+  useEffect(() => {
+    const handleSearch = () => {
+      let searchInput: HTMLInputElement | null = null;
+
+      if (searchSectionRef.current) {
+        searchInput = searchSectionRef.current.querySelector(
+          "input",
+        ) as HTMLInputElement;
+      }
+
+      if (!searchInput) {
+        searchInput = document.querySelector("input") as HTMLInputElement;
+      }
+
+      if (searchInput) {
+        searchInput.focus();
+        searchInput.select();
+      }
+    };
+
+    window.addEventListener("topbar-search", handleSearch);
+
+    return () => {
+      window.removeEventListener("topbar-search", handleSearch);
+    };
   }, []);
 
   const loadConversations = async () => {
@@ -84,17 +117,68 @@ export default function UserMessagesPage() {
     loadUnreadCounts();
   };
 
+  // Filter conversations based on search query
+  const filteredDmConversations = searchQuery
+    ? dmConversations.filter((conv) => {
+        const query = searchQuery.toLowerCase();
+        const otherUser = conv.otherUser;
+        return (
+          otherUser.email?.toLowerCase().includes(query) ||
+          otherUser.username?.toLowerCase().includes(query)
+        );
+      })
+    : dmConversations;
+
+  const filteredHomeConversations = searchQuery
+    ? homeConversations.filter((conv) => {
+        const query = searchQuery.toLowerCase();
+        return conv.home.name?.toLowerCase().includes(query);
+      })
+    : homeConversations;
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl md:text-3xl font-bold mb-1 flex items-center gap-2">
-          <MessageSquare className="h-7 w-7" />
-          {t("messages") || "Messages"}
-        </h1>
-        <p className="text-sm md:text-base text-muted-foreground">
-          {t("messagesDescription") || "Chat with other users and home members"}
-        </p>
+      {/* Header with Stats */}
+      <PageHeader
+        stats={[
+          {
+            label: t("directMessages"),
+            value: dmConversations.length,
+            icon: Mail,
+            color: "text-blue-500",
+          },
+          {
+            label: t("homeChats"),
+            value: homeConversations.length,
+            icon: Users,
+            color: "text-green-500",
+          },
+          {
+            label: t("unreadMessages"),
+            value: dmUnreadCount + homeUnreadCount,
+            icon: MessageSquare,
+            color: "text-orange-500",
+          },
+        ]}
+      />
+
+      {/* Search Bar */}
+      <div ref={searchSectionRef}>
+        <Card>
+          <CardContent className="p-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={
+                  t("searchConversations") || "Search conversations..."
+                }
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <Card className="overflow-hidden">
@@ -145,7 +229,7 @@ export default function UserMessagesPage() {
             <div className="lg:col-span-1 border-r">
               <TabsContent value="dm" className="m-0">
                 <ConversationList
-                  conversations={dmConversations}
+                  conversations={filteredDmConversations}
                   selectedId={selectedConversation?.id}
                   onSelect={handleConversationSelect}
                   loading={isLoading}
@@ -154,7 +238,7 @@ export default function UserMessagesPage() {
               </TabsContent>
               <TabsContent value="home" className="m-0">
                 <ConversationList
-                  conversations={homeConversations}
+                  conversations={filteredHomeConversations}
                   selectedId={selectedConversation?.id}
                   onSelect={handleConversationSelect}
                   loading={isLoading}

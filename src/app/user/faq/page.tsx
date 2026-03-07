@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useTranslation } from "@/hooks/use-translation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page-header";
 import {
   HelpCircle,
   Search,
@@ -14,10 +15,11 @@ import {
   ChevronUp,
   ThumbsUp,
   ThumbsDown,
+  BookOpen,
+  MessageCircle,
 } from "lucide-react";
 import { getFAQs, markFAQFeedback, type FAQ } from "@/lib/api/faq";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 
 export default function UserFAQPage() {
   const { t } = useTranslation();
@@ -28,6 +30,9 @@ export default function UserFAQPage() {
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
 
+  // Ref for search functionality
+  const searchSectionRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     loadFAQs();
   }, []);
@@ -35,6 +40,34 @@ export default function UserFAQPage() {
   useEffect(() => {
     filterFAQs();
   }, [searchQuery, selectedCategory, faqs]);
+
+  // Listen to topbar events
+  useEffect(() => {
+    const handleSearch = () => {
+      let searchInput: HTMLInputElement | null = null;
+
+      if (searchSectionRef.current) {
+        searchInput = searchSectionRef.current.querySelector(
+          "input",
+        ) as HTMLInputElement;
+      }
+
+      if (!searchInput) {
+        searchInput = document.querySelector("input") as HTMLInputElement;
+      }
+
+      if (searchInput) {
+        searchInput.focus();
+        searchInput.select();
+      }
+    };
+
+    window.addEventListener("topbar-search", handleSearch);
+
+    return () => {
+      window.removeEventListener("topbar-search", handleSearch);
+    };
+  }, []);
 
   const loadFAQs = async () => {
     setIsLoading(true);
@@ -104,32 +137,54 @@ export default function UserFAQPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl md:text-3xl font-bold mb-1 flex items-center gap-2">
-          <HelpCircle className="h-7 w-7" />
-          {t("faq") || "Frequently Asked Questions"}
-        </h1>
-        <p className="text-sm md:text-base text-muted-foreground">
-          {t("faqDescription") ||
-            "Find answers to common questions about using the smart home system"}
-        </p>
-      </div>
+      {/* Header with Stats */}
+      <PageHeader
+        stats={[
+          {
+            label: t("totalFAQs") || "Total FAQs",
+            value: faqs.length,
+            icon: BookOpen,
+            color: "text-blue-500",
+          },
+          {
+            label: t("categories") || "Categories",
+            value: categories.length - 1, // Exclude "ALL"
+            icon: HelpCircle,
+            color: "text-purple-500",
+          },
+          {
+            label: t("searchResults") || "Results",
+            value: filteredFaqs.length,
+            icon: Search,
+            color: "text-green-500",
+          },
+        ]}
+        actions={
+          <Button asChild variant="outline">
+            <a href="/user/chat">
+              <MessageCircle className="h-4 w-4 mr-2" />
+              {t("chatWithAI") || "Chat AI"}
+            </a>
+          </Button>
+        }
+      />
 
       {/* Search Bar */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder={t("searchFAQ") || "Search questions..."}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-        </CardContent>
-      </Card>
+      <div ref={searchSectionRef}>
+        <Card>
+          <CardContent className="p-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={t("searchFAQ") || "Search questions..."}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Category Filter */}
       <div className="flex flex-wrap gap-2">

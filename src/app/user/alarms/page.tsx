@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +27,8 @@ import {
   Zap,
   Activity,
   Home as HomeIcon,
+  Filter,
+  Shield,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "@/hooks/use-translation";
@@ -36,6 +38,7 @@ import {
   acknowledgeAlarm,
   resolveAlarm,
 } from "@/lib/api/alarms";
+import { PageHeader } from "@/components/ui/page-header";
 import type {
   AlarmDTO,
   AlarmStatus,
@@ -53,6 +56,9 @@ export default function UserAlarmsPage() {
   const [severityFilter, setSeverityFilter] = useState<string>("all");
   const [homeFilter, setHomeFilter] = useState<string>("all");
 
+  // Refs for filter section
+  const filterSectionRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     loadData();
   }, [homeFilter]);
@@ -60,6 +66,67 @@ export default function UserAlarmsPage() {
   useEffect(() => {
     filterAlarms();
   }, [alarms, searchQuery, statusFilter, severityFilter]);
+
+  // Listen to topbar events
+  useEffect(() => {
+    const handleRefresh = () => {
+      loadData();
+    };
+
+    const handleFilter = () => {
+      if (filterSectionRef.current) {
+        filterSectionRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+        filterSectionRef.current.classList.add(
+          "ring-2",
+          "ring-primary",
+          "ring-offset-2",
+        );
+        setTimeout(() => {
+          filterSectionRef.current?.classList.remove(
+            "ring-2",
+            "ring-primary",
+            "ring-offset-2",
+          );
+        }, 2000);
+      }
+    };
+
+    const handleSearch = () => {
+      // Find input within the filter section using the ref
+      let searchInput: HTMLInputElement | null = null;
+
+      if (filterSectionRef.current) {
+        searchInput = filterSectionRef.current.querySelector(
+          'input[type="text"]',
+        ) as HTMLInputElement;
+      }
+
+      // Fallback to document-wide search
+      if (!searchInput) {
+        searchInput = document.querySelector(
+          'input[type="text"]',
+        ) as HTMLInputElement;
+      }
+
+      if (searchInput) {
+        searchInput.focus();
+        searchInput.select();
+      }
+    };
+
+    window.addEventListener("topbar-refresh", handleRefresh);
+    window.addEventListener("topbar-filter", handleFilter);
+    window.addEventListener("topbar-search", handleSearch);
+
+    return () => {
+      window.removeEventListener("topbar-refresh", handleRefresh);
+      window.removeEventListener("topbar-filter", handleFilter);
+      window.removeEventListener("topbar-search", handleSearch);
+    };
+  }, []);
 
   const loadData = async () => {
     setIsLoading(true);
@@ -242,26 +309,47 @@ export default function UserAlarmsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
-            <AlertTriangle className="h-7 w-7 text-red-500" />
-            {t("alarms")}
-          </h1>
-          <p className="text-sm md:text-base text-muted-foreground mt-1">
-            {t("monitorSecurityAlarms")}
-          </p>
-        </div>
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={loadData}
-          disabled={isLoading}
-        >
-          <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
-        </Button>
-      </div>
+      {/* Header with Stats */}
+      <PageHeader
+        stats={[
+          {
+            label: t("totalAlarms"),
+            value: alarms.length,
+            icon: AlertTriangle,
+            color: "text-red-500",
+          },
+          {
+            label: t("open"),
+            value: openCount,
+            icon: XCircle,
+            color: "text-red-600",
+          },
+          {
+            label: t("acknowledged"),
+            value: ackedCount,
+            icon: CheckCircle,
+            color: "text-blue-600",
+          },
+          {
+            label: t("critical"),
+            value: criticalCount,
+            icon: AlertCircle,
+            color: "text-orange-600",
+          },
+        ]}
+        actions={
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={loadData}
+            disabled={isLoading}
+          >
+            <RefreshCw
+              className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
+            />
+          </Button>
+        }
+      />
 
       {/* Critical Alert Banner */}
       {criticalCount > 0 && (
@@ -335,8 +423,8 @@ export default function UserAlarmsPage() {
       )}
 
       {/* Filters */}
-      {alarms.length > 0 && (
-        <Card>
+      <div ref={filterSectionRef}>
+        <Card className="transition-all duration-300">
           <CardContent className="pt-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {/* Search */}
@@ -353,40 +441,87 @@ export default function UserAlarmsPage() {
               {/* Status Filter */}
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder={t("status")} />
+                  <div className="flex items-center gap-2">
+                    <Filter className="h-4 w-4 text-muted-foreground" />
+                    <SelectValue placeholder={t("status")} />
+                  </div>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">{t("allStatus")}</SelectItem>
-                  <SelectItem value="OPEN">{t("open")}</SelectItem>
-                  <SelectItem value="ACKED">{t("acknowledged")}</SelectItem>
-                  <SelectItem value="RESOLVED">{t("resolved")}</SelectItem>
+                  <SelectItem value="OPEN">
+                    <div className="flex items-center gap-2">
+                      <XCircle className="h-4 w-4 text-red-500" />
+                      {t("open")}
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="ACKED">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-blue-500" />
+                      {t("acknowledged")}
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="RESOLVED">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      {t("resolved")}
+                    </div>
+                  </SelectItem>
                 </SelectContent>
               </Select>
 
               {/* Severity Filter */}
               <Select value={severityFilter} onValueChange={setSeverityFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder={t("severity")} />
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-muted-foreground" />
+                    <SelectValue placeholder={t("severity")} />
+                  </div>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">{t("allSeverity")}</SelectItem>
-                  <SelectItem value="CRITICAL">{t("critical")}</SelectItem>
-                  <SelectItem value="HIGH">{t("high")}</SelectItem>
-                  <SelectItem value="MEDIUM">{t("medium")}</SelectItem>
-                  <SelectItem value="LOW">{t("low")}</SelectItem>
+                  <SelectItem value="CRITICAL">
+                    <div className="flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4 text-red-500" />
+                      {t("critical")}
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="HIGH">
+                    <div className="flex items-center gap-2">
+                      <AlertCircle className="h-4 w-4 text-orange-500" />
+                      {t("high")}
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="MEDIUM">
+                    <div className="flex items-center gap-2">
+                      <Bell className="h-4 w-4 text-yellow-500" />
+                      {t("medium")}
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="LOW">
+                    <div className="flex items-center gap-2">
+                      <Bell className="h-4 w-4 text-gray-500" />
+                      {t("low")}
+                    </div>
+                  </SelectItem>
                 </SelectContent>
               </Select>
 
               {/* Home Filter */}
               <Select value={homeFilter} onValueChange={setHomeFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder={t("filterByHome")} />
+                  <div className="flex items-center gap-2">
+                    <HomeIcon className="h-4 w-4 text-muted-foreground" />
+                    <SelectValue placeholder={t("filterByHome")} />
+                  </div>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">{t("allHomes")}</SelectItem>
                   {homes.map((home) => (
                     <SelectItem key={home.id} value={home.id.toString()}>
-                      {home.name}
+                      <div className="flex items-center gap-2">
+                        <HomeIcon className="h-4 w-4" />
+                        {home.name}
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -394,7 +529,7 @@ export default function UserAlarmsPage() {
             </div>
           </CardContent>
         </Card>
-      )}
+      </div>
 
       {/* Alarms List */}
       <Card>
