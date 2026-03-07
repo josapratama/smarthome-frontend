@@ -15,7 +15,6 @@ import {
   User,
   Bell,
   MessageSquare,
-  MessageCircle,
   HelpCircle,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
@@ -40,7 +39,6 @@ export function UserSidebar({ className, onClose }: UserSidebarProps) {
     { name: t("energy"), href: "/user/energy", icon: Zap },
     { name: t("alarms"), href: "/user/alarms", icon: AlertTriangle },
     { name: t("messages"), href: "/user/messages", icon: MessageSquare },
-    { name: t("chatAI"), href: "/user/chat", icon: MessageCircle },
     { name: t("faq"), href: "/user/faq", icon: HelpCircle },
     { name: t("notifications"), href: "/user/notifications", icon: Bell },
     { name: t("appInformation"), href: "/user/app-info", icon: Info },
