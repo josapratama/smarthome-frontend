@@ -16,7 +16,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { PageHeader } from "@/components/ui/page-header";
 import {
   User,
   Mail,
@@ -66,8 +65,21 @@ export default function AdminProfilePage() {
   });
 
   useEffect(() => {
+    // Update topbar title
+    window.dispatchEvent(
+      new CustomEvent("topbar-title-change", {
+        detail: t("profileSettings"),
+      }),
+    );
+
     loadProfile();
-  }, []);
+
+    return () => {
+      window.dispatchEvent(
+        new CustomEvent("topbar-title-change", { detail: null }),
+      );
+    };
+  }, [t]);
 
   const loadProfile = async () => {
     setIsLoading(true);
@@ -277,10 +289,6 @@ export default function AdminProfilePage() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <PageHeader
-          title={t("profileSettings")}
-          description={t("manageAccount")}
-        />
         <Skeleton className="h-[400px]" />
       </div>
     );
@@ -288,15 +296,9 @@ export default function AdminProfilePage() {
 
   if (!profile) {
     return (
-      <>
-        <PageHeader
-          title={t("profileSettings")}
-          description={t("manageAccount")}
-        />
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">Failed to load profile</p>
-        </div>
-      </>
+      <div className="text-center py-12">
+        <p className="text-muted-foreground">Failed to load profile</p>
+      </div>
     );
   }
 
@@ -311,11 +313,6 @@ export default function AdminProfilePage() {
 
   return (
     <div className="space-y-6 max-w-4xl">
-      <PageHeader
-        title={t("profileSettings")}
-        description={t("manageAccount")}
-      />
-
       <div className="grid gap-6 md:grid-cols-3">
         {/* Profile Card */}
         <Card className="md:col-span-1">

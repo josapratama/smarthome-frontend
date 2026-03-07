@@ -3,7 +3,8 @@ export type AITab =
   | "anomalies"
   | "rules"
   | "models"
-  | "homeModels";
+  | "homeModels"
+  | "training";
 
 export interface CreateRuleFormData {
   name: string;

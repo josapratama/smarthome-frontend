@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Plus, Sparkles, Brain, TrendingUp, Settings } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Sparkles, Brain, TrendingUp, Settings } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -25,6 +25,10 @@ import { AnomaliesTab } from "./anomalies-tab";
 import { RulesTab } from "./rules-tab";
 import { ModelsTab } from "./models-tab";
 import { HomeModelsTab } from "./home-models-tab";
+import { TrainingSettingsTab } from "./training-settings-tab";
+import { TrainingControlTab } from "./training-control-tab";
+import { TrainingHistoryTab } from "./training-history-tab";
+import { TrainingAnalyticsTab } from "./training-analytics-tab";
 import { CreateRuleDialog } from "./create-rule-dialog";
 import type { AITab, CreateRuleFormData } from "./types";
 
@@ -186,88 +190,110 @@ export default function AIPage() {
       {/* Stats Cards */}
       <AIStatsCards stats={stats} isLoading={statsLoading} />
 
-      {/* Tab Navigation */}
-      <div
-        className="flex gap-2 border-b dark:border-gray-800 overflow-x-auto pb-px -mx-1 px-1"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      {/* Tabs */}
+      <Tabs
+        value={selectedTab}
+        onValueChange={(value) => setSelectedTab(value as AITab)}
       >
-        <Button
-          variant={selectedTab === "predictions" ? "default" : "ghost"}
-          onClick={() => setSelectedTab("predictions")}
-          className="rounded-b-none whitespace-nowrap flex-shrink-0 text-xs sm:text-sm px-3 sm:px-4"
-          size="sm"
-        >
-          <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-          <span className="hidden xs:inline">{t("energyPredictions")}</span>
-          <span className="xs:hidden">{t("predictions")}</span>
-        </Button>
-        <Button
-          variant={selectedTab === "anomalies" ? "default" : "ghost"}
-          onClick={() => setSelectedTab("anomalies")}
-          className="rounded-b-none whitespace-nowrap flex-shrink-0 text-xs sm:text-sm px-3 sm:px-4"
-          size="sm"
-        >
-          <Brain className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-          <span className="hidden xs:inline">{t("anomalyDetection")}</span>
-          <span className="xs:hidden">{t("anomalies")}</span>
-        </Button>
-        <Button
-          variant={selectedTab === "rules" ? "default" : "ghost"}
-          onClick={() => setSelectedTab("rules")}
-          className="rounded-b-none whitespace-nowrap flex-shrink-0 text-xs sm:text-sm px-3 sm:px-4"
-          size="sm"
-        >
-          <Settings className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-          <span className="hidden xs:inline">{t("aiRules")}</span>
-          <span className="xs:hidden">{t("rules")}</span>
-        </Button>
-        <Button
-          variant={selectedTab === "models" ? "default" : "ghost"}
-          onClick={() => setSelectedTab("models")}
-          className="rounded-b-none whitespace-nowrap flex-shrink-0 text-xs sm:text-sm px-3 sm:px-4"
-          size="sm"
-        >
-          <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-          <span className="hidden xs:inline">{t("aiModels")}</span>
-          <span className="xs:hidden">{t("models")}</span>
-        </Button>
-        <Button
-          variant={selectedTab === "homeModels" ? "default" : "ghost"}
-          onClick={() => setSelectedTab("homeModels")}
-          className="rounded-b-none whitespace-nowrap flex-shrink-0 text-xs sm:text-sm px-3 sm:px-4"
-          size="sm"
-        >
-          <Settings className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-          <span className="hidden xs:inline">{t("homeAIModels")}</span>
-          <span className="xs:hidden">{t("homeModels")}</span>
-        </Button>
-      </div>
+        <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6">
+          <TabsTrigger value="predictions" className="gap-2">
+            <TrendingUp className="h-4 w-4" />
+            <span className="hidden sm:inline">{t("predictions")}</span>
+          </TabsTrigger>
+          <TabsTrigger value="anomalies" className="gap-2">
+            <Brain className="h-4 w-4" />
+            <span className="hidden sm:inline">{t("anomalies")}</span>
+          </TabsTrigger>
+          <TabsTrigger value="rules" className="gap-2">
+            <Settings className="h-4 w-4" />
+            <span className="hidden sm:inline">{t("rules")}</span>
+          </TabsTrigger>
+          <TabsTrigger value="models" className="gap-2">
+            <Sparkles className="h-4 w-4" />
+            <span className="hidden sm:inline">{t("models")}</span>
+          </TabsTrigger>
+          <TabsTrigger value="homeModels" className="gap-2">
+            <Settings className="h-4 w-4" />
+            <span className="hidden sm:inline">{t("homeModels")}</span>
+          </TabsTrigger>
+          <TabsTrigger value="training" className="gap-2">
+            <Brain className="h-4 w-4" />
+            <span className="hidden sm:inline">{t("training")}</span>
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Content Area */}
-      {selectedTab === "predictions" && (
-        <PredictionsTab
-          predictions={predictions}
-          isLoading={predictionsLoading}
-        />
-      )}
+        <TabsContent value="predictions" className="space-y-4">
+          <PredictionsTab
+            predictions={predictions}
+            isLoading={predictionsLoading}
+          />
+        </TabsContent>
 
-      {selectedTab === "anomalies" && (
-        <AnomaliesTab anomalies={anomalies} isLoading={anomaliesLoading} />
-      )}
+        <TabsContent value="anomalies" className="space-y-4">
+          <AnomaliesTab anomalies={anomalies} isLoading={anomaliesLoading} />
+        </TabsContent>
 
-      {selectedTab === "rules" && (
-        <RulesTab
-          rules={rules}
-          isLoading={rulesLoading}
-          onCreateRule={handleCreateAiRule}
-          onToggleRule={handleToggleRule}
-          onDeleteRule={handleDeleteRule}
-        />
-      )}
+        <TabsContent value="rules" className="space-y-4">
+          <RulesTab
+            rules={rules}
+            isLoading={rulesLoading}
+            onCreateRule={handleCreateAiRule}
+            onToggleRule={handleToggleRule}
+            onDeleteRule={handleDeleteRule}
+          />
+        </TabsContent>
 
-      {selectedTab === "models" && <ModelsTab />}
+        <TabsContent value="models" className="space-y-4">
+          <ModelsTab />
+        </TabsContent>
 
-      {selectedTab === "homeModels" && <HomeModelsTab />}
+        <TabsContent value="homeModels" className="space-y-4">
+          <HomeModelsTab />
+        </TabsContent>
+
+        <TabsContent value="training" className="space-y-4">
+          <Tabs defaultValue="settings" className="w-full">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="settings" className="gap-1 px-2">
+                <Settings className="h-4 w-4" />
+                <span className="hidden lg:inline text-xs">
+                  {t("settings")}
+                </span>
+              </TabsTrigger>
+              <TabsTrigger value="control" className="gap-1 px-2">
+                <Brain className="h-4 w-4" />
+                <span className="hidden lg:inline text-xs">{t("control")}</span>
+              </TabsTrigger>
+              <TabsTrigger value="history" className="gap-1 px-2">
+                <TrendingUp className="h-4 w-4" />
+                <span className="hidden lg:inline text-xs">{t("history")}</span>
+              </TabsTrigger>
+              <TabsTrigger value="analytics" className="gap-1 px-2">
+                <Sparkles className="h-4 w-4" />
+                <span className="hidden lg:inline text-xs">
+                  {t("analytics")}
+                </span>
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="settings" className="space-y-4">
+              <TrainingSettingsTab />
+            </TabsContent>
+
+            <TabsContent value="control" className="space-y-4">
+              <TrainingControlTab />
+            </TabsContent>
+
+            <TabsContent value="history" className="space-y-4">
+              <TrainingHistoryTab />
+            </TabsContent>
+
+            <TabsContent value="analytics" className="space-y-4">
+              <TrainingAnalyticsTab />
+            </TabsContent>
+          </Tabs>
+        </TabsContent>
+      </Tabs>
 
       {/* Create AI Rule Dialog */}
       <CreateRuleDialog

@@ -132,7 +132,7 @@ export default function HelpUI() {
   };
 
   return (
-    <div className="container mx-auto p-4 sm:p-6 max-w-6xl">
+    <div className="container mx-auto p-4 sm:p-6 max-w-6xl space-y-6">
       {/* Header with Stats */}
       <PageHeader
         stats={[
@@ -159,7 +159,7 @@ export default function HelpUI() {
 
       {/* Search */}
       <div ref={searchSectionRef}>
-        <Card className="mb-6">
+        <Card className="shadow-sm">
           <CardContent className="p-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -175,7 +175,7 @@ export default function HelpUI() {
       </div>
 
       {/* Categories */}
-      <Card className="mb-6">
+      <Card className="shadow-sm">
         <CardHeader>
           <CardTitle>{t("categories")}</CardTitle>
         </CardHeader>
@@ -185,6 +185,7 @@ export default function HelpUI() {
               variant={selectedCategory === null ? "default" : "outline"}
               size="sm"
               onClick={() => setSelectedCategory(null)}
+              className="rounded-full"
             >
               {t("allCategories")}
             </Button>
@@ -194,13 +195,14 @@ export default function HelpUI() {
                 variant={selectedCategory === category ? "default" : "outline"}
                 size="sm"
                 onClick={() => setSelectedCategory(category)}
+                className="rounded-full"
               >
                 {getCategoryLabel(category)}
-                {categoryCounts[category] && (
-                  <span className="ml-2 text-xs opacity-70">
-                    ({categoryCounts[category]})
+                {categoryCounts[category] ? (
+                  <span className="ml-1.5 px-1.5 py-0.5 text-xs rounded-full bg-background/20">
+                    {categoryCounts[category]}
                   </span>
-                )}
+                ) : null}
               </Button>
             ))}
           </div>
