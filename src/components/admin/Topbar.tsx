@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Bell, Menu, RefreshCw, Search, Filter, Plus } from "lucide-react";
+import { Bell, Menu } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -46,79 +46,67 @@ export function Topbar({ onMenuClick }: TopbarProps) {
     };
   }, []);
 
-  // Get page title and action buttons based on current route
+  // Get page title based on current route
   const getPageInfo = () => {
     // If custom title is set, use it
     if (customTitle) {
-      return { title: customTitle, actions: ["notification"] };
+      return { title: customTitle };
     }
 
     if (pathname.includes("/dashboard"))
       return {
         title: t("welcomeBack") || "Welcome Back 👋",
-        actions: ["notification"],
       };
 
     // Combined pages
     if (pathname.includes("/location-management"))
       return {
         title: t("locationManagement") || "Location Management",
-        actions: ["search", "add", "notification"],
       };
     if (pathname.includes("/communications"))
       return {
         title: t("communications") || "Communications",
-        actions: ["search", "notification"],
       };
     if (pathname.includes("/device-management"))
       return {
         title: t("deviceManagement") || "Device Management",
-        actions: ["search", "filter", "add", "notification"],
       };
     if (pathname.includes("/energy"))
       return {
         title: t("energyManagement") || "Energy Management",
-        actions: ["refresh", "filter", "notification"],
       };
     if (pathname.includes("/firmware"))
       return {
         title: t("firmwareManagement") || "Firmware Management",
-        actions: ["search", "add", "notification"],
       };
     if (pathname.includes("/system-tools"))
       return {
         title: t("systemTools") || "System Tools",
-        actions: ["search", "add", "notification"],
       };
     if (pathname.includes("/settings-help"))
       return {
         title: t("settingsHelp") || "Settings & Help",
-        actions: ["search", "notification"],
       };
 
     // Other pages
     if (pathname.includes("/alarms"))
       return {
         title: t("alarms"),
-        actions: ["refresh", "filter", "notification"],
       };
     if (pathname.includes("/ai"))
       return {
         title: t("aiAutomation"),
-        actions: ["refresh", "notification"],
       };
     if (pathname.includes("/notifications"))
       return {
         title: t("notifications"),
-        actions: ["filter"],
       };
     if (pathname.includes("/profile"))
       return {
         title: t("profile"),
-        actions: ["notification"],
       };
 
-    return { title: "Admin Panel", actions: ["notification"] };
+    return { title: "Admin Panel" };
   };
 
   const pageInfo = getPageInfo();
@@ -146,78 +134,23 @@ export function Topbar({ onMenuClick }: TopbarProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Action Buttons */}
-          {pageInfo.actions.includes("search") && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hover:bg-primary/10 transition-colors"
-              onClick={() => {
-                window.dispatchEvent(new CustomEvent("topbar-search"));
-              }}
-            >
-              <Search className="h-5 w-5" />
-            </Button>
-          )}
-
-          {pageInfo.actions.includes("filter") && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hover:bg-primary/10 transition-colors"
-              onClick={() => {
-                window.dispatchEvent(new CustomEvent("topbar-filter"));
-              }}
-            >
-              <Filter className="h-5 w-5" />
-            </Button>
-          )}
-
-          {pageInfo.actions.includes("refresh") && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hover:bg-primary/10 transition-colors"
-              onClick={() => {
-                window.dispatchEvent(new CustomEvent("topbar-refresh"));
-              }}
-            >
-              <RefreshCw className="h-5 w-5" />
-            </Button>
-          )}
-
-          {pageInfo.actions.includes("add") && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="hover:bg-primary/10 transition-colors"
-              onClick={() => {
-                window.dispatchEvent(new CustomEvent("topbar-add"));
-              }}
-            >
-              <Plus className="h-5 w-5" />
-            </Button>
-          )}
-
           {/* Notifications */}
-          {pageInfo.actions.includes("notification") && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="relative hover:bg-primary/10 transition-colors"
-              onClick={handleNotificationClick}
-            >
-              <Bell className="h-5 w-5" />
-              {unreadCount > 0 && (
-                <Badge
-                  variant="destructive"
-                  className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs animate-pulse"
-                >
-                  {unreadCount > 9 ? "9+" : unreadCount}
-                </Badge>
-              )}
-            </Button>
-          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative hover:bg-primary/10 transition-colors"
+            onClick={handleNotificationClick}
+          >
+            <Bell className="h-5 w-5" />
+            {unreadCount > 0 && (
+              <Badge
+                variant="destructive"
+                className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs animate-pulse"
+              >
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </Badge>
+            )}
+          </Button>
         </div>
       </div>
     </header>

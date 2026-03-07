@@ -14,8 +14,8 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>
       <LanguageProvider>
-        <div className="min-h-screen bg-background">
-          <div className="flex h-screen overflow-hidden">
+        <div className="h-screen bg-background overflow-hidden">
+          <div className="flex h-full">
             {/* Desktop Sidebar */}
             <Sidebar className="hidden lg:flex" />
 

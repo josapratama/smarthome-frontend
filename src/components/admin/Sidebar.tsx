@@ -46,6 +46,8 @@ export function Sidebar({ className, onClose }: SidebarProps) {
     { name: t("energyManagement"), href: "/energy", icon: Zap },
     { name: t("aiModels"), href: "/ai", icon: Brain },
     { name: t("communications"), href: "/communications", icon: MessageSquare },
+    { name: t("roomAccess"), href: "/room-access", icon: DoorOpen },
+    { name: t("security"), href: "/security", icon: Activity },
     { name: t("firmwareManagement"), href: "/firmware", icon: Package },
     { name: t("systemTools"), href: "/system-tools", icon: Terminal },
     { name: t("settingsHelp"), href: "/settings-help", icon: Settings },
@@ -67,7 +69,7 @@ export function Sidebar({ className, onClose }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "w-64 flex h-screen flex-col bg-card border-r border-border",
+        "w-64 flex flex-col bg-card border-r border-border",
         className,
       )}
     >
