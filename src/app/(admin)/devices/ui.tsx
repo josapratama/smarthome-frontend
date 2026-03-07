@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -47,7 +46,6 @@ import {
   Trash2,
   Activity,
   Zap,
-  Plus,
   Smartphone,
   Wifi,
   WifiOff,
@@ -315,14 +313,6 @@ export default function DevicesClient() {
             color: "text-gray-500",
           },
         ]}
-        actions={
-          <Link href="/devices/register">
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              {t("registerDevice")}
-            </Button>
-          </Link>
-        }
       />
 
       {/* Search */}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { PageHeader } from "@/components/ui/page-header";
 import {
   Select,
   SelectContent,
@@ -29,7 +30,17 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Info, Edit, Trash2, Plus, Save } from "lucide-react";
+import {
+  Info,
+  Edit,
+  Trash2,
+  Plus,
+  Save,
+  FileText,
+  Eye,
+  EyeOff,
+  Search,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/language-context";
 
@@ -50,6 +61,9 @@ export default function AppInfoPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingInfo, setEditingInfo] = useState<AppInfo | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const searchSectionRef = useRef<HTMLDivElement>(null);
 
   const [formData, setFormData] = useState({
     key: "",
@@ -61,6 +75,36 @@ export default function AppInfoPage() {
 
   useEffect(() => {
     loadAppInfo();
+  }, []);
+
+  useEffect(() => {
+    const handleSearch = () => {
+      let searchInput: HTMLInputElement | null = null;
+      if (searchSectionRef.current) {
+        searchInput = searchSectionRef.current.querySelector(
+          "input",
+        ) as HTMLInputElement;
+      }
+      if (!searchInput) {
+        searchInput = document.querySelector("input") as HTMLInputElement;
+      }
+      if (searchInput) {
+        searchInput.focus();
+        searchInput.select();
+      }
+    };
+
+    const handleAdd = () => {
+      handleOpenDialog();
+    };
+
+    window.addEventListener("topbar-search", handleSearch);
+    window.addEventListener("topbar-add", handleAdd);
+
+    return () => {
+      window.removeEventListener("topbar-search", handleSearch);
+      window.removeEventListener("topbar-add", handleAdd);
+    };
   }, []);
 
   const loadAppInfo = async () => {
@@ -156,28 +200,89 @@ export default function AppInfoPage() {
     }
   };
 
-  const groupedInfo = appInfo.reduce(
-    (acc, info) => {
-      if (!acc[info.category]) {
-        acc[info.category] = [];
-      }
-      acc[info.category].push(info);
-      return acc;
-    },
-    {} as Record<string, AppInfo[]>,
-  );
+  const groupedInfo = appInfo
+    .filter((info) => {
+      if (!searchQuery) return true;
+      const search = searchQuery.toLowerCase();
+      return (
+        info.key.toLowerCase().includes(search) ||
+        info.value.toLowerCase().includes(search) ||
+        info.category.toLowerCase().includes(search)
+      );
+    })
+    .reduce(
+      (acc, info) => {
+        if (!acc[info.category]) {
+          acc[info.category] = [];
+        }
+        acc[info.category].push(info);
+        return acc;
+      },
+      {} as Record<string, AppInfo[]>,
+    );
+
+  const stats = {
+    total: appInfo.length,
+    public: appInfo.filter((i) => i.isPublic).length,
+    private: appInfo.filter((i) => !i.isPublic).length,
+    categories: Object.keys(
+      appInfo.reduce(
+        (acc, info) => {
+          acc[info.category] = true;
+          return acc;
+        },
+        {} as Record<string, boolean>,
+      ),
+    ).length,
+  };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">{t("appInformation")}</h1>
-          <p className="text-muted-foreground mt-1">{t("manageAppInfo")}</p>
-        </div>
-        <Button onClick={() => handleOpenDialog()}>
-          <Plus className="h-4 w-4 mr-2" />
-          {t("addInfo")}
-        </Button>
+      {/* Header with Stats */}
+      <PageHeader
+        stats={[
+          {
+            label: t("totalInfo"),
+            value: stats.total,
+            icon: Info,
+            color: "text-blue-500",
+          },
+          {
+            label: t("public"),
+            value: stats.public,
+            icon: Eye,
+            color: "text-green-500",
+          },
+          {
+            label: t("private"),
+            value: stats.private,
+            icon: EyeOff,
+            color: "text-orange-500",
+          },
+          {
+            label: t("categories"),
+            value: stats.categories,
+            icon: FileText,
+            color: "text-purple-500",
+          },
+        ]}
+      />
+
+      {/* Search */}
+      <div ref={searchSectionRef}>
+        <Card>
+          <CardContent className="p-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={t("searchAppInfo")}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {Object.entries(groupedInfo).map(([category, items]) => (
@@ -234,20 +339,16 @@ export default function AppInfoPage() {
         </Card>
       ))}
 
-      {appInfo.length === 0 && !isLoading && (
+      {Object.keys(groupedInfo).length === 0 && !isLoading && (
         <Card>
           <CardContent className="py-12 text-center">
             <Info className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">
-              {t("noAppInfoFound")}
+              {searchQuery ? t("noAppInfoMatchSearch") : t("noAppInfoFound")}
             </h3>
             <p className="text-muted-foreground mb-4">
               {t("getStartedAppInfo")}
             </p>
-            <Button onClick={() => handleOpenDialog()}>
-              <Plus className="h-4 w-4 mr-2" />
-              {t("addInfo")}
-            </Button>
           </CardContent>
         </Card>
       )}

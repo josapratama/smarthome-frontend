@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Plus, Sparkles, Brain, TrendingUp, Settings } from "lucide-react";
@@ -49,6 +49,21 @@ export default function AIPage() {
     },
     priority: 50,
   });
+
+  useEffect(() => {
+    const handleRefresh = () => {
+      queryClient.invalidateQueries({ queryKey: ["ai-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["energy-predictions"] });
+      queryClient.invalidateQueries({ queryKey: ["ai-anomalies"] });
+      queryClient.invalidateQueries({ queryKey: ["ai-rules"] });
+    };
+
+    window.addEventListener("topbar-refresh", handleRefresh);
+
+    return () => {
+      window.removeEventListener("topbar-refresh", handleRefresh);
+    };
+  }, [queryClient]);
 
   // Fetch AI stats
   const { data: stats, isLoading: statsLoading } = useQuery<AIStats>({
@@ -168,21 +183,6 @@ export default function AIPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold dark:text-white">
-            {t("aiAutomation")}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {t("intelligentAutomation")}
-          </p>
-        </div>
-        <Button onClick={handleCreateAiRule}>
-          <Plus className="h-4 w-4" />
-          {t("createAiRule")}
-        </Button>
-      </div>
-
       {/* Stats Cards */}
       <AIStatsCards stats={stats} isLoading={statsLoading} />
 

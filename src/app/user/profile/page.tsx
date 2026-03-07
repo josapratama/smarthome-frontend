@@ -275,8 +275,8 @@ export default function UserProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <Skeleton className="h-10 w-64" />
+      <div className="space-y-4 p-4">
+        <Skeleton className="h-[200px]" />
         <Skeleton className="h-[400px]" />
       </div>
     );
@@ -284,7 +284,7 @@ export default function UserProfilePage() {
 
   if (!profile) {
     return (
-      <div className="text-center py-12">
+      <div className="text-center py-12 p-4">
         <p className="text-muted-foreground">Failed to load profile</p>
       </div>
     );
@@ -300,12 +300,12 @@ export default function UserProfilePage() {
     .slice(0, 2);
 
   return (
-    <div className="space-y-6 max-w-4xl">
-      <div className="grid gap-6 md:grid-cols-3">
+    <div className="space-y-4 p-4 pb-20">
+      <div className="grid gap-4 md:grid-cols-3">
         {/* Profile Card */}
-        <Card className="md:col-span-1">
-          <CardHeader>
-            <CardTitle>{t("profile")}</CardTitle>
+        <Card className="md:col-span-1 rounded-2xl shadow-sm border-0">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base">{t("profile")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex flex-col items-center text-center space-y-4">
@@ -388,14 +388,18 @@ export default function UserProfilePage() {
         </Card>
 
         {/* Account Information & Settings */}
-        <div className="md:col-span-2 space-y-6">
+        <div className="md:col-span-2 space-y-4">
           {/* Account Info */}
-          <Card>
+          <Card className="rounded-2xl shadow-sm border-0">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>{t("accountInformation")}</CardTitle>
-                  <CardDescription>{t("updateAccountDetails")}</CardDescription>
+                  <CardTitle className="text-base">
+                    {t("accountInformation")}
+                  </CardTitle>
+                  <CardDescription className="text-sm">
+                    {t("updateAccountDetails")}
+                  </CardDescription>
                 </div>
                 {!isEditing && (
                   <Button onClick={() => setIsEditing(true)} variant="outline">
@@ -468,13 +472,15 @@ export default function UserProfilePage() {
 
               {/* Security Section */}
               {!isGoogleUser && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                <Card className="rounded-2xl shadow-sm border-0">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base flex items-center gap-2">
                       <Key className="h-5 w-5" />
                       {t("security")}
                     </CardTitle>
-                    <CardDescription>{t("changePasswordDesc")}</CardDescription>
+                    <CardDescription className="text-sm">
+                      {t("changePasswordDesc")}
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     {!showPasswordForm ? (
@@ -572,9 +578,9 @@ export default function UserProfilePage() {
           </Card>
 
           {/* Account Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{t("accountActions")}</CardTitle>
+          <Card className="rounded-2xl shadow-sm border-0">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">{t("accountActions")}</CardTitle>
             </CardHeader>
             <CardContent>
               <Button

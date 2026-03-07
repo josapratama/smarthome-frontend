@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { qk } from "@/lib/api/queries";
 import { apiFetchBrowser } from "@/lib/api/client.browser";
@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PageHeader } from "@/components/ui/page-header";
 import {
   Dialog,
   DialogContent,
@@ -39,6 +40,9 @@ import {
   Users,
   UserCheck,
   ShieldAlert,
+  DoorOpen,
+  Smartphone,
+  Search,
 } from "lucide-react";
 import { RoomAccessDialog } from "@/app/user/rooms/room-access-dialog";
 
@@ -175,6 +179,9 @@ export function RoomsClient() {
   const { t } = useTranslation();
   const [selectedRoom, setSelectedRoom] = useState<RoomDTO | null>(null);
   const [isAccessDialogOpen, setIsAccessDialogOpen] = useState(false);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchSectionRef = useRef<HTMLDivElement>(null);
 
   const roomsQuery = useQuery({
     queryKey: qk.rooms.all,
@@ -195,6 +202,36 @@ export function RoomsClient() {
       return payload.data ?? [];
     },
   });
+
+  useEffect(() => {
+    const handleSearch = () => {
+      let searchInput: HTMLInputElement | null = null;
+      if (searchSectionRef.current) {
+        searchInput = searchSectionRef.current.querySelector(
+          "input",
+        ) as HTMLInputElement;
+      }
+      if (!searchInput) {
+        searchInput = document.querySelector("input") as HTMLInputElement;
+      }
+      if (searchInput) {
+        searchInput.focus();
+        searchInput.select();
+      }
+    };
+
+    const handleAdd = () => {
+      setAddDialogOpen(true);
+    };
+
+    window.addEventListener("topbar-search", handleSearch);
+    window.addEventListener("topbar-add", handleAdd);
+
+    return () => {
+      window.removeEventListener("topbar-search", handleSearch);
+      window.removeEventListener("topbar-add", handleAdd);
+    };
+  }, []);
 
   const deleteMutation = useMutation({
     mutationFn: async (roomId: number) => {
@@ -253,49 +290,54 @@ export function RoomsClient() {
   const activeHomes = new Set(roomsQuery.data?.map((r) => r.homeId) || []);
   const devicesInRooms = 0;
 
+  const filteredRooms = roomsQuery.data?.filter((room) => {
+    if (!searchQuery) return true;
+    const search = searchQuery.toLowerCase();
+    return (
+      room.name.toLowerCase().includes(search) ||
+      getHomeName(room.homeId).toLowerCase().includes(search)
+    );
+  });
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">{t("rooms")}</h1>
-          <p className="text-sm text-muted-foreground">{t("manageRooms")}</p>
-        </div>
-        <AddRoomDialog />
-      </div>
+      {/* Header with Stats */}
+      <PageHeader
+        stats={[
+          {
+            label: t("totalRooms"),
+            value: roomsQuery.data?.length || 0,
+            icon: DoorOpen,
+            color: "text-blue-500",
+          },
+          {
+            label: t("activeHomes"),
+            value: activeHomes.size,
+            icon: Home,
+            color: "text-green-500",
+          },
+          {
+            label: t("devicesInRooms"),
+            value: devicesInRooms,
+            icon: Smartphone,
+            color: "text-purple-500",
+          },
+        ]}
+      />
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">
-              {t("totalRooms")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold">
-              {roomsQuery.data?.length || 0}
+      {/* Search */}
+      <div ref={searchSectionRef}>
+        <Card>
+          <CardContent className="p-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={t("searchRooms")}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+              />
             </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">
-              {t("activeHomes")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold">{activeHomes.size}</div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">
-              {t("devicesInRooms")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold">{devicesInRooms}</div>
           </CardContent>
         </Card>
       </div>
@@ -315,11 +357,11 @@ export function RoomsClient() {
             <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
               {(roomsQuery.error as Error).message}
             </div>
-          ) : !roomsQuery.data || roomsQuery.data.length === 0 ? (
+          ) : !filteredRooms || filteredRooms.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <Home className="h-12 w-12 text-muted-foreground/50" />
               <h3 className="mt-4 text-lg font-semibold">
-                {t("noRoomsFound")}
+                {searchQuery ? t("noRoomsMatchSearch") : t("noRoomsFound")}
               </h3>
               <p className="mt-2 text-sm text-muted-foreground">
                 {t("getStartedRoom")}
@@ -327,7 +369,7 @@ export function RoomsClient() {
             </div>
           ) : (
             <div className="divide-y rounded-xl border">
-              {roomsQuery.data.map((room) => (
+              {filteredRooms.map((room) => (
                 <div
                   key={room.id}
                   className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
@@ -396,6 +438,14 @@ export function RoomsClient() {
         </CardContent>
       </Card>
 
+      {/* Add Room Dialog - controlled externally */}
+      {addDialogOpen && (
+        <AddRoomDialogControlled
+          open={addDialogOpen}
+          onOpenChange={setAddDialogOpen}
+        />
+      )}
+
       {/* Access Control Dialog */}
       {selectedRoom && (
         <RoomAccessDialog
@@ -412,5 +462,132 @@ export function RoomsClient() {
         />
       )}
     </div>
+  );
+}
+
+// Controlled version of AddRoomDialog
+function AddRoomDialogControlled({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const [formData, setFormData] = useState({
+    name: "",
+    homeId: "",
+  });
+
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const { t } = useTranslation();
+
+  const homesQuery = useQuery({
+    queryKey: qk.homes.list(),
+    queryFn: async () => {
+      const payload = await apiFetchBrowser<{ data: HomeDTO[] }>(
+        "/api/v1/homes",
+      );
+      return payload.data ?? [];
+    },
+  });
+
+  const createMutation = useMutation({
+    mutationFn: async (data: RoomCreateRequest) => {
+      return apiFetchBrowser(`/api/v1/homes/${data.homeId}/rooms`, {
+        method: "POST",
+        body: JSON.stringify({ name: data.name }),
+        headers: { "Content-Type": "application/json" },
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: qk.rooms.all });
+      onOpenChange(false);
+      setFormData({ name: "", homeId: "" });
+      toast({
+        title: t("roomCreated"),
+        variant: "success",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: t("failedCreateRoom"),
+        description: error.message || t("unknownError"),
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleSubmit = () => {
+    if (!formData.name || !formData.homeId) {
+      toast({
+        title: t("validationError"),
+        description: t("fillAllFields"),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    createMutation.mutate({
+      name: formData.name,
+      homeId: Number(formData.homeId),
+    });
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>{t("addNewRoom")}</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="home">
+              {t("home")} {t("required")}
+            </Label>
+            <Select
+              value={formData.homeId}
+              onValueChange={(value) =>
+                setFormData((prev) => ({ ...prev, homeId: value }))
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={t("selectHome")} />
+              </SelectTrigger>
+              <SelectContent>
+                {homesQuery.data?.map((home) => (
+                  <SelectItem key={home.id} value={String(home.id)}>
+                    {home.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="name">
+              {t("roomName")} {t("required")}
+            </Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, name: e.target.value }))
+              }
+              placeholder="e.g., Living Room, Bedroom"
+            />
+          </div>
+
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
+              {t("cancel")}
+            </Button>
+            <Button onClick={handleSubmit} disabled={createMutation.isPending}>
+              {createMutation.isPending ? t("creating") : t("createRoom")}
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

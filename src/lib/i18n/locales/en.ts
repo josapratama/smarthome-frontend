@@ -9,6 +9,7 @@ export const en = {
   monitoring: "Monitoring",
   alarms: "Alarms",
   energy: "Energy",
+  energyCost: "Energy Cost",
   settings: "Settings",
   logout: "Logout",
   faq: "FAQ",
@@ -672,6 +673,54 @@ export const en = {
   darkTheme: "Dark",
   appVersion: "Version",
   appPlatform: "Platform",
+  privacySecurity: "Privacy & Security",
+  downloadData: "Download Data",
+  dangerZone: "Danger Zone",
+  deleteAccount: "Delete Account",
+  managePrivacyAndSecurity: "Manage your privacy and security settings",
+  controlDataAndPrivacy: "Control your data, privacy, and account security",
+
+  // Privacy Page
+  profileVisibility: "Profile Visibility",
+  controlWhoCanSeeProfile: "Control who can see your profile",
+  showOnlineStatus: "Show Online Status",
+  letOthersSeeOnline: "Let others see when you're online",
+  showLocation: "Show Location",
+  shareLocationInfo: "Share your location information",
+  showActivity: "Show Activity",
+  shareActivityStatus: "Share your activity status",
+  communicationPreferences: "Communication Preferences",
+  controlWhoCanContact: "Control who can contact you",
+  allowFriendRequests: "Allow Friend Requests",
+  receiveFriendRequests: "Receive friend requests from other users",
+  allowMessages: "Allow Messages",
+  receiveDirectMessages: "Receive direct messages from other users",
+  dataPrivacy: "Data & Privacy",
+  manageDataCollection: "Manage data collection and usage",
+  dataCollection: "Data Collection",
+  allowDataCollection: "Allow data collection to improve services",
+  analyticsTracking: "Analytics Tracking",
+  allowAnalyticsTracking: "Allow analytics tracking for usage insights",
+  manageYourData: "Manage your personal data",
+  downloadMyData: "Download My Data",
+  downloadDataInfo:
+    "Download a copy of your personal data in JSON format. This includes your profile, devices, and settings.",
+  irreversibleActions: "Irreversible actions",
+  deleteAllMyData: "Delete All My Data",
+  deleteDataWarning:
+    "Warning: This action will permanently delete all your data and cannot be undone.",
+  dataDownloaded: "Data downloaded successfully",
+  failedToDownloadData: "Failed to download data",
+  deleteDataConfirm:
+    "Are you sure you want to delete all your data? This action cannot be undone.",
+  dataDeleted: "Data deleted successfully",
+  failedToDeleteData: "Failed to delete data",
+  privacyFeaturesComing: "Privacy Features Coming Soon",
+  privacyFeaturesDescription:
+    "We're working on comprehensive privacy controls. These features will be available in a future update.",
+  comingSoon: "Coming Soon",
+  plannedFeatures: "Planned Features",
+  backToSettings: "Back to Settings",
 
   // Device Control
   deviceControl: "Device Control",
@@ -1069,6 +1118,10 @@ export const en = {
   failedToDeleteConversation: "Failed to delete conversation",
   failedToSendMessage: "Failed to send message",
   failedToLoadConversations: "Failed to load conversations",
+  manageConversations: "Manage your conversations and messages",
+  totalConversations: "Total Conversations",
+  selectConversationDesc:
+    "Choose a conversation from the list to start chatting",
 
   // FAQ Management (Admin)
   faqManagement: "FAQ Management",

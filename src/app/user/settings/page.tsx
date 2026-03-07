@@ -17,8 +17,8 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@/components/ui/separator";
 import {
   Moon,
   Sun,
@@ -28,7 +28,10 @@ import {
   Mail,
   Volume2,
   Clock,
-  RotateCcw,
+  ChevronRight,
+  Smartphone,
+  Lock,
+  Eye,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTheme } from "@/contexts/theme-context";
@@ -45,7 +48,6 @@ export default function SettingsPage() {
 
   const [preferences, setPreferences] = useState<UserPreferences | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     loadPreferences();
@@ -58,7 +60,6 @@ export default function SettingsPage() {
       setPreferences(data);
     } catch (error) {
       console.error("Failed to load preferences:", error);
-      // Silent fail - use local storage values
     } finally {
       setIsLoading(false);
     }
@@ -68,6 +69,7 @@ export default function SettingsPage() {
     setTheme(newTheme as "light" | "dark" | "system");
     try {
       await preferencesApi.update({ theme: newTheme as any });
+      toast.success(t("settingsSaved"));
     } catch (error) {
       console.error("Failed to save theme preference:", error);
     }
@@ -77,6 +79,7 @@ export default function SettingsPage() {
     setLanguage(newLanguage as any);
     try {
       await preferencesApi.update({ language: newLanguage });
+      toast.success(t("settingsSaved"));
     } catch (error) {
       console.error("Failed to save language preference:", error);
     }
@@ -121,230 +124,278 @@ export default function SettingsPage() {
     }
   };
 
-  const handleResetPreferences = async () => {
-    if (!confirm(t("resetPreferencesConfirm"))) return;
-
-    setIsSaving(true);
-    try {
-      await preferencesApi.reset();
-      toast.success(t("settingsReset"));
-      loadPreferences();
-    } catch (error) {
-      toast.error(t("failedToResetSettings"));
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   if (isLoading) {
     return (
-      <div className="container max-w-4xl mx-auto p-6 space-y-6">
-        <Skeleton className="h-10 w-64" />
-        <Skeleton className="h-[400px]" />
+      <div className="space-y-4 p-4">
+        <Skeleton className="h-[200px]" />
+        <Skeleton className="h-[200px]" />
+        <Skeleton className="h-[200px]" />
       </div>
     );
   }
 
   return (
-    <div className="container max-w-4xl mx-auto p-6 space-y-6">
-      <div className="space-y-6">
-        {/* Theme Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Moon className="h-5 w-5" />
-              {t("theme")}
-            </CardTitle>
-            <CardDescription>{t("customizeAppearance")}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Select value={theme} onValueChange={handleThemeChange}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="light">
-                  <div className="flex items-center gap-2">
-                    <Sun className="h-4 w-4" />
-                    {t("lightTheme")}
-                  </div>
-                </SelectItem>
-                <SelectItem value="dark">
-                  <div className="flex items-center gap-2">
-                    <Moon className="h-4 w-4" />
-                    {t("darkTheme")}
-                  </div>
-                </SelectItem>
-                <SelectItem value="system">
-                  <div className="flex items-center gap-2">
-                    <Monitor className="h-4 w-4" />
-                    {t("system")}
-                  </div>
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </CardContent>
-        </Card>
-
-        {/* Language Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Globe className="h-5 w-5" />
-              {t("language")}
-            </CardTitle>
-            <CardDescription>{t("languageDescription")}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Select value={language} onValueChange={handleLanguageChange}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="id">🇮🇩 Bahasa Indonesia</SelectItem>
-                <SelectItem value="en">🇬🇧 English</SelectItem>
-                <SelectItem value="es">🇪🇸 Español</SelectItem>
-                <SelectItem value="ja">🇯🇵 日本語</SelectItem>
-                <SelectItem value="zh">🇨🇳 中文</SelectItem>
-                <SelectItem value="ko">🇰🇷 한국어</SelectItem>
-              </SelectContent>
-            </Select>
-          </CardContent>
-        </Card>
-
-        {/* Notification Preferences */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Bell className="h-5 w-5" />
-              {t("notificationPreferences")}
-            </CardTitle>
-            <CardDescription>{t("manageNotificationSettings")}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Mail className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <Label htmlFor="email-notifications" className="text-base">
-                    {t("enableEmailNotifications")}
-                  </Label>
-                  <p className="text-sm text-muted-foreground">
-                    {t("receiveEmailNotifications")}
-                  </p>
+    <div className="space-y-4 p-4 pb-20">
+      {/* Appearance Section */}
+      <Card className="rounded-2xl shadow-sm border-0 bg-card">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base font-medium flex items-center gap-2">
+            <Moon className="h-5 w-5 text-primary" />
+            {t("theme")}
+          </CardTitle>
+          <CardDescription className="text-sm">
+            {t("customizeAppearance")}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <Select value={theme} onValueChange={handleThemeChange}>
+            <SelectTrigger className="h-12 rounded-xl">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="light">
+                <div className="flex items-center gap-3 py-1">
+                  <Sun className="h-5 w-5" />
+                  <span>{t("lightTheme")}</span>
                 </div>
-              </div>
-              <Switch
-                id="email-notifications"
-                checked={preferences?.notifications?.email ?? true}
-                onCheckedChange={(checked) =>
-                  handleNotificationChange("email", checked)
-                }
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Bell className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <Label htmlFor="push-notifications" className="text-base">
-                    {t("enablePushNotifications")}
-                  </Label>
-                  <p className="text-sm text-muted-foreground">
-                    {t("receivePushNotifications")}
-                  </p>
+              </SelectItem>
+              <SelectItem value="dark">
+                <div className="flex items-center gap-3 py-1">
+                  <Moon className="h-5 w-5" />
+                  <span>{t("darkTheme")}</span>
                 </div>
-              </div>
-              <Switch
-                id="push-notifications"
-                checked={preferences?.notifications?.push ?? true}
-                onCheckedChange={(checked) =>
-                  handleNotificationChange("push", checked)
-                }
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Volume2 className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <Label htmlFor="sound-notifications" className="text-base">
-                    {t("enableSoundNotifications")}
-                  </Label>
-                  <p className="text-sm text-muted-foreground">
-                    {t("playSoundForNotifications")}
-                  </p>
+              </SelectItem>
+              <SelectItem value="system">
+                <div className="flex items-center gap-3 py-1">
+                  <Monitor className="h-5 w-5" />
+                  <span>{t("system")}</span>
                 </div>
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </CardContent>
+      </Card>
+
+      {/* Language Section */}
+      <Card className="rounded-2xl shadow-sm border-0 bg-card">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base font-medium flex items-center gap-2">
+            <Globe className="h-5 w-5 text-primary" />
+            {t("language")}
+          </CardTitle>
+          <CardDescription className="text-sm">
+            {t("languageDescription")}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <Select value={language} onValueChange={handleLanguageChange}>
+            <SelectTrigger className="h-12 rounded-xl">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="id">
+                <div className="flex items-center gap-3 py-1">
+                  <span className="text-xl">🇮🇩</span>
+                  <span>Bahasa Indonesia</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="en">
+                <div className="flex items-center gap-3 py-1">
+                  <span className="text-xl">🇬🇧</span>
+                  <span>English</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="es">
+                <div className="flex items-center gap-3 py-1">
+                  <span className="text-xl">🇪🇸</span>
+                  <span>Español</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="ja">
+                <div className="flex items-center gap-3 py-1">
+                  <span className="text-xl">🇯🇵</span>
+                  <span>日本語</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="zh">
+                <div className="flex items-center gap-3 py-1">
+                  <span className="text-xl">🇨🇳</span>
+                  <span>中文</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="ko">
+                <div className="flex items-center gap-3 py-1">
+                  <span className="text-xl">🇰🇷</span>
+                  <span>한국어</span>
+                </div>
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </CardContent>
+      </Card>
+
+      {/* Notifications Section */}
+      <Card className="rounded-2xl shadow-sm border-0 bg-card">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base font-medium flex items-center gap-2">
+            <Bell className="h-5 w-5 text-primary" />
+            {t("notificationPreferences")}
+          </CardTitle>
+          <CardDescription className="text-sm">
+            {t("manageNotificationSettings")}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between py-2">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <Mail className="h-5 w-5 text-primary" />
               </div>
-              <Switch
-                id="sound-notifications"
-                checked={preferences?.notifications?.sound ?? true}
-                onCheckedChange={(checked) =>
-                  handleNotificationChange("sound", checked)
-                }
-              />
+              <div>
+                <Label
+                  htmlFor="email-notifications"
+                  className="text-sm font-medium"
+                >
+                  {t("emailNotifications")}
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  {t("receiveEmailNotifications")}
+                </p>
+              </div>
             </div>
-          </CardContent>
-        </Card>
+            <Switch
+              id="email-notifications"
+              checked={preferences?.notifications?.email ?? true}
+              onCheckedChange={(checked) =>
+                handleNotificationChange("email", checked)
+              }
+            />
+          </div>
 
-        {/* Timezone Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5" />
-              {t("timezone")}
-            </CardTitle>
-            <CardDescription>{t("selectYourTimezone")}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Select
-              value={preferences?.timezone || "UTC"}
-              onValueChange={handleTimezoneChange}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="UTC">UTC (GMT+0)</SelectItem>
-                <SelectItem value="Asia/Jakarta">
-                  Asia/Jakarta (GMT+7)
-                </SelectItem>
-                <SelectItem value="Asia/Tokyo">Asia/Tokyo (GMT+9)</SelectItem>
-                <SelectItem value="Europe/London">
-                  Europe/London (GMT+0)
-                </SelectItem>
-                <SelectItem value="America/New_York">
-                  America/New York (GMT-5)
-                </SelectItem>
-                <SelectItem value="America/Los_Angeles">
-                  America/Los Angeles (GMT-8)
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </CardContent>
-        </Card>
+          <Separator />
 
-        {/* Reset Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <RotateCcw className="h-5 w-5" />
-              {t("resetSettings")}
-            </CardTitle>
-            <CardDescription>{t("resetToDefaultSettings")}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button
-              variant="destructive"
-              onClick={handleResetPreferences}
-              disabled={isSaving}
-            >
-              <RotateCcw className="h-4 w-4 mr-2" />
-              {isSaving ? t("resetting") : t("resetToDefaults")}
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+          <div className="flex items-center justify-between py-2">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <Smartphone className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <Label
+                  htmlFor="push-notifications"
+                  className="text-sm font-medium"
+                >
+                  {t("pushNotifications")}
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  {t("receivePushNotifications")}
+                </p>
+              </div>
+            </div>
+            <Switch
+              id="push-notifications"
+              checked={preferences?.notifications?.push ?? true}
+              onCheckedChange={(checked) =>
+                handleNotificationChange("push", checked)
+              }
+            />
+          </div>
+
+          <Separator />
+
+          <div className="flex items-center justify-between py-2">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <Volume2 className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <Label
+                  htmlFor="sound-notifications"
+                  className="text-sm font-medium"
+                >
+                  {t("soundNotifications")}
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  {t("playSoundForNotifications")}
+                </p>
+              </div>
+            </div>
+            <Switch
+              id="sound-notifications"
+              checked={preferences?.notifications?.sound ?? true}
+              onCheckedChange={(checked) =>
+                handleNotificationChange("sound", checked)
+              }
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Timezone Section */}
+      <Card className="rounded-2xl shadow-sm border-0 bg-card">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base font-medium flex items-center gap-2">
+            <Clock className="h-5 w-5 text-primary" />
+            {t("timezone")}
+          </CardTitle>
+          <CardDescription className="text-sm">
+            {t("selectYourTimezone")}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <Select
+            value={preferences?.timezone || "UTC"}
+            onValueChange={handleTimezoneChange}
+          >
+            <SelectTrigger className="h-12 rounded-xl">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="UTC">UTC (GMT+0)</SelectItem>
+              <SelectItem value="Asia/Jakarta">Asia/Jakarta (GMT+7)</SelectItem>
+              <SelectItem value="Asia/Tokyo">Asia/Tokyo (GMT+9)</SelectItem>
+              <SelectItem value="Europe/London">
+                Europe/London (GMT+0)
+              </SelectItem>
+              <SelectItem value="America/New_York">
+                America/New York (GMT-5)
+              </SelectItem>
+              <SelectItem value="America/Los_Angeles">
+                America/Los Angeles (GMT-8)
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </CardContent>
+      </Card>
+
+      {/* Privacy & Security Section */}
+      <Card className="rounded-2xl shadow-sm border-0 bg-card">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base font-medium flex items-center gap-2">
+            <Lock className="h-5 w-5 text-primary" />
+            {t("privacySecurity")}
+          </CardTitle>
+          <CardDescription className="text-sm">
+            {t("managePrivacyAndSecurity")}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <a
+            href="/user/privacy"
+            className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-muted/50 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <Eye className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <p className="text-sm font-medium">{t("privacySettings")}</p>
+                <p className="text-xs text-muted-foreground">
+                  {t("controlDataAndPrivacy")}
+                </p>
+              </div>
+            </div>
+            <ChevronRight className="h-5 w-5 text-muted-foreground" />
+          </a>
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -23,6 +23,7 @@ import {
   Zap,
   HelpCircle,
   MessageSquare,
+  DollarSign,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 import { cn } from "@/lib/utils";
@@ -47,6 +48,7 @@ export function Sidebar({ className, onClose }: SidebarProps) {
     { name: t("monitoring"), href: "/monitoring", icon: Activity },
     { name: t("alarms"), href: "/alarms", icon: AlertTriangle },
     { name: t("energy"), href: "/energy", icon: Zap },
+    { name: t("energyCost"), href: "/energy-cost", icon: DollarSign },
     { name: t("aiModels"), href: "/ai", icon: Brain },
     { name: t("rooms"), href: "/rooms", icon: DoorOpen },
     { name: t("commands"), href: "/commands", icon: Terminal },

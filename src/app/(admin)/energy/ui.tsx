@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/ui/page-header";
 import { useLanguage } from "@/contexts/language-context";
 import {
   Activity,
@@ -56,8 +57,45 @@ export default function EnergyClient() {
   const [predictions, setPredictions] = useState<EnergyPrediction[]>([]);
   const [error, setError] = useState<string | null>(null);
 
+  const filterSectionRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     loadData();
+  }, []);
+
+  useEffect(() => {
+    const handleRefresh = () => {
+      loadData();
+    };
+
+    const handleFilter = () => {
+      if (filterSectionRef.current) {
+        filterSectionRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+        filterSectionRef.current.classList.add(
+          "ring-2",
+          "ring-primary",
+          "ring-offset-2",
+        );
+        setTimeout(() => {
+          filterSectionRef.current?.classList.remove(
+            "ring-2",
+            "ring-primary",
+            "ring-offset-2",
+          );
+        }, 2000);
+      }
+    };
+
+    window.addEventListener("topbar-refresh", handleRefresh);
+    window.addEventListener("topbar-filter", handleFilter);
+
+    return () => {
+      window.removeEventListener("topbar-refresh", handleRefresh);
+      window.removeEventListener("topbar-filter", handleFilter);
+    };
   }, []);
 
   const loadData = async () => {
@@ -148,89 +186,35 @@ export default function EnergyClient() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">{t("energyAnalytics")}</h1>
-          <p className="text-sm text-muted-foreground">
-            {t("monitorEnergyConsumption")}
-          </p>
-        </div>
-        <Button onClick={loadData} variant="outline" size="sm">
-          <RefreshCw className="h-4 w-4 mr-2" />
-          {t("refresh")}
-        </Button>
-      </div>
-
-      {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
-              <Zap className="h-4 w-4" />
-              {t("totalDevices")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold">{stats.totalDevices}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {t("powerMeters")}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
-              <BarChart3 className="h-4 w-4" />
-              {t("thisMonth")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold">
-              {stats.totalUsageMonth.toFixed(1)}
-              <span className="text-lg text-muted-foreground ml-1">kWh</span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {t("totalConsumption")}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
-              <DollarSign className="h-4 w-4" />
-              {t("estimatedCost")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold">
-              ${stats.estimatedCost.toFixed(2)}
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {t("thisMonth")}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
-              <Lightbulb className="h-4 w-4" />
-              {t("aiPredictions")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold">
-              {stats.activePredictions}
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {t("activePredictions")}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Header with Stats */}
+      <PageHeader
+        stats={[
+          {
+            label: t("totalConsumption"),
+            value: `${stats.totalUsageMonth.toFixed(1)} kWh`,
+            icon: Zap,
+            color: "text-yellow-500",
+          },
+          {
+            label: t("today"),
+            value: `${stats.totalUsageToday.toFixed(1)} kWh`,
+            icon: TrendingUp,
+            color: "text-blue-500",
+          },
+          {
+            label: t("estimatedCost"),
+            value: `$${stats.estimatedCost.toFixed(2)}`,
+            icon: DollarSign,
+            color: "text-green-500",
+          },
+          {
+            label: t("totalDevices"),
+            value: stats.totalDevices,
+            icon: BarChart3,
+            color: "text-purple-500",
+          },
+        ]}
+      />
 
       {/* AI Predictions */}
       {predictions.length > 0 && (
@@ -276,73 +260,75 @@ export default function EnergyClient() {
       )}
 
       {/* Energy Consumption by Device */}
-      {devices.length > 0 ? (
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
-              <BarChart3 className="h-4 w-4" />
-              {t("energyConsumptionByDevice")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {devices.map((device) => (
-                <div key={device.deviceId} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Zap className="h-4 w-4 text-muted-foreground" />
-                      <span className="font-medium">{device.deviceName}</span>
-                      {getTrendIcon(device.trend)}
-                    </div>
-                    <div className="text-right">
-                      <div className="font-semibold">
-                        {device.monthUsage.toFixed(1)} kWh
+      <div ref={filterSectionRef}>
+        {devices.length > 0 ? (
+          <Card className="rounded-2xl shadow-sm transition-all duration-300">
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <BarChart3 className="h-4 w-4" />
+                {t("energyConsumptionByDevice")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {devices.map((device) => (
+                  <div key={device.deviceId} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Zap className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium">{device.deviceName}</span>
+                        {getTrendIcon(device.trend)}
                       </div>
-                      <div className="text-xs text-muted-foreground">
-                        ${device.cost.toFixed(2)}
+                      <div className="text-right">
+                        <div className="font-semibold">
+                          {device.monthUsage.toFixed(1)} kWh
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          ${device.cost.toFixed(2)}
+                        </div>
                       </div>
                     </div>
+                    <div className="w-full bg-muted rounded-full h-2">
+                      <div
+                        className="h-2 rounded-full bg-primary"
+                        style={{
+                          width: `${totalUsage > 0 ? (device.monthUsage / totalUsage) * 100 : 0}%`,
+                        }}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span>
+                        {t("currentUsage")}:{" "}
+                        {device.currentPower?.toFixed(1) || "0.0"}W
+                      </span>
+                      <span>
+                        {t("today")}: {device.todayUsage.toFixed(2)} kWh
+                      </span>
+                      <span className={getTrendColor(device.trend)}>
+                        {device.trend === "up"
+                          ? t("increasing")
+                          : device.trend === "down"
+                            ? t("decreasing")
+                            : t("stable")}
+                      </span>
+                    </div>
                   </div>
-                  <div className="w-full bg-muted rounded-full h-2">
-                    <div
-                      className="h-2 rounded-full bg-primary"
-                      style={{
-                        width: `${totalUsage > 0 ? (device.monthUsage / totalUsage) * 100 : 0}%`,
-                      }}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>
-                      {t("currentUsage")}:{" "}
-                      {device.currentPower?.toFixed(1) || "0.0"}W
-                    </span>
-                    <span>
-                      {t("today")}: {device.todayUsage.toFixed(2)} kWh
-                    </span>
-                    <span className={getTrendColor(device.trend)}>
-                      {device.trend === "up"
-                        ? t("increasing")
-                        : device.trend === "down"
-                          ? t("decreasing")
-                          : t("stable")}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card className="rounded-2xl shadow-sm">
-          <CardContent className="pt-6">
-            <div className="text-center py-8 text-muted-foreground">
-              <Zap className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <p>{t("noPowerMetersFound")}</p>
-              <p className="text-sm mt-2">{t("addPowerMeterToTrack")}</p>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="rounded-2xl shadow-sm">
+            <CardContent className="pt-6">
+              <div className="text-center py-8 text-muted-foreground">
+                <Zap className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                <p>{t("noPowerMetersFound")}</p>
+                <p className="text-sm mt-2">{t("addPowerMeterToTrack")}</p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
 
       {/* Energy Saving Tips */}
       <Card className="rounded-2xl shadow-sm border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950">

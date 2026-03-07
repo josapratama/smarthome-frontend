@@ -14,6 +14,7 @@ import { useTranslation } from "@/hooks/use-translation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page-header";
 import {
   Select,
   SelectContent,
@@ -23,6 +24,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Zap, Clock, Activity, CheckCircle } from "lucide-react";
 
 function statusBadge(online?: boolean | null, t?: any) {
   if (online === true) return <Badge>{t?.("online") || "Online"}</Badge>;
@@ -121,14 +123,63 @@ export default function OtaClientPage({
     router.replace(`/ota?deviceId=${deviceId}`);
   }, [deviceId, router]);
 
+  React.useEffect(() => {
+    const handleRefresh = () => {
+      if (deviceId) {
+        qc.invalidateQueries({ queryKey: qk.ota.deviceJobs(deviceId) });
+      }
+      devicesQ.refetch();
+      releasesQ.refetch();
+    };
+
+    window.addEventListener("topbar-refresh", handleRefresh);
+
+    return () => {
+      window.removeEventListener("topbar-refresh", handleRefresh);
+    };
+  }, [deviceId, qc, devicesQ, releasesQ]);
+
   const selectedDevice = devicesQ.data?.find((d) => d.id === deviceId);
 
+  const stats = {
+    totalJobs: jobsQ.data?.length || 0,
+    pending: jobsQ.data?.filter((j) => j.status === "PENDING").length || 0,
+    inProgress:
+      jobsQ.data?.filter((j) => j.status === "IN_PROGRESS").length || 0,
+    completed: jobsQ.data?.filter((j) => j.status === "COMPLETED").length || 0,
+  };
+
   return (
-    <div className="space-y-4">
-      <div className="space-y-1">
-        <h1 className="text-xl font-semibold">{t("ota")}</h1>
-        <p className="text-sm text-muted-foreground">{t("otaDescription")}</p>
-      </div>
+    <div className="space-y-6">
+      {/* Header with Stats */}
+      <PageHeader
+        stats={[
+          {
+            label: t("totalJobs"),
+            value: stats.totalJobs,
+            icon: Zap,
+            color: "text-blue-500",
+          },
+          {
+            label: t("pending"),
+            value: stats.pending,
+            icon: Clock,
+            color: "text-yellow-500",
+          },
+          {
+            label: t("inProgress"),
+            value: stats.inProgress,
+            icon: Activity,
+            color: "text-orange-500",
+          },
+          {
+            label: t("completed"),
+            value: stats.completed,
+            icon: CheckCircle,
+            color: "text-green-500",
+          },
+        ]}
+      />
 
       <Card>
         <CardHeader>

@@ -1,16 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Search, MessageCircle, HelpCircle } from "lucide-react";
+import {
+  Search,
+  MessageCircle,
+  HelpCircle,
+  Folder,
+  CheckCircle,
+} from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 import { getFAQs, getCategories, type FAQ } from "@/lib/api/faq";
 import { FAQList } from "./faq-list";
@@ -50,10 +57,36 @@ export default function HelpPage() {
     return "";
   });
 
+  const searchSectionRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     loadFAQs();
     loadCategories();
   }, [selectedCategory, searchQuery]);
+
+  useEffect(() => {
+    const handleSearch = () => {
+      let searchInput: HTMLInputElement | null = null;
+      if (searchSectionRef.current) {
+        searchInput = searchSectionRef.current.querySelector(
+          "input",
+        ) as HTMLInputElement;
+      }
+      if (!searchInput) {
+        searchInput = document.querySelector("input") as HTMLInputElement;
+      }
+      if (searchInput) {
+        searchInput.focus();
+        searchInput.select();
+      }
+    };
+
+    window.addEventListener("topbar-search", handleSearch);
+
+    return () => {
+      window.removeEventListener("topbar-search", handleSearch);
+    };
+  }, []);
 
   const loadFAQs = async () => {
     setIsLoading(true);
@@ -100,29 +133,46 @@ export default function HelpPage() {
 
   return (
     <div className="container mx-auto p-4 sm:p-6 max-w-6xl">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <HelpCircle className="h-8 w-8 text-primary" />
-          <h1 className="text-3xl font-bold">{t("helpCenter")}</h1>
-        </div>
-        <p className="text-muted-foreground">{t("frequentlyAskedQuestions")}</p>
-      </div>
+      {/* Header with Stats */}
+      <PageHeader
+        stats={[
+          {
+            label: t("totalFAQs"),
+            value: Object.values(categoryCounts).reduce((a, b) => a + b, 0),
+            icon: HelpCircle,
+            color: "text-blue-500",
+          },
+          {
+            label: t("categories"),
+            value: Object.keys(categoryCounts).length,
+            icon: Folder,
+            color: "text-green-500",
+          },
+          {
+            label: t("published"),
+            value: faqs.length,
+            icon: CheckCircle,
+            color: "text-purple-500",
+          },
+        ]}
+      />
 
       {/* Search */}
-      <Card className="mb-6">
-        <CardContent className="p-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-              placeholder={t("searchFAQ")}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-        </CardContent>
-      </Card>
+      <div ref={searchSectionRef}>
+        <Card className="mb-6">
+          <CardContent className="p-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input
+                placeholder={t("searchFAQ")}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Categories */}
       <Card className="mb-6">

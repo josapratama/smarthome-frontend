@@ -1,13 +1,25 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, MailPlus, Users, Clock, CheckCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { PageHeader } from "@/components/ui/page-header";
+import {
+  Plus,
+  MailPlus,
+  Users,
+  Clock,
+  CheckCircle,
+  Mail,
+  Search,
+} from "lucide-react";
 import { InviteDialog } from "@/app/user/invites/invite-dialog";
 import { InviteList } from "@/app/user/invites/invite-list";
 import { apiFetchBrowser } from "@/lib/api/client.browser";
 import { useLanguage } from "@/contexts/language-context";
+import { useState } from "react";
 
 interface Home {
   id: number;
@@ -24,6 +36,10 @@ interface InviteStats {
 
 export default function InvitesPage() {
   const { t } = useLanguage();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const searchSectionRef = useRef<HTMLDivElement>(null);
+  const filterSectionRef = useRef<HTMLDivElement>(null);
 
   const { data: homes = [] } = useQuery({
     queryKey: ["homes-for-invite"],
@@ -50,81 +66,97 @@ export default function InvitesPage() {
     },
   });
 
+  useEffect(() => {
+    const handleSearch = () => {
+      let searchInput: HTMLInputElement | null = null;
+      if (searchSectionRef.current) {
+        searchInput = searchSectionRef.current.querySelector(
+          "input",
+        ) as HTMLInputElement;
+      }
+      if (!searchInput) {
+        searchInput = document.querySelector("input") as HTMLInputElement;
+      }
+      if (searchInput) {
+        searchInput.focus();
+        searchInput.select();
+      }
+    };
+
+    const handleFilter = () => {
+      if (filterSectionRef.current) {
+        filterSectionRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+        filterSectionRef.current.classList.add(
+          "ring-2",
+          "ring-primary",
+          "ring-offset-2",
+        );
+        setTimeout(() => {
+          filterSectionRef.current?.classList.remove(
+            "ring-2",
+            "ring-primary",
+            "ring-offset-2",
+          );
+        }, 2000);
+      }
+    };
+
+    window.addEventListener("topbar-search", handleSearch);
+    window.addEventListener("topbar-filter", handleFilter);
+
+    return () => {
+      window.removeEventListener("topbar-search", handleSearch);
+      window.removeEventListener("topbar-filter", handleFilter);
+    };
+  }, []);
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">{t("homeInvites")}</h1>
-          <p className="text-sm text-muted-foreground">
-            {t("manageMemberInvitations")}
-          </p>
-        </div>
-        <InviteDialog homes={homes}>
-          <Button>
-            <Plus className="h-4 w-4" />
-            {t("sendInvite")}
-          </Button>
-        </InviteDialog>
-      </div>
+      {/* Header with Stats */}
+      <PageHeader
+        stats={[
+          {
+            label: t("totalInvites"),
+            value: stats?.totalInvites || 0,
+            icon: Mail,
+            color: "text-blue-500",
+          },
+          {
+            label: t("pending"),
+            value: stats?.pendingInvites || 0,
+            icon: Clock,
+            color: "text-yellow-500",
+          },
+          {
+            label: t("accepted"),
+            value: stats?.acceptedInvites || 0,
+            icon: CheckCircle,
+            color: "text-green-500",
+          },
+          {
+            label: t("activeMembers"),
+            value: stats?.activeMembers || 0,
+            icon: Users,
+            color: "text-purple-500",
+          },
+        ]}
+      />
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">
-              {t("totalInvites")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold">
-              {stats?.totalInvites || 0}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">
-              {t("pending")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-yellow-500" />
-              <div className="text-3xl font-semibold">
-                {stats?.pendingInvites || 0}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">
-              {t("accepted")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-green-500" />
-              <div className="text-3xl font-semibold">
-                {stats?.acceptedInvites || 0}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">
-              {t("activeMembers")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-blue-500" />
-              <div className="text-3xl font-semibold">
-                {stats?.activeMembers || 0}
-              </div>
+      {/* Search */}
+      <div ref={searchSectionRef}>
+        <Card>
+          <CardContent className="p-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={t("searchInvites")}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+              />
             </div>
           </CardContent>
         </Card>
@@ -133,51 +165,53 @@ export default function InvitesPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         <InviteList />
 
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-base">{t("quickActions")}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <InviteDialog homes={homes}>
+        <div ref={filterSectionRef}>
+          <Card className="rounded-2xl shadow-sm transition-all duration-300">
+            <CardHeader>
+              <CardTitle className="text-base">{t("quickActions")}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <InviteDialog homes={homes}>
+                <Button className="w-full justify-start" variant="outline">
+                  <MailPlus className="h-4 w-4" />
+                  {t("sendNewInvitation")}
+                </Button>
+              </InviteDialog>
+
               <Button className="w-full justify-start" variant="outline">
-                <MailPlus className="h-4 w-4" />
-                {t("sendNewInvitation")}
+                <Users className="h-4 w-4" />
+                {t("viewAllMembers")}
               </Button>
-            </InviteDialog>
 
-            <Button className="w-full justify-start" variant="outline">
-              <Users className="h-4 w-4" />
-              {t("viewAllMembers")}
-            </Button>
-
-            <div className="pt-4 border-t">
-              <h4 className="text-sm font-medium mb-2">
-                {t("availableHomes")}
-              </h4>
-              <div className="space-y-2">
-                {homes.length > 0 ? (
-                  homes.map((home) => (
-                    <div
-                      key={home.id}
-                      className="flex items-center justify-between p-2 bg-muted/50 rounded-lg"
-                    >
-                      <span className="text-sm">{home.name}</span>
-                      <InviteDialog homes={[home]}>
-                        <Button size="sm" variant="ghost">
-                          <Plus className="h-3 w-3" />
-                        </Button>
-                      </InviteDialog>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-xs text-muted-foreground">
-                    {t("noHomesAvailable")}
-                  </p>
-                )}
+              <div className="pt-4 border-t">
+                <h4 className="text-sm font-medium mb-2">
+                  {t("availableHomes")}
+                </h4>
+                <div className="space-y-2">
+                  {homes.length > 0 ? (
+                    homes.map((home) => (
+                      <div
+                        key={home.id}
+                        className="flex items-center justify-between p-2 bg-muted/50 rounded-lg"
+                      >
+                        <span className="text-sm">{home.name}</span>
+                        <InviteDialog homes={[home]}>
+                          <Button size="sm" variant="ghost">
+                            <Plus className="h-3 w-3" />
+                          </Button>
+                        </InviteDialog>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      {t("noHomesAvailable")}
+                    </p>
+                  )}
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

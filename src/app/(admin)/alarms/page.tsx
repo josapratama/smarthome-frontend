@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,14 +13,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PageHeader } from "@/components/ui/page-header";
 import {
-  RefreshCw,
   Siren,
   AlertTriangle,
   Shield,
   Search,
-  Filter,
   AlertCircle,
+  XCircle,
+  CheckCircle,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 import { useToast } from "@/hooks/use-toast";
@@ -43,6 +44,9 @@ export default function AlarmsPage() {
   const [searchText, setSearchText] = useState("");
   const [statusFilter, setStatusFilter] = useState<AlarmStatus | "ALL">("ALL");
   const [autoRefresh, setAutoRefresh] = useState(true);
+
+  const searchSectionRef = useRef<HTMLDivElement>(null);
+  const filterSectionRef = useRef<HTMLDivElement>(null);
 
   // Fetch homes
   const homesQuery = useQuery({
@@ -73,8 +77,44 @@ export default function AlarmsPage() {
       return payload.data ?? [];
     },
     enabled: !!selectedHomeId,
-    refetchInterval: autoRefresh ? 10000 : false, // Auto-refresh every 10s
+    refetchInterval: autoRefresh ? 10000 : false,
   });
+
+  // Listen to topbar events
+  useEffect(() => {
+    const handleRefresh = () => {
+      alarmsQuery.refetch();
+    };
+
+    const handleFilter = () => {
+      if (filterSectionRef.current) {
+        filterSectionRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+        filterSectionRef.current.classList.add(
+          "ring-2",
+          "ring-primary",
+          "ring-offset-2",
+        );
+        setTimeout(() => {
+          filterSectionRef.current?.classList.remove(
+            "ring-2",
+            "ring-primary",
+            "ring-offset-2",
+          );
+        }, 2000);
+      }
+    };
+
+    window.addEventListener("topbar-refresh", handleRefresh);
+    window.addEventListener("topbar-filter", handleFilter);
+
+    return () => {
+      window.removeEventListener("topbar-refresh", handleRefresh);
+      window.removeEventListener("topbar-filter", handleFilter);
+    };
+  }, [alarmsQuery]);
 
   // Acknowledge mutation
   const ackMutation = useMutation({
@@ -156,31 +196,35 @@ export default function AlarmsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-            {t("alarms")}
-          </h1>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            {t("monitorSecurityAlarms")}
-          </p>
-        </div>
-
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => alarmsQuery.refetch()}
-            disabled={alarmsQuery.isFetching}
-          >
-            <RefreshCw
-              className={`h-4 w-4 ${alarmsQuery.isFetching ? "animate-spin" : ""}`}
-            />
-            {t("refresh")}
-          </Button>
-        </div>
-      </div>
+      {/* Header with Stats */}
+      <PageHeader
+        stats={[
+          {
+            label: t("totalAlarms"),
+            value: stats.total,
+            icon: AlertTriangle,
+            color: "text-red-500",
+          },
+          {
+            label: t("open"),
+            value: stats.open,
+            icon: XCircle,
+            color: "text-orange-500",
+          },
+          {
+            label: t("acknowledged"),
+            value: stats.acked,
+            icon: CheckCircle,
+            color: "text-blue-500",
+          },
+          {
+            label: t("critical"),
+            value: stats.critical,
+            icon: AlertCircle,
+            color: "text-red-600",
+          },
+        ]}
+      />
 
       {/* Critical Alarms Banner */}
       {criticalAlarms.length > 0 && (
@@ -203,114 +247,45 @@ export default function AlarmsPage() {
 
       {/* Home Selector */}
       {homesQuery.data && homesQuery.data.length > 0 && (
-        <div className="flex items-center gap-2">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            {t("selectHome")}:
-          </label>
-          <Select
-            value={selectedHomeId?.toString() ?? ""}
-            onValueChange={(v) => setSelectedHomeId(Number(v))}
-          >
-            <SelectTrigger className="w-[250px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {homesQuery.data.map((home: any) => (
-                <SelectItem key={home.id} value={home.id.toString()}>
-                  {home.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium">{t("selectHome")}:</label>
+              <Select
+                value={selectedHomeId?.toString() ?? ""}
+                onValueChange={(v) => setSelectedHomeId(Number(v))}
+              >
+                <SelectTrigger className="w-[250px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {homesQuery.data.map((home: any) => (
+                    <SelectItem key={home.id} value={home.id.toString()}>
+                      {home.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
-      {/* Statistics Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="rounded-xl shadow-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-gray-600 dark:text-gray-400">
-              {t("totalAlarms")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold text-gray-900 dark:text-gray-100">
-              {stats.total}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-xl shadow-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-gray-600 dark:text-gray-400">
-              {t("critical")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-red-500" />
-              <div className="text-3xl font-semibold text-gray-900 dark:text-gray-100">
-                {stats.critical}
-              </div>
-            </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              {t("high")}: {stats.high}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-xl shadow-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-gray-600 dark:text-gray-400">
-              {t("open")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <Siren className="h-5 w-5 text-orange-500" />
-              <div className="text-3xl font-semibold text-gray-900 dark:text-gray-100">
-                {stats.open}
-              </div>
-            </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              {t("acknowledged")}: {stats.acked}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-xl shadow-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-gray-600 dark:text-gray-400">
-              {t("resolved")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-green-500" />
-              <div className="text-3xl font-semibold text-gray-900 dark:text-gray-100">
-                {stats.resolved}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
       {/* Filters */}
-      <Card className="rounded-xl shadow-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-        <CardContent className="pt-6">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
-              <Input
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-                placeholder={t("searchAlarms")}
-                className="pl-9"
-              />
-            </div>
+      <div ref={filterSectionRef}>
+        <Card className="transition-all duration-300">
+          <CardContent className="pt-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  placeholder={t("searchAlarms")}
+                  className="pl-9"
+                />
+              </div>
 
-            <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-gray-500 dark:text-gray-400" />
               <Select
                 value={statusFilter}
                 onValueChange={(v) => setStatusFilter(v as AlarmStatus | "ALL")}
@@ -328,9 +303,9 @@ export default function AlarmsPage() {
                 </SelectContent>
               </Select>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Alarms List */}
       <div className="space-y-3">
@@ -341,22 +316,22 @@ export default function AlarmsPage() {
             <Skeleton className="h-32 w-full rounded-xl" />
           </>
         ) : alarmsQuery.error ? (
-          <Card className="rounded-xl shadow-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+          <Card>
             <CardContent className="pt-6">
-              <div className="text-center py-8 text-red-600 dark:text-red-400">
+              <div className="text-center py-8 text-destructive">
                 {t("errorLoadingAlarms")}
               </div>
             </CardContent>
           </Card>
         ) : filteredAlarms.length === 0 ? (
-          <Card className="rounded-xl shadow-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+          <Card>
             <CardContent className="pt-6">
               <div className="flex flex-col items-center justify-center py-12 text-center">
-                <Siren className="h-12 w-12 text-gray-400 dark:text-gray-600" />
-                <h3 className="mt-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                <Siren className="h-12 w-12 text-muted-foreground" />
+                <h3 className="mt-4 text-lg font-semibold">
                   {t("noAlarmsFound")}
                 </h3>
-                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                <p className="mt-2 text-sm text-muted-foreground">
                   {searchText
                     ? t("noAlarmsMatchSearch")
                     : t("securityAlarmsWillAppear")}
@@ -378,7 +353,7 @@ export default function AlarmsPage() {
       </div>
 
       {alarmsQuery.isFetching && !alarmsQuery.isLoading && (
-        <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
+        <div className="text-xs text-muted-foreground text-center">
           {t("updating")}
         </div>
       )}

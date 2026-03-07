@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { PageHeader } from "@/components/ui/page-header";
 import {
   User,
   Mail,
@@ -276,7 +277,10 @@ export default function AdminProfilePage() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-10 w-64" />
+        <PageHeader
+          title={t("profileSettings")}
+          description={t("manageAccount")}
+        />
         <Skeleton className="h-[400px]" />
       </div>
     );
@@ -284,9 +288,15 @@ export default function AdminProfilePage() {
 
   if (!profile) {
     return (
-      <div className="text-center py-12">
-        <p className="text-muted-foreground">Failed to load profile</p>
-      </div>
+      <>
+        <PageHeader
+          title={t("profileSettings")}
+          description={t("manageAccount")}
+        />
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">Failed to load profile</p>
+        </div>
+      </>
     );
   }
 
@@ -301,10 +311,10 @@ export default function AdminProfilePage() {
 
   return (
     <div className="space-y-6 max-w-4xl">
-      <div>
-        <h1 className="text-3xl font-bold">{t("profileSettings")}</h1>
-        <p className="text-muted-foreground mt-1">{t("manageAccount")}</p>
-      </div>
+      <PageHeader
+        title={t("profileSettings")}
+        description={t("manageAccount")}
+      />
 
       <div className="grid gap-6 md:grid-cols-3">
         {/* Profile Card */}

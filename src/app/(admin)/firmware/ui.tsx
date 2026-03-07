@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { qk } from "@/lib/api/queries";
 import { apiFetchBrowser } from "@/lib/api/client.browser";
@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page-header";
 import {
   Dialog,
   DialogContent,
@@ -40,7 +41,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Pencil, Trash2 } from "lucide-react";
+import {
+  Pencil,
+  Trash2,
+  Package,
+  Upload,
+  Smartphone,
+  Clock,
+  Search,
+} from "lucide-react";
 
 function fmtDateTime(v?: string | null) {
   if (!v) return "-";
@@ -363,6 +372,9 @@ function DeleteFirmwareDialog({ firmware }: { firmware: FirmwareReleaseDTO }) {
 
 export function FirmwareClient() {
   const { t } = useTranslation();
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchSectionRef = useRef<HTMLDivElement>(null);
 
   const q = useQuery({
     queryKey: qk.firmware.releases(),
@@ -374,30 +386,106 @@ export function FirmwareClient() {
     },
   });
 
+  useEffect(() => {
+    const handleSearch = () => {
+      let searchInput: HTMLInputElement | null = null;
+      if (searchSectionRef.current) {
+        searchInput = searchSectionRef.current.querySelector(
+          "input",
+        ) as HTMLInputElement;
+      }
+      if (!searchInput) {
+        searchInput = document.querySelector("input") as HTMLInputElement;
+      }
+      if (searchInput) {
+        searchInput.focus();
+        searchInput.select();
+      }
+    };
+
+    const handleAdd = () => {
+      setUploadDialogOpen(true);
+    };
+
+    window.addEventListener("topbar-search", handleSearch);
+    window.addEventListener("topbar-add", handleAdd);
+
+    return () => {
+      window.removeEventListener("topbar-search", handleSearch);
+      window.removeEventListener("topbar-add", handleAdd);
+    };
+  }, []);
+
+  const filteredData = q.data?.filter((firmware) => {
+    if (!searchQuery) return true;
+    const search = searchQuery.toLowerCase();
+    return (
+      firmware.version.toLowerCase().includes(search) ||
+      firmware.platform.toLowerCase().includes(search) ||
+      firmware.notes?.toLowerCase().includes(search)
+    );
+  });
+
+  const stats = {
+    total: q.data?.length || 0,
+    esp32: q.data?.filter((f) => f.platform.includes("ESP32")).length || 0,
+    esp8266: q.data?.filter((f) => f.platform === "ESP8266").length || 0,
+    latest: q.data?.[0]?.version || "-",
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">{t("firmware")}</h1>
-          <p className="text-sm text-muted-foreground">{t("manageFirmware")}</p>
-        </div>
+      {/* Header with Stats */}
+      <PageHeader
+        stats={[
+          {
+            label: t("totalFirmware"),
+            value: stats.total,
+            icon: Package,
+            color: "text-blue-500",
+          },
+          {
+            label: t("latestVersion"),
+            value: stats.latest,
+            icon: Upload,
+            color: "text-green-500",
+          },
+          {
+            label: "ESP32",
+            value: stats.esp32,
+            icon: Smartphone,
+            color: "text-purple-500",
+          },
+          {
+            label: "ESP8266",
+            value: stats.esp8266,
+            icon: Smartphone,
+            color: "text-orange-500",
+          },
+        ]}
+      />
 
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => q.refetch()}
-            disabled={q.isFetching}
-          >
-            {t("refresh")}
-          </Button>
-          <UploadFirmwareDialog />
-        </div>
+      {/* Search */}
+      <div ref={searchSectionRef}>
+        <Card>
+          <CardContent className="p-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={t("searchFirmware")}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <Card className="rounded-2xl shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="text-base">
-            {t("firmwareReleases")} ({q.data?.length || 0})
+            {t("firmwareReleases")} ({filteredData?.length || 0})
           </CardTitle>
         </CardHeader>
 
@@ -412,13 +500,13 @@ export function FirmwareClient() {
             <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
               {(q.error as Error).message}
             </div>
-          ) : !q.data || q.data.length === 0 ? (
+          ) : !filteredData || filteredData.length === 0 ? (
             <div className="text-sm text-muted-foreground">
-              {t("noFirmwareFound")}
+              {searchQuery ? t("noFirmwareMatchSearch") : t("noFirmwareFound")}
             </div>
           ) : (
             <div className="divide-y rounded-xl border">
-              {q.data.map((firmware) => (
+              {filteredData.map((firmware) => (
                 <div
                   key={firmware.id}
                   className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between"
@@ -470,6 +558,154 @@ export function FirmwareClient() {
           ) : null}
         </CardContent>
       </Card>
+
+      {/* Upload Dialog - controlled externally */}
+      {uploadDialogOpen && (
+        <UploadFirmwareDialogControlled
+          open={uploadDialogOpen}
+          onOpenChange={setUploadDialogOpen}
+        />
+      )}
     </div>
+  );
+}
+
+// Controlled version of UploadFirmwareDialog
+function UploadFirmwareDialogControlled({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const [formData, setFormData] = useState({
+    platform: "ESP32",
+    version: "",
+    description: "",
+  });
+  const [file, setFile] = useState<File | null>(null);
+
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const { t } = useTranslation();
+
+  const uploadMutation = useMutation({
+    mutationFn: async (data: { formData: typeof formData; file: File }) => {
+      const form = new FormData();
+      form.append("file", data.file);
+      form.append("platform", data.formData.platform);
+      form.append("version", data.formData.version);
+      form.append("notes", data.formData.description);
+
+      return apiFetchBrowser("/api/v1/firmware/releases", {
+        method: "POST",
+        body: form,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: qk.firmware.releases() });
+      onOpenChange(false);
+      setFormData({
+        platform: "ESP32",
+        version: "",
+        description: "",
+      });
+      setFile(null);
+      toast({ title: t("firmwareUploaded") });
+    },
+    onError: (error: any) => {
+      toast({
+        title: t("failedUploadFirmware"),
+        description: error.message || t("unknownError"),
+        variant: "destructive",
+      });
+    },
+  });
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>{t("uploadNewFirmware")}</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="file">
+              {t("firmwareFile")} {t("required")}
+            </Label>
+            <Input
+              id="file"
+              type="file"
+              accept=".bin,.hex,.elf"
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="platform">
+              {t("appPlatform")} {t("required")}
+            </Label>
+            <Select
+              value={formData.platform}
+              onValueChange={(value) =>
+                setFormData((prev) => ({ ...prev, platform: value }))
+              }
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ESP32">ESP32</SelectItem>
+                <SelectItem value="ESP32-C3">ESP32-C3</SelectItem>
+                <SelectItem value="ESP32-S3">ESP32-S3</SelectItem>
+                <SelectItem value="ESP8266">ESP8266</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="version">
+              {t("appVersion")} {t("required")}
+            </Label>
+            <Input
+              id="version"
+              value={formData.version}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, version: e.target.value }))
+              }
+              placeholder={t("versionPlaceholder")}
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="description">{t("releaseNotes")}</Label>
+            <Textarea
+              id="description"
+              value={formData.description}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
+              }
+              placeholder={t("whatsNew")}
+              rows={3}
+            />
+          </div>
+
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
+              {t("cancel")}
+            </Button>
+            <Button
+              onClick={() => file && uploadMutation.mutate({ formData, file })}
+              disabled={!file || !formData.version || uploadMutation.isPending}
+            >
+              {uploadMutation.isPending ? t("uploading") : t("upload")}
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

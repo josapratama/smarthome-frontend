@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page-header";
+import { Input } from "@/components/ui/input";
 import {
   Plus,
   TerminalSquare,
@@ -11,6 +13,8 @@ import {
   XCircle,
   RefreshCw,
   AlertCircle,
+  Search,
+  Terminal,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 import { SendCommandDialog } from "@/components/admin/send-command-dialog";
@@ -48,9 +52,48 @@ export default function CommandsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const searchSectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     loadCommands();
+  }, []);
+
+  useEffect(() => {
+    const handleSearch = () => {
+      let searchInput: HTMLInputElement | null = null;
+      if (searchSectionRef.current) {
+        searchInput = searchSectionRef.current.querySelector(
+          "input",
+        ) as HTMLInputElement;
+      }
+      if (!searchInput) {
+        searchInput = document.querySelector("input") as HTMLInputElement;
+      }
+      if (searchInput) {
+        searchInput.focus();
+        searchInput.select();
+      }
+    };
+
+    const handleRefresh = () => {
+      handleRefreshData();
+    };
+
+    const handleAdd = () => {
+      setDialogOpen(true);
+    };
+
+    window.addEventListener("topbar-search", handleSearch);
+    window.addEventListener("topbar-refresh", handleRefresh);
+    window.addEventListener("topbar-add", handleAdd);
+
+    return () => {
+      window.removeEventListener("topbar-search", handleSearch);
+      window.removeEventListener("topbar-refresh", handleRefresh);
+      window.removeEventListener("topbar-add", handleAdd);
+    };
   }, []);
 
   const loadCommands = async () => {
@@ -71,7 +114,7 @@ export default function CommandsPage() {
     }
   };
 
-  const handleRefresh = async () => {
+  const handleRefreshData = async () => {
     setIsRefreshing(true);
     await loadCommands();
     setIsRefreshing(false);
@@ -125,83 +168,61 @@ export default function CommandsPage() {
     ).length,
   };
 
+  const filteredCommands = commands.filter((command) => {
+    if (!searchQuery) return true;
+    const search = searchQuery.toLowerCase();
+    return (
+      command.type.toLowerCase().includes(search) ||
+      command.deviceName?.toLowerCase().includes(search) ||
+      String(command.id).includes(search) ||
+      String(command.deviceId).includes(search)
+    );
+  });
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">{t("commands")}</h1>
-          <p className="text-sm text-muted-foreground">
-            {t("monitorCommands")}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-          >
-            <RefreshCw
-              className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
-            />
-          </Button>
-          <Button onClick={() => setDialogOpen(true)}>
-            <Plus className="h-4 w-4" />
-            {t("sendCommand")}
-          </Button>
-        </div>
-      </div>
+      {/* Header with Stats */}
+      <PageHeader
+        stats={[
+          {
+            label: t("totalCommands"),
+            value: stats.total,
+            icon: Terminal,
+            color: "text-blue-500",
+          },
+          {
+            label: t("pending"),
+            value: stats.pending,
+            icon: Clock,
+            color: "text-yellow-500",
+          },
+          {
+            label: t("successful"),
+            value: stats.successful,
+            icon: CheckCircle,
+            color: "text-green-500",
+          },
+          {
+            label: t("failed"),
+            value: stats.failed,
+            icon: XCircle,
+            color: "text-red-500",
+          },
+        ]}
+      />
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">
-              {t("totalCommands")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold">{stats.total}</div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">
-              {t("pending")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-yellow-500" />
-              <div className="text-3xl font-semibold">{stats.pending}</div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">
-              {t("successful")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-green-500" />
-              <div className="text-3xl font-semibold">{stats.successful}</div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">
-              {t("failed")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <XCircle className="h-5 w-5 text-red-500" />
-              <div className="text-3xl font-semibold">{stats.failed}</div>
+      {/* Search */}
+      <div ref={searchSectionRef}>
+        <Card>
+          <CardContent className="p-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={t("searchCommands")}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+              />
             </div>
           </CardContent>
         </Card>
@@ -225,14 +246,6 @@ export default function CommandsPage() {
               <p className="mt-2 text-sm text-muted-foreground">
                 {t("commandsWillAppear")}
               </p>
-              <Button
-                className="mt-4"
-                variant="outline"
-                onClick={() => setDialogOpen(true)}
-              >
-                <Plus className="h-4 w-4" />
-                {t("sendFirstCommand")}
-              </Button>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -248,7 +261,7 @@ export default function CommandsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {commands.map((command) => (
+                  {filteredCommands.map((command) => (
                     <TableRow key={command.id}>
                       <TableCell className="font-mono text-sm">
                         {t("commandId")}: {command.id}
