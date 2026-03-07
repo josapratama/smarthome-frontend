@@ -2,22 +2,22 @@
 
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
-import { PageHeader } from "@/components/ui/page-header";
 import { MessageSquare, Bell } from "lucide-react";
-import { useTranslation } from "@/hooks/use-translation";
 import MessagesUI from "./messages-ui";
 import NotificationsUI from "./notifications-ui";
+import { useLanguage } from "@/contexts/language-context";
+import { PageHeader } from "@/components/ui/page-header";
 
 export default function CommunicationsPage() {
-  const { t } = useTranslation();
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState("messages");
 
-  // Update topbar title when tab changes
   useEffect(() => {
-    const title = activeTab === "messages" ? t("messages") : t("notifications");
+    // Update topbar title
     window.dispatchEvent(
-      new CustomEvent("topbar-title-change", { detail: title }),
+      new CustomEvent("topbar-title-change", {
+        detail: t("communications"),
+      }),
     );
 
     return () => {
@@ -25,49 +25,36 @@ export default function CommunicationsPage() {
         new CustomEvent("topbar-title-change", { detail: null }),
       );
     };
-  }, [activeTab, t]);
+  }, [t]);
 
   return (
     <div className="space-y-4">
       <PageHeader />
 
-      <Card className="rounded-2xl shadow-sm overflow-hidden">
-        <div className="border-b bg-muted/50">
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className="w-full"
-          >
-            <TabsList className="w-full h-auto bg-transparent p-0 justify-start rounded-none border-b-0 overflow-x-auto">
-              <TabsTrigger
-                value="messages"
-                className="relative rounded-none border-b-2 border-transparent px-4 md:px-6 py-3 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:font-semibold flex-shrink-0"
-              >
-                <MessageSquare className="w-4 h-4 md:mr-2" />
-                <span className="hidden md:inline">{t("messages")}</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="notifications"
-                className="relative rounded-none border-b-2 border-transparent px-4 md:px-6 py-3 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:font-semibold flex-shrink-0"
-              >
-                <Bell className="w-4 h-4 md:mr-2" />
-                <span className="hidden md:inline">{t("notifications")}</span>
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-4"
+      >
+        <TabsList className="grid w-full grid-cols-2 lg:w-auto lg:inline-flex">
+          <TabsTrigger value="messages" className="gap-2">
+            <MessageSquare className="h-4 w-4" />
+            <span className="hidden sm:inline">{t("messages")}</span>
+          </TabsTrigger>
+          <TabsTrigger value="notifications" className="gap-2">
+            <Bell className="h-4 w-4" />
+            <span className="hidden sm:inline">{t("notifications")}</span>
+          </TabsTrigger>
+        </TabsList>
 
-        <CardContent className="p-4 md:p-6">
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsContent value="messages" className="m-0">
-              <MessagesUI />
-            </TabsContent>
-            <TabsContent value="notifications" className="m-0">
-              <NotificationsUI />
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+        <TabsContent value="messages" className="space-y-4">
+          {activeTab === "messages" && <MessagesUI />}
+        </TabsContent>
+
+        <TabsContent value="notifications" className="space-y-4">
+          {activeTab === "notifications" && <NotificationsUI />}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

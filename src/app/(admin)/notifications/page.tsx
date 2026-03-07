@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Bell, Plus, CheckCircle, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/language-context";
-import { PageHeader } from "@/components/ui/page-header";
 import type { NotificationTemplate } from "./types";
 import { SendNotificationDialog } from "./send-notification-dialog";
 import { TemplateCard } from "./template-card";
@@ -107,47 +106,89 @@ export default function NotificationsPage() {
   return (
     <div className="space-y-6">
       {/* Header with Stats */}
-      <PageHeader
-        stats={[
-          {
-            label: t("totalTemplates"),
-            value: stats.total,
-            icon: Bell,
-            color: "text-blue-500",
-          },
-          {
-            label: t("active"),
-            value: stats.active,
-            icon: CheckCircle,
-            color: "text-green-500",
-          },
-          {
-            label: t("inactive"),
-            value: stats.inactive,
-            icon: XCircle,
-            color: "text-orange-500",
-          },
-        ]}
-        actions={
-          <div className="flex gap-2">
-            <Button
-              onClick={() => setIsSendDialogOpen(true)}
-              variant="outline"
-              size="sm"
-            >
-              <Bell className="h-4 w-4 mr-2" />
-              {t("sendNotification")}
-            </Button>
-            <Button onClick={() => setIsTemplateDialogOpen(true)} size="sm">
-              <Plus className="h-4 w-4 mr-2" />
-              {t("createTemplate")}
-            </Button>
-          </div>
-        }
-      />
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+            {t("notifications")}
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            {t("manageNotificationTemplates")}
+          </p>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Button
+            onClick={() => setIsSendDialogOpen(true)}
+            variant="outline"
+            size="sm"
+            className="w-full sm:w-auto"
+          >
+            <Bell className="h-4 w-4 mr-2" />
+            {t("sendNotification")}
+          </Button>
+          <Button
+            onClick={() => setIsTemplateDialogOpen(true)}
+            size="sm"
+            className="w-full sm:w-auto"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            {t("createTemplate")}
+          </Button>
+        </div>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid gap-3 sm:gap-4 grid-cols-3">
+        <Card className="overflow-hidden">
+          <CardContent className="p-4 sm:p-6">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
+                <Bell className="h-5 w-5 sm:h-6 sm:w-6 text-blue-500" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs sm:text-sm text-muted-foreground truncate">
+                  {t("totalTemplates")}
+                </p>
+                <p className="text-xl sm:text-2xl font-bold">{stats.total}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="overflow-hidden">
+          <CardContent className="p-4 sm:p-6">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-green-500/10 flex items-center justify-center shrink-0">
+                <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-green-500" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs sm:text-sm text-muted-foreground truncate">
+                  {t("active")}
+                </p>
+                <p className="text-xl sm:text-2xl font-bold">{stats.active}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="overflow-hidden">
+          <CardContent className="p-4 sm:p-6">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-orange-500/10 flex items-center justify-center shrink-0">
+                <XCircle className="h-5 w-5 sm:h-6 sm:w-6 text-orange-500" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs sm:text-sm text-muted-foreground truncate">
+                  {t("inactive")}
+                </p>
+                <p className="text-xl sm:text-2xl font-bold">
+                  {stats.inactive}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       <div ref={filterSectionRef}>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 transition-all duration-300">
+        <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 transition-all duration-300">
           {templates.map((template) => (
             <TemplateCard
               key={template.id}

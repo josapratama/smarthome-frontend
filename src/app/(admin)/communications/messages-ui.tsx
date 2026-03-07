@@ -136,20 +136,22 @@ export default function MessagesPage() {
             className="w-full"
           >
             {/* Tabs Header */}
-            <div className="border-b px-6 pt-6">
-              <TabsList className="grid w-full max-w-md grid-cols-2">
-                <TabsTrigger value="dm" className="relative">
-                  <MessageSquare className="w-4 h-4 mr-2" />
-                  {t("directMessages")}
+            <div className="border-b px-4 sm:px-6 pt-4 sm:pt-6">
+              <TabsList className="grid w-full max-w-md grid-cols-2 mb-4">
+                <TabsTrigger value="dm" className="relative gap-2">
+                  <MessageSquare className="w-4 h-4" />
+                  <span className="hidden sm:inline">
+                    {t("directMessages")}
+                  </span>
                   {dmUnreadCount > 0 && (
                     <Badge className="ml-2 h-5 min-w-5 px-1.5 text-xs">
                       {dmUnreadCount}
                     </Badge>
                   )}
                 </TabsTrigger>
-                <TabsTrigger value="home" className="relative">
-                  <Home className="w-4 h-4 mr-2" />
-                  {t("homeChats")}
+                <TabsTrigger value="home" className="relative gap-2">
+                  <Home className="w-4 h-4" />
+                  <span className="hidden sm:inline">{t("homeChats")}</span>
                   {homeUnreadCount > 0 && (
                     <Badge className="ml-2 h-5 min-w-5 px-1.5 text-xs">
                       {homeUnreadCount}
