@@ -436,8 +436,8 @@ export default function FirmwareVersionsUI() {
   return (
     <div className="space-y-6">
       {/* Statistics Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card className="rounded-2xl shadow-sm">
+      <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
+        <Card className="rounded-2xl shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
@@ -446,42 +446,50 @@ export default function FirmwareVersionsUI() {
                 </p>
                 <p className="text-2xl font-bold">{stats.total}</p>
               </div>
-              <Package className="h-8 w-8 text-blue-500" />
+              <div className="h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                <Package className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              </div>
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-2xl shadow-sm">
+        <Card className="rounded-2xl shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">
                   {t("latestVersion")}
                 </p>
-                <p className="text-lg font-bold">{stats.latest}</p>
+                <p className="text-lg font-bold truncate">{stats.latest}</p>
               </div>
-              <Upload className="h-8 w-8 text-green-500" />
+              <div className="h-12 w-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                <Upload className="h-6 w-6 text-green-600 dark:text-green-400" />
+              </div>
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-2xl shadow-sm">
+        <Card className="rounded-2xl shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">ESP32</p>
                 <p className="text-2xl font-bold">{stats.esp32}</p>
               </div>
-              <Smartphone className="h-8 w-8 text-purple-500" />
+              <div className="h-12 w-12 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
+                <Smartphone className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+              </div>
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-2xl shadow-sm">
+        <Card className="rounded-2xl shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">ESP8266</p>
                 <p className="text-2xl font-bold">{stats.esp8266}</p>
               </div>
-              <Smartphone className="h-8 w-8 text-orange-500" />
+              <div className="h-12 w-12 rounded-full bg-orange-100 dark:bg-orange-900 flex items-center justify-center">
+                <Smartphone className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -523,52 +531,85 @@ export default function FirmwareVersionsUI() {
               {(q.error as Error).message}
             </div>
           ) : !filteredData || filteredData.length === 0 ? (
-            <div className="text-sm text-muted-foreground">
-              {searchQuery ? t("noFirmwareMatchSearch") : t("noFirmwareFound")}
+            <div className="text-center py-12">
+              <div className="h-16 w-16 rounded-full bg-muted mx-auto mb-4 flex items-center justify-center">
+                <Package className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <h3 className="font-semibold text-lg mb-1">
+                {searchQuery
+                  ? t("noFirmwareMatchSearch")
+                  : t("noFirmwareFound")}
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {!searchQuery && t("uploadFirstFirmware")}
+              </p>
             </div>
           ) : (
-            <div className="divide-y rounded-xl border">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {filteredData.map((firmware) => (
-                <div
+                <Card
                   key={firmware.id}
-                  className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between"
+                  className="hover:shadow-md transition-shadow"
                 >
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-medium">{firmware.version}</span>
-                      <Badge variant="outline">{firmware.platform}</Badge>
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-semibold text-lg truncate">
+                            {firmware.version}
+                          </span>
+                        </div>
+                        <Badge variant="outline">{firmware.platform}</Badge>
+                      </div>
                     </div>
+                  </CardHeader>
 
-                    <div className="mt-1 text-sm text-muted-foreground">
-                      {t("size")}: {formatFileSize(firmware.sizeBytes)} •{" "}
-                      {t("sha256")}: {firmware.sha256.substring(0, 12)}...
+                  <CardContent className="space-y-3">
+                    <div className="text-xs text-muted-foreground space-y-1">
+                      <div className="flex justify-between">
+                        <span>{t("size")}:</span>
+                        <span className="font-mono">
+                          {formatFileSize(firmware.sizeBytes)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>{t("sha256")}:</span>
+                        <span className="font-mono text-xs truncate">
+                          {firmware.sha256.substring(0, 12)}...
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>{t("released")}:</span>
+                        <span>{fmtDateTime(firmware.createdAt)}</span>
+                      </div>
                     </div>
 
                     {firmware.notes && (
-                      <div className="mt-1 text-sm text-muted-foreground">
+                      <div className="text-sm text-muted-foreground border-t pt-2">
                         {firmware.notes}
                       </div>
                     )}
 
-                    <div className="mt-1 text-xs text-muted-foreground">
-                      {t("released")}: {fmtDateTime(firmware.createdAt)}
-                    </div>
-                  </div>
-
-                  <div className="flex shrink-0 items-center gap-2">
-                    <Button variant="outline" size="sm" asChild>
-                      <a
-                        href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/api/v1/firmware/releases/${firmware.id}/download`}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                    <div className="flex gap-2 pt-2 border-t">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1"
+                        asChild
                       >
-                        {t("download")}
-                      </a>
-                    </Button>
-                    <EditFirmwareDialog firmware={firmware} />
-                    <DeleteFirmwareDialog firmware={firmware} />
-                  </div>
-                </div>
+                        <a
+                          href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/api/v1/firmware/releases/${firmware.id}/download`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {t("download")}
+                        </a>
+                      </Button>
+                      <EditFirmwareDialog firmware={firmware} />
+                      <DeleteFirmwareDialog firmware={firmware} />
+                    </div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           )}

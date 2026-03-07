@@ -203,36 +203,6 @@ export default function RoomsClient() {
     },
   });
 
-  useEffect(() => {
-    const handleSearch = () => {
-      let searchInput: HTMLInputElement | null = null;
-      if (searchSectionRef.current) {
-        searchInput = searchSectionRef.current.querySelector(
-          "input",
-        ) as HTMLInputElement;
-      }
-      if (!searchInput) {
-        searchInput = document.querySelector("input") as HTMLInputElement;
-      }
-      if (searchInput) {
-        searchInput.focus();
-        searchInput.select();
-      }
-    };
-
-    const handleAdd = () => {
-      setAddDialogOpen(true);
-    };
-
-    window.addEventListener("topbar-search", handleSearch);
-    window.addEventListener("topbar-add", handleAdd);
-
-    return () => {
-      window.removeEventListener("topbar-search", handleSearch);
-      window.removeEventListener("topbar-add", handleAdd);
-    };
-  }, []);
-
   const deleteMutation = useMutation({
     mutationFn: async (roomId: number) => {
       return apiFetchBrowser(`/api/v1/rooms/${roomId}`, {
@@ -325,21 +295,32 @@ export default function RoomsClient() {
         ]}
       />
 
-      {/* Search */}
-      <div ref={searchSectionRef}>
-        <Card>
-          <CardContent className="p-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder={t("searchRooms")}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
-              />
-            </div>
-          </CardContent>
-        </Card>
+      {/* Search and Add Button */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div ref={searchSectionRef} className="flex-1">
+          <Card>
+            <CardContent className="p-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder={t("searchRooms")}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Add Room Button */}
+        <Button
+          onClick={() => setAddDialogOpen(true)}
+          className="shadow-md hover:shadow-lg transition-all"
+        >
+          <DoorOpen className="h-4 w-4 mr-2" />
+          {t("addRoom")}
+        </Button>
       </div>
 
       <Card className="rounded-2xl shadow-sm">
@@ -368,64 +349,88 @@ export default function RoomsClient() {
               </p>
             </div>
           ) : (
-            <div className="divide-y rounded-xl border">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {filteredRooms.map((room) => (
-                <div
+                <Card
                   key={room.id}
-                  className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                  className="hover:shadow-md transition-shadow"
                 >
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                      <span className="font-medium">{room.name}</span>
-                      <Badge variant="outline">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="h-10 w-10 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
+                          <DoorOpen className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                        </div>
+                        <div>
+                          <CardTitle className="text-base font-semibold">
+                            {room.name}
+                          </CardTitle>
+                          <p className="text-xs text-muted-foreground">
+                            ID: #{room.id}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {/* Home Badge */}
+                    <div className="flex items-center gap-2">
+                      <Home className="h-3 w-3 text-muted-foreground" />
+                      <Badge variant="outline" className="text-xs">
                         {getHomeName(room.homeId)}
                       </Badge>
-                      {/* Privacy Badge */}
+                    </div>
+
+                    {/* Privacy Badge */}
+                    <div className="flex items-center gap-2">
+                      <Shield className="h-3 w-3 text-muted-foreground" />
                       <Badge
-                        className={`flex items-center gap-1 ${getPrivacyColor(room.privacyLevel || "PUBLIC")}`}
+                        className={`flex items-center gap-1 text-xs ${getPrivacyColor(room.privacyLevel || "PUBLIC")}`}
                       >
                         {getPrivacyIcon(room.privacyLevel || "PUBLIC")}
-                        <span className="text-xs">
+                        <span>
                           {t(`privacy${room.privacyLevel || "PUBLIC"}` as any)}
                         </span>
                       </Badge>
                     </div>
-                    <div className="mt-1 text-xs text-muted-foreground">
+
+                    {/* Created At */}
+                    <div className="text-xs text-muted-foreground">
                       {t("createdAt")}:{" "}
                       {new Date(room.createdAt).toLocaleString()}
                     </div>
-                  </div>
 
-                  <div className="flex items-center gap-2 ml-4">
-                    {/* Access Control Button */}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedRoom(room);
-                        setIsAccessDialogOpen(true);
-                      }}
-                      title={t("accessControl")}
-                    >
-                      <Shield className="h-4 w-4" />
-                    </Button>
+                    {/* Action Buttons */}
+                    <div className="flex gap-2 pt-2 border-t">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1"
+                        onClick={() => {
+                          setSelectedRoom(room);
+                          setIsAccessDialogOpen(true);
+                        }}
+                        title={t("accessControl")}
+                      >
+                        <Shield className="h-3 w-3 mr-1" />
+                        {t("access")}
+                      </Button>
 
-                    {/* Delete Button */}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        if (confirm(`${t("deleteRoom")} "${room.name}"?`)) {
-                          deleteMutation.mutate(room.id);
-                        }
-                      }}
-                      disabled={deleteMutation.isPending}
-                    >
-                      <Trash2 className="h-4 w-4 text-red-600" />
-                    </Button>
-                  </div>
-                </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          if (confirm(`${t("deleteRoom")} "${room.name}"?`)) {
+                            deleteMutation.mutate(room.id);
+                          }
+                        }}
+                        disabled={deleteMutation.isPending}
+                      >
+                        <Trash2 className="h-4 w-4 text-red-600" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           )}

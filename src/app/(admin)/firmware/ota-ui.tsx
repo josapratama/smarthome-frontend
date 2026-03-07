@@ -120,7 +120,7 @@ export default function OtaClientPage({
   // keep URL in sync
   React.useEffect(() => {
     if (!deviceId) return;
-    router.replace(`/ota?deviceId=${deviceId}`);
+    router.replace(`/firmware?deviceId=${deviceId}`);
   }, [deviceId, router]);
 
   React.useEffect(() => {
@@ -152,8 +152,8 @@ export default function OtaClientPage({
   return (
     <div className="space-y-6">
       {/* Statistics Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card className="rounded-2xl shadow-sm">
+      <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
+        <Card className="rounded-2xl shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
@@ -162,22 +162,26 @@ export default function OtaClientPage({
                 </p>
                 <p className="text-2xl font-bold">{stats.totalJobs}</p>
               </div>
-              <Zap className="h-8 w-8 text-blue-500" />
+              <div className="h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                <Zap className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              </div>
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-2xl shadow-sm">
+        <Card className="rounded-2xl shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">{t("pending")}</p>
                 <p className="text-2xl font-bold">{stats.pending}</p>
               </div>
-              <Clock className="h-8 w-8 text-yellow-500" />
+              <div className="h-12 w-12 rounded-full bg-yellow-100 dark:bg-yellow-900 flex items-center justify-center">
+                <Clock className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+              </div>
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-2xl shadow-sm">
+        <Card className="rounded-2xl shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
@@ -186,11 +190,13 @@ export default function OtaClientPage({
                 </p>
                 <p className="text-2xl font-bold">{stats.inProgress}</p>
               </div>
-              <Activity className="h-8 w-8 text-orange-500" />
+              <div className="h-12 w-12 rounded-full bg-orange-100 dark:bg-orange-900 flex items-center justify-center">
+                <Activity className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+              </div>
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-2xl shadow-sm">
+        <Card className="rounded-2xl shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
@@ -199,146 +205,157 @@ export default function OtaClientPage({
                 </p>
                 <p className="text-2xl font-bold">{stats.completed}</p>
               </div>
-              <CheckCircle className="h-8 w-8 text-green-500" />
+              <div className="h-12 w-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
+      <Card className="rounded-2xl shadow-sm">
         <CardHeader>
           <CardTitle>{t("triggerOta")}</CardTitle>
         </CardHeader>
-        <CardContent className="grid gap-4 md:grid-cols-3">
-          <div className="space-y-2">
-            <div className="text-sm text-muted-foreground">{t("device")}</div>
-            {devicesQ.isLoading ? (
-              <Skeleton className="h-10 w-full" />
-            ) : (
-              <Select
-                value={deviceId ? String(deviceId) : ""}
-                onValueChange={(v) => setDeviceId(Number(v))}
+        <CardContent className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="space-y-2">
+              <div className="text-sm font-medium">{t("device")}</div>
+              {devicesQ.isLoading ? (
+                <Skeleton className="h-10 w-full" />
+              ) : (
+                <Select
+                  value={deviceId ? String(deviceId) : ""}
+                  onValueChange={(v) => setDeviceId(Number(v))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t("selectDevice")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(devicesQ.data ?? []).map((d) => (
+                      <SelectItem key={d.id} value={String(d.id)}>
+                        #{d.id} {d.deviceName ? `- ${d.deviceName}` : ""} (
+                        {d.mqttClientId ?? "no-mqtt"})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+
+              {selectedDevice ? (
+                <div className="flex items-center gap-2 text-xs">
+                  {statusBadge(selectedDevice.status, t)}
+                  <span className="text-muted-foreground">
+                    {t("lastSeen")}: {fmtLastSeen(selectedDevice.lastSeenAt)}
+                  </span>
+                </div>
+              ) : null}
+            </div>
+
+            <div className="space-y-2">
+              <div className="text-sm font-medium">{t("release")}</div>
+              {releasesQ.isLoading ? (
+                <Skeleton className="h-10 w-full" />
+              ) : (
+                <Select
+                  value={releaseId ? String(releaseId) : ""}
+                  onValueChange={(v) => setReleaseId(Number(v))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t("selectFirmware")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(releasesQ.data ?? []).map((r: any) => (
+                      <SelectItem key={r.id} value={String(r.id)}>
+                        {r.version} ({r.platform})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+
+            <div className="flex items-end">
+              <Button
+                className="w-full"
+                disabled={triggerM.isPending || !deviceId || !releaseId}
+                onClick={() => triggerM.mutate()}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder={t("selectDevice")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {(devicesQ.data ?? []).map((d) => (
-                    <SelectItem key={d.id} value={String(d.id)}>
-                      #{d.id} {d.deviceName ? `- ${d.deviceName}` : ""} (
-                      {d.mqttClientId ?? "no-mqtt"})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-
-            {selectedDevice ? (
-              <div className="flex items-center gap-2 text-xs">
-                {statusBadge(selectedDevice.status, t)}
-                <span className="text-muted-foreground">
-                  {t("lastSeen")}: {fmtLastSeen(selectedDevice.lastSeenAt)}
-                </span>
-              </div>
-            ) : null}
-          </div>
-
-          <div className="space-y-2">
-            <div className="text-sm text-muted-foreground">{t("release")}</div>
-            {releasesQ.isLoading ? (
-              <Skeleton className="h-10 w-full" />
-            ) : (
-              <Select
-                value={releaseId ? String(releaseId) : ""}
-                onValueChange={(v) => setReleaseId(Number(v))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t("selectFirmware")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {(releasesQ.data ?? []).map((r: any) => (
-                    <SelectItem key={r.id} value={String(r.id)}>
-                      {r.version} ({r.platform})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          </div>
-
-          <div className="flex items-end">
-            <Button
-              className="w-full"
-              disabled={triggerM.isPending || !deviceId || !releaseId}
-              onClick={() => triggerM.mutate()}
-            >
-              {triggerM.isPending ? t("triggering") : t("triggerOta")}
-            </Button>
+                {triggerM.isPending ? t("triggering") : t("triggerOta")}
+              </Button>
+            </div>
           </div>
 
           {triggerM.error ? (
-            <div className="md:col-span-3 text-sm text-destructive">
+            <div className="text-sm text-destructive rounded-lg bg-destructive/10 p-3">
               {(triggerM.error as Error).message}
             </div>
           ) : null}
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="rounded-2xl shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between gap-2">
           <CardTitle>{t("jobs")}</CardTitle>
-          <div className="text-xs text-muted-foreground">
+          <Badge variant={jobsQ.isFetching ? "default" : "outline"}>
             {jobsQ.isFetching ? t("updating") : t("idle")}
-          </div>
+          </Badge>
         </CardHeader>
         <CardContent className="space-y-3">
           {!deviceId ? (
-            <div className="text-sm text-muted-foreground">
-              {t("selectDeviceToViewJobs")}
+            <div className="text-center py-8">
+              <div className="h-16 w-16 rounded-full bg-muted mx-auto mb-4 flex items-center justify-center">
+                <Zap className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <p className="text-sm text-muted-foreground">
+                {t("selectDeviceToViewJobs")}
+              </p>
             </div>
           ) : jobsQ.isLoading ? (
             <div className="space-y-2">
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
             </div>
           ) : jobsQ.error ? (
-            <div className="text-sm text-destructive">
+            <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
               {(jobsQ.error as Error).message}
             </div>
           ) : (jobsQ.data ?? []).length === 0 ? (
-            <div className="text-sm text-muted-foreground">
-              {t("noJobsYet")}
+            <div className="text-center py-8">
+              <div className="h-16 w-16 rounded-full bg-muted mx-auto mb-4 flex items-center justify-center">
+                <Clock className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <p className="text-sm text-muted-foreground">{t("noJobsYet")}</p>
             </div>
           ) : (
-            <div className="divide-y rounded-md border">
+            <div className="divide-y rounded-xl border">
               {(jobsQ.data ?? []).map((j) => (
                 <div
                   key={j.id}
-                  className="flex items-center justify-between gap-3 p-3"
+                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 hover:bg-muted/50 transition-colors"
                 >
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap mb-1">
                       <span className="font-medium">
                         {t("job")} #{j.id}
                       </span>
                       <Badge variant="secondary">{j.status}</Badge>
-                      {typeof j.progress === "number" ? (
-                        <span className="text-xs text-muted-foreground">
+                      {typeof j.progress === "number" && (
+                        <Badge variant="outline" className="text-xs">
                           {j.progress}%
-                        </span>
-                      ) : null}
+                        </Badge>
+                      )}
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      {t("device")} {j.deviceId} • {t("release")}{" "}
+                      {t("device")} #{j.deviceId} • {t("release")} #
                       {j.firmwareReleaseId}
                     </div>
                   </div>
 
-                  <Link
-                    className="text-sm underline underline-offset-4 hover:opacity-80"
-                    href={`/firmware/jobs/${j.id}`}
-                  >
-                    {t("view")}
+                  <Link href={`/firmware/jobs/${j.id}`}>
+                    <Button variant="outline" size="sm">
+                      {t("view")}
+                    </Button>
                   </Link>
                 </div>
               ))}

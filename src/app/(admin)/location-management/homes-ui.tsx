@@ -176,37 +176,6 @@ export default function HomesClient() {
     },
   });
 
-  // Listen to topbar events
-  useEffect(() => {
-    const handleSearch = () => {
-      let searchInput: HTMLInputElement | null = null;
-      if (searchSectionRef.current) {
-        searchInput = searchSectionRef.current.querySelector(
-          "input",
-        ) as HTMLInputElement;
-      }
-      if (!searchInput) {
-        searchInput = document.querySelector("input") as HTMLInputElement;
-      }
-      if (searchInput) {
-        searchInput.focus();
-        searchInput.select();
-      }
-    };
-
-    const handleAdd = () => {
-      setCreateDialogOpen(true);
-    };
-
-    window.addEventListener("topbar-search", handleSearch);
-    window.addEventListener("topbar-add", handleAdd);
-
-    return () => {
-      window.removeEventListener("topbar-search", handleSearch);
-      window.removeEventListener("topbar-add", handleAdd);
-    };
-  }, []);
-
   const filtered = (q.data ?? []).filter((home: HomeDTO) => {
     const search = searchText.toLowerCase();
     return (
@@ -230,21 +199,32 @@ export default function HomesClient() {
         ]}
       />
 
-      {/* Search */}
-      <div ref={searchSectionRef}>
-        <Card>
-          <CardContent className="p-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-                placeholder={t("searchHomes")}
-                className="pl-9"
-              />
-            </div>
-          </CardContent>
-        </Card>
+      {/* Search and Add Button */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div ref={searchSectionRef} className="flex-1">
+          <Card>
+            <CardContent className="p-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  placeholder={t("searchHomes")}
+                  className="pl-9"
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Add Home Button */}
+        <Button
+          onClick={() => setCreateDialogOpen(true)}
+          className="shadow-md hover:shadow-lg transition-all"
+        >
+          <HomeIcon className="h-4 w-4 mr-2" />
+          {t("addHome")}
+        </Button>
       </div>
 
       <CreateHomeDialog
@@ -273,49 +253,84 @@ export default function HomesClient() {
               {searchText ? t("noHomesMatchSearch") : t("noHomesFound")}
             </div>
           ) : (
-            <div className="divide-y rounded-xl border">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {filtered.map((home: HomeDTO) => (
-                <div
+                <Card
                   key={home.id}
-                  className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between"
+                  className="hover:shadow-md transition-shadow"
                 >
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-medium">
-                        #{home.id} • {home.name}
-                      </span>
-                      <Badge variant="outline">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                          <HomeIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                        </div>
+                        <div>
+                          <CardTitle className="text-base font-semibold">
+                            {home.name}
+                          </CardTitle>
+                          <p className="text-xs text-muted-foreground">
+                            ID: #{home.id}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {/* Address Info */}
+                    <div className="space-y-1">
+                      <p className="text-sm text-muted-foreground">
+                        {home.addressText || t("noAddress")}
+                      </p>
+                      {(home.city || home.postalCode) && (
+                        <p className="text-xs text-muted-foreground">
+                          {home.city}
+                          {home.city && home.postalCode && " • "}
+                          {home.postalCode}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Owner Badge */}
+                    <div className="flex items-center gap-2">
+                      <Users className="h-3 w-3 text-muted-foreground" />
+                      <Badge variant="outline" className="text-xs">
                         {t("owner")}: {home.ownerUserId}
                       </Badge>
                     </div>
 
-                    <div className="mt-1 text-sm text-muted-foreground">
-                      {home.addressText || t("noAddress")}
-                      {home.city && ` • ${home.city}`}
-                      {home.postalCode && ` • ${home.postalCode}`}
+                    {/* Timestamps */}
+                    <div className="text-xs text-muted-foreground space-y-0.5">
+                      <div>
+                        {t("created")}: {fmtDateTime(home.createdAt)}
+                      </div>
+                      <div>
+                        {t("updated")}: {fmtDateTime(home.updatedAt)}
+                      </div>
                     </div>
 
-                    <div className="mt-1 text-xs text-muted-foreground">
-                      {t("created")}: {fmtDateTime(home.createdAt)} •{" "}
-                      {t("updated")}: {fmtDateTime(home.updatedAt)}
+                    {/* Action Links */}
+                    <div className="flex gap-2 pt-2 border-t">
+                      <Link
+                        href={`/location-management/homes/${home.id}/rooms`}
+                        className="flex-1"
+                      >
+                        <Button variant="outline" size="sm" className="w-full">
+                          <DoorOpen className="h-3 w-3 mr-1" />
+                          {t("rooms")}
+                        </Button>
+                      </Link>
+                      <Link
+                        href={`/device-management?homeId=${home.id}`}
+                        className="flex-1"
+                      >
+                        <Button variant="outline" size="sm" className="w-full">
+                          {t("devices")}
+                        </Button>
+                      </Link>
                     </div>
-                  </div>
-
-                  <div className="flex shrink-0 items-center gap-3">
-                    <Link
-                      className="text-sm underline underline-offset-4 hover:opacity-80"
-                      href={`/location-management/homes/${home.id}/rooms`}
-                    >
-                      {t("rooms")}
-                    </Link>
-                    <Link
-                      className="text-sm underline underline-offset-4 hover:opacity-80"
-                      href={`/devices?homeId=${home.id}`}
-                    >
-                      {t("devices")}
-                    </Link>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           )}

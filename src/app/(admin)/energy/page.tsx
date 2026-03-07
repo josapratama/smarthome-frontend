@@ -2,23 +2,22 @@
 
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
-import { PageHeader } from "@/components/ui/page-header";
 import { Zap, DollarSign } from "lucide-react";
-import { useTranslation } from "@/hooks/use-translation";
 import EnergyMonitoringUI from "./monitoring-ui";
 import EnergyCostUI from "./cost-ui";
+import { useLanguage } from "@/contexts/language-context";
+import { PageHeader } from "@/components/ui/page-header";
 
 export default function EnergyManagementPage() {
-  const { t } = useTranslation();
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState("monitoring");
 
-  // Update topbar title when tab changes
   useEffect(() => {
-    const title =
-      activeTab === "monitoring" ? t("energyMonitoring") : t("energyCost");
+    // Update topbar title
     window.dispatchEvent(
-      new CustomEvent("topbar-title-change", { detail: title }),
+      new CustomEvent("topbar-title-change", {
+        detail: t("energyManagement"),
+      }),
     );
 
     return () => {
@@ -26,51 +25,36 @@ export default function EnergyManagementPage() {
         new CustomEvent("topbar-title-change", { detail: null }),
       );
     };
-  }, [activeTab, t]);
+  }, [t]);
 
   return (
     <div className="space-y-4">
       <PageHeader />
 
-      <Card className="rounded-2xl shadow-sm overflow-hidden">
-        <div className="border-b bg-muted/50">
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className="w-full"
-          >
-            <TabsList className="w-full h-auto bg-transparent p-0 justify-start rounded-none border-b-0 overflow-x-auto">
-              <TabsTrigger
-                value="monitoring"
-                className="relative rounded-none border-b-2 border-transparent px-4 md:px-6 py-3 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:font-semibold flex-shrink-0"
-              >
-                <Zap className="w-4 h-4 md:mr-2" />
-                <span className="hidden md:inline">
-                  {t("energyMonitoring")}
-                </span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="cost"
-                className="relative rounded-none border-b-2 border-transparent px-4 md:px-6 py-3 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:font-semibold flex-shrink-0"
-              >
-                <DollarSign className="w-4 h-4 md:mr-2" />
-                <span className="hidden md:inline">{t("energyCost")}</span>
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-4"
+      >
+        <TabsList className="grid w-full grid-cols-2 lg:w-auto">
+          <TabsTrigger value="monitoring" className="gap-2">
+            <Zap className="h-4 w-4" />
+            <span className="hidden sm:inline">{t("energyMonitoring")}</span>
+          </TabsTrigger>
+          <TabsTrigger value="cost" className="gap-2">
+            <DollarSign className="h-4 w-4" />
+            <span className="hidden sm:inline">{t("energyCost")}</span>
+          </TabsTrigger>
+        </TabsList>
 
-        <CardContent className="p-4 md:p-6">
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsContent value="monitoring" className="m-0">
-              <EnergyMonitoringUI />
-            </TabsContent>
-            <TabsContent value="cost" className="m-0">
-              <EnergyCostUI />
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+        <TabsContent value="monitoring" className="space-y-4">
+          {activeTab === "monitoring" && <EnergyMonitoringUI />}
+        </TabsContent>
+
+        <TabsContent value="cost" className="space-y-4">
+          {activeTab === "cost" && <EnergyCostUI />}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
