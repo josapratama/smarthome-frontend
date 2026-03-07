@@ -252,26 +252,6 @@ export default function UserFAQPage() {
           })}
         </div>
       )}
-
-      {/* Help Section */}
-      <Card className="border-primary/20 bg-primary/5">
-        <CardContent className="p-6">
-          <h3 className="text-lg font-semibold mb-2">
-            {t("stillNeedHelp") || "Still need help?"}
-          </h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            {t("contactSupportMessage") ||
-              "Can't find what you're looking for? Contact our support team or use the AI chat assistant."}
-          </p>
-          <div className="flex flex-wrap gap-2">
-            <Button asChild>
-              <a href="/user/chat">
-                {t("chatWithAI") || "Chat with AI Assistant"}
-              </a>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

@@ -169,7 +169,6 @@ export const id = {
   // Members Page
   members: "Anggota",
   manageHomeMembersAndInvites: "Kelola anggota rumah dan undangan",
-  noHomesYet: "Belum Ada Rumah",
   createHomeToManageMembers:
     "Buat rumah terlebih dahulu untuk mengelola anggota",
   chooseHomeToManageMembers:
@@ -187,7 +186,6 @@ export const id = {
   noDevicesFound: "Tidak ada perangkat ditemukan",
   getStartedDevice: "Daftarkan perangkat pertama Anda untuk memulai",
   allDevices: "Semua Perangkat",
-  allHomes: "Semua Rumah",
   deviceInfo: "Informasi Perangkat",
   deviceStatus: "Status Perangkat",
   firmwareVersion: "Versi Firmware",
@@ -376,7 +374,6 @@ export const id = {
   failedResendInvite: "Gagal mengirim ulang undangan",
   inviteRevoked: "Undangan berhasil dicabut",
   failedRevokeInvite: "Gagal mencabut undangan",
-  pendingInvitations: "Undangan Tertunda",
   noPendingInvitations: "Tidak ada undangan tertunda",
   sentInvitationsWillAppear: "Undangan yang dikirim akan muncul di sini",
   invited: "Diundang",
@@ -620,8 +617,6 @@ export const id = {
   manageAppInfo: "Kelola informasi dan pengaturan aplikasi",
   addInfo: "Tambah Info",
   item: "item",
-  public: "Publik",
-  private: "Privat",
   noAppInfoFound: "Tidak Ada Info Aplikasi Ditemukan",
   getStartedAppInfo: "Mulai dengan menambahkan informasi aplikasi pertama Anda",
   editAppInfo: "Edit Info Aplikasi",
@@ -1179,7 +1174,6 @@ export const id = {
   insufficientPermissions: "Anda tidak memiliki izin yang cukup untuk aksi ini",
 
   // Homes Extended Keys
-  failedToLoadHomes: "Gagal memuat rumah",
   homeDeletedSuccess: "Rumah berhasil dihapus",
   manageHomesLocations: "Kelola rumah dan lokasi Anda",
   createFirstHomeDescription:
