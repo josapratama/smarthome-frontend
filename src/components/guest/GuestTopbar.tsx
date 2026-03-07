@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Bell, Menu } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ interface GuestTopbarProps {
 export function GuestTopbar({ onMenuClick }: GuestTopbarProps) {
   const { t } = useLanguage();
   const router = useRouter();
+  const pathname = usePathname();
   const [unreadCount, setUnreadCount] = useState(0);
   const [username, setUsername] = useState("");
 
@@ -37,6 +38,28 @@ export function GuestTopbar({ onMenuClick }: GuestTopbarProps) {
     router.push("/guest/notifications");
   };
 
+  // Get page title based on current route
+  const getPageInfo = () => {
+    if (pathname.includes("/dashboard"))
+      return { title: t("dashboard"), subtitle: t("guestDashboardDesc") };
+    if (pathname.includes("/devices"))
+      return { title: t("devices"), subtitle: t("viewDeviceStatus") };
+    if (pathname.includes("/homes"))
+      return { title: t("homes"), subtitle: t("homesYouCanView") };
+    if (pathname.includes("/invitations"))
+      return { title: t("invitations"), subtitle: t("pendingInvitations") };
+    if (pathname.includes("/notifications"))
+      return { title: t("notifications"), subtitle: t("allNotifications") };
+    if (pathname.includes("/settings"))
+      return { title: t("settings"), subtitle: t("preferences") };
+    if (pathname.includes("/profile"))
+      return { title: t("profile"), subtitle: t("accountInformation") };
+
+    return { title: "Guest Panel", subtitle: t("viewOnly") };
+  };
+
+  const pageInfo = getPageInfo();
+
   return (
     <header className="bg-card border-b border-border px-4 py-3 md:px-6 md:py-4">
       <div className="flex items-center justify-between">
@@ -51,15 +74,15 @@ export function GuestTopbar({ onMenuClick }: GuestTopbarProps) {
             <Menu className="h-5 w-5" />
           </Button>
 
-          {/* Logo/Brand */}
+          {/* Page Title - Breadcrumb Style */}
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
-              <span className="text-white font-bold text-sm">SH</span>
-            </div>
-            <div className="hidden md:block">
-              <h2 className="text-base font-bold leading-none">Smart Home</h2>
-              <p className="text-xs text-muted-foreground">{t("guestPanel")}</p>
-            </div>
+            <span className="text-sm font-medium text-muted-foreground">
+              Guest
+            </span>
+            <span className="text-muted-foreground">/</span>
+            <h1 className="text-base md:text-lg font-semibold bg-gradient-to-r from-purple-600 via-purple-500 to-purple-400 bg-clip-text text-transparent">
+              {pageInfo.title}
+            </h1>
           </div>
         </div>
 
@@ -71,16 +94,16 @@ export function GuestTopbar({ onMenuClick }: GuestTopbarProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="relative"
+            className="relative hover:bg-purple-500/10 transition-colors"
             onClick={handleNotificationClick}
           >
             <Bell className="h-5 w-5" />
             {unreadCount > 0 && (
               <Badge
                 variant="destructive"
-                className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs animate-pulse"
               >
-                {unreadCount}
+                {unreadCount > 9 ? "9+" : unreadCount}
               </Badge>
             )}
           </Button>
