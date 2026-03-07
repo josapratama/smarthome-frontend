@@ -14,13 +14,13 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import {
-  ArrowLeft,
   Clock,
   AlertCircle,
   CheckCircle2,
   XCircle,
   RefreshCw,
   Activity,
+  Home as HomeIcon,
 } from "lucide-react";
 
 // Import sensor components and utilities
@@ -31,6 +31,12 @@ import {
   UltrasonicCards,
   CurrentCards,
 } from "./sensor-cards";
+import {
+  TemperatureHumidityCards,
+  PressureCards,
+  SoilMoistureCards,
+  LightSensorCards,
+} from "./sensor-cards-extended";
 import {
   detectSensorType,
   hasSensorData,
@@ -165,6 +171,14 @@ export function TelemetryClient() {
         return <UltrasonicCards data={latestTelemetry} />;
       case "CURRENT_SENSOR":
         return <CurrentCards data={latestTelemetry} />;
+      case "TEMPERATURE_HUMIDITY":
+        return <TemperatureHumidityCards data={latestTelemetry} />;
+      case "PRESSURE":
+        return <PressureCards data={latestTelemetry} />;
+      case "SOIL_MOISTURE":
+        return <SoilMoistureCards data={latestTelemetry} />;
+      case "LIGHT_SENSOR":
+        return <LightSensorCards data={latestTelemetry} />;
       default:
         return (
           <Card className="rounded-2xl shadow-sm">
@@ -219,22 +233,33 @@ export function TelemetryClient() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => router.push(`/devices/${deviceId}`)}
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <button
+          onClick={() => router.push("/device-management")}
+          className="hover:text-foreground transition-colors flex items-center gap-1"
         >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          {t("back")}
-        </Button>
+          <HomeIcon className="h-4 w-4" />
+          {t("deviceManagement")}
+        </button>
+        <span>/</span>
+        <button
+          onClick={() => router.push(`/device-management/devices/${deviceId}`)}
+          className="hover:text-foreground transition-colors"
+        >
+          {t("device")} #{deviceId}
+        </button>
+        <span>/</span>
+        <span className="text-foreground font-medium">{t("telemetry")}</span>
+      </div>
 
-        <div className="flex-1">
-          <h1 className="text-2xl font-semibold">
-            {device?.deviceName || `Device ${deviceId}`}
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold">
+            {device?.deviceName || `${t("device")} ${deviceId}`}
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground mt-1">
             {t("sensorTelemetry")} - {t("realTimeMonitoring")}
           </p>
         </div>
@@ -250,7 +275,7 @@ export function TelemetryClient() {
             disabled={telemetryQuery.isFetching}
           >
             <RefreshCw
-              className={`h-4 w-4 mr-2 ${telemetryQuery.isFetching ? "animate-spin" : ""}`}
+              className={`mr-2 h-4 w-4 ${telemetryQuery.isFetching ? "animate-spin" : ""}`}
             />
             {t("refresh")}
           </Button>
@@ -260,7 +285,7 @@ export function TelemetryClient() {
             size="sm"
             onClick={() => setAutoRefresh(!autoRefresh)}
           >
-            <Activity className="h-4 w-4 mr-2" />
+            <Activity className="mr-2 h-4 w-4" />
             {autoRefresh ? t("autoRefreshOn") : t("autoRefreshOff")}
           </Button>
         </div>

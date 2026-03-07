@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   getDeviceChannels,
   createChannel,
@@ -15,6 +16,19 @@ import type {
   ChannelType,
 } from "@/lib/api/dto/channel.dto";
 import { useTranslation } from "@/hooks/use-translation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Home as HomeIcon, Plus, Pencil, Trash2, Power } from "lucide-react";
 
 const CHANNEL_TYPES: ChannelType[] = [
   "RELAY",
@@ -30,6 +44,7 @@ const CHANNEL_TYPES: ChannelType[] = [
 
 export function ChannelsUI({ deviceId }: { deviceId: number }) {
   const { t } = useTranslation();
+  const router = useRouter();
   const [channels, setChannels] = useState<ChannelDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -111,290 +126,314 @@ export function ChannelsUI({ deviceId }: { deviceId: number }) {
   }
 
   if (loading) {
-    return <div className="p-4">{t("loading")}...</div>;
+    return (
+      <div className="flex items-center justify-center p-12">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">{t("loading")}...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="p-4 space-y-4">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">{t("deviceChannels")}</h1>
+    <div className="space-y-6">
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <button
-          onClick={() => setShowAddForm(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          onClick={() => router.push("/device-management")}
+          className="hover:text-foreground transition-colors flex items-center gap-1"
         >
-          {t("addChannel")}
+          <HomeIcon className="h-4 w-4" />
+          {t("deviceManagement")}
         </button>
+        <span>/</span>
+        <button
+          onClick={() => router.push(`/device-management/devices/${deviceId}`)}
+          className="hover:text-foreground transition-colors"
+        >
+          {t("device")} #{deviceId}
+        </button>
+        <span>/</span>
+        <span className="text-foreground font-medium">
+          {t("manageChannels")}
+        </span>
+      </div>
+
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold">{t("deviceChannels")}</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            {t("manageDeviceChannels")}
+          </p>
+        </div>
+        <Button onClick={() => setShowAddForm(true)} size="lg">
+          <Plus className="mr-2 h-4 w-4" />
+          {t("addChannel")}
+        </Button>
       </div>
 
       {showAddForm && (
-        <div className="border rounded-lg p-6 bg-gray-50 dark:bg-gray-800 shadow-sm">
-          <h2 className="text-xl font-semibold mb-4">{t("addNewChannel")}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                {t("channelNumber")} <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="number"
-                value={formData.channelNum}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    channelNum: parseInt(e.target.value),
-                  })
-                }
-                className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
-                min="1"
-                max="16"
-                placeholder="1-16"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                {t("channelNumberDesc")}
-              </p>
+        <Card className="rounded-2xl shadow-sm">
+          <CardHeader>
+            <CardTitle>{t("addNewChannel")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="channelNum">
+                  {t("channelNumber")} <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="channelNum"
+                  type="number"
+                  value={formData.channelNum}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      channelNum: parseInt(e.target.value),
+                    })
+                  }
+                  min="1"
+                  max="16"
+                  placeholder="1-16"
+                />
+                <p className="text-xs text-muted-foreground">
+                  {t("channelNumberDesc")}
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="channelName">
+                  {t("channelName")} <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="channelName"
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  placeholder={t("channelNamePlaceholder")}
+                />
+                <p className="text-xs text-muted-foreground">
+                  {t("channelNameDesc")}
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="channelType">
+                  {t("channelType")} <span className="text-red-500">*</span>
+                </Label>
+                <Select
+                  value={formData.type}
+                  onValueChange={(value) =>
+                    setFormData({
+                      ...formData,
+                      type: value as ChannelType,
+                    })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CHANNEL_TYPES.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  {t("channelTypeDesc")}
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="gpioPin">
+                  {t("gpioPin")} ({t("optional")})
+                </Label>
+                <Input
+                  id="gpioPin"
+                  type="number"
+                  value={formData.pinNumber || ""}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      pinNumber: e.target.value
+                        ? parseInt(e.target.value)
+                        : undefined,
+                    })
+                  }
+                  placeholder="e.g., 2, 4, 5"
+                />
+                <p className="text-xs text-muted-foreground">
+                  {t("gpioPinDesc")}
+                </p>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                {t("channelName")} <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
-                placeholder={t("channelNamePlaceholder")}
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                {t("channelNameDesc")}
-              </p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                {t("channelType")} <span className="text-red-500">*</span>
-              </label>
-              <select
-                value={formData.type}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    type: e.target.value as ChannelType,
-                  })
-                }
-                className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+            <div className="flex gap-3 mt-6">
+              <Button
+                onClick={handleCreate}
+                disabled={!formData.name || !formData.channelNum}
               >
-                {CHANNEL_TYPES.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
-              <p className="text-xs text-gray-500 mt-1">
-                {t("channelTypeDesc")}
-              </p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                {t("gpioPin")} ({t("optional")})
-              </label>
-              <input
-                type="number"
-                value={formData.pinNumber || ""}
-                onChange={(e) =>
+                {t("createChannel")}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowAddForm(false);
                   setFormData({
-                    ...formData,
-                    pinNumber: e.target.value
-                      ? parseInt(e.target.value)
-                      : undefined,
-                  })
-                }
-                className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
-                placeholder="e.g., 2, 4, 5"
-              />
-              <p className="text-xs text-gray-500 mt-1">{t("gpioPinDesc")}</p>
+                    deviceId,
+                    channelNum: channels.length + 1,
+                    name: "",
+                    type: "RELAY",
+                    pinNumber: undefined,
+                  });
+                }}
+              >
+                {t("cancel")}
+              </Button>
             </div>
-          </div>
-
-          <div className="flex gap-3 mt-6">
-            <button
-              onClick={handleCreate}
-              disabled={!formData.name || !formData.channelNum}
-              className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-            >
-              {t("createChannel")}
-            </button>
-            <button
-              onClick={() => {
-                setShowAddForm(false);
-                setFormData({
-                  deviceId,
-                  channelNum: channels.length + 1,
-                  name: "",
-                  type: "RELAY",
-                  pinNumber: undefined,
-                });
-              }}
-              className="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-            >
-              {t("cancel")}
-            </button>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       )}
 
       <div className="grid gap-4">
         {channels.length === 0 ? (
-          <div className="text-center py-12 border-2 border-dashed rounded-lg">
-            <svg
-              className="mx-auto h-12 w-12 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"
-              />
-            </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-              {t("noChannelsConfigured")}
-            </h3>
-            <p className="mt-1 text-sm text-gray-500">{t("noChannelsDesc")}</p>
-            <div className="mt-6">
-              <button
-                onClick={() => setShowAddForm(true)}
-                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-              >
-                <svg
-                  className="-ml-1 mr-2 h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-                {t("addFirstChannel")}
-              </button>
-            </div>
-          </div>
+          <Card className="rounded-2xl shadow-sm">
+            <CardContent className="py-12 text-center">
+              <div className="flex flex-col items-center">
+                <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
+                  <Power className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">
+                  {t("noChannelsConfigured")}
+                </h3>
+                <p className="text-sm text-muted-foreground mb-6">
+                  {t("noChannelsDesc")}
+                </p>
+                <Button onClick={() => setShowAddForm(true)} size="lg">
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t("addFirstChannel")}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         ) : (
           channels.map((channel) => (
-            <div
+            <Card
               key={channel.id}
-              className="border rounded-lg p-4 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-shadow"
+              className="rounded-2xl shadow-sm hover:shadow-md transition-shadow"
             >
               {editingChannel?.id === channel.id ? (
-                <div className="space-y-3">
-                  <h3 className="text-lg font-semibold mb-3">
+                <CardContent className="pt-6">
+                  <h3 className="text-lg font-semibold mb-4">
                     {t("editChannel")}
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-sm font-medium mb-1">
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor={`edit-name-${channel.id}`}>
                         {t("name")}
-                      </label>
-                      <input
+                      </Label>
+                      <Input
                         type="text"
                         defaultValue={channel.name}
                         id={`edit-name-${channel.id}`}
-                        className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
                       />
                     </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        const name = (
-                          document.getElementById(
-                            `edit-name-${channel.id}`,
-                          ) as HTMLInputElement
-                        ).value;
-                        handleUpdate(channel.id, { name });
-                      }}
-                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                    >
-                      {t("save")}
-                    </button>
-                    <button
-                      onClick={() => setEditingChannel(null)}
-                      className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
-                    >
-                      {t("cancel")}
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <h3 className="text-lg font-semibold">{channel.name}</h3>
-                      <span className="px-2 py-1 text-xs bg-gray-200 dark:bg-gray-700 rounded-full font-medium">
-                        CH{channel.channelNum}
-                      </span>
-                      <span className="px-2 py-1 text-xs bg-blue-200 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full font-medium">
-                        {channel.type}
-                      </span>
-                      {channel.pinNumber && (
-                        <span className="px-2 py-1 text-xs bg-purple-200 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded-full font-medium">
-                          GPIO {channel.pinNumber}
-                        </span>
-                      )}
-                    </div>
-                    <div className="mt-2 flex items-center gap-4 text-sm">
-                      <span
-                        className={`font-medium ${
-                          channel.state
-                            ? "text-green-600 dark:text-green-400"
-                            : "text-gray-500"
-                        }`}
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => {
+                          const name = (
+                            document.getElementById(
+                              `edit-name-${channel.id}`,
+                            ) as HTMLInputElement
+                          ).value;
+                          handleUpdate(channel.id, { name });
+                        }}
                       >
-                        {t("state")}: {channel.state ? t("on") : t("off")}
-                      </span>
-                      {channel.value !== null && (
-                        <span className="text-gray-600 dark:text-gray-400">
-                          {t("value")}: {channel.value}
-                          {channel.unit || ""}
-                        </span>
-                      )}
+                        {t("save")}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => setEditingChannel(null)}
+                      >
+                        {t("cancel")}
+                      </Button>
                     </div>
                   </div>
-                  <div className="flex gap-2 flex-wrap">
-                    <button
-                      onClick={() => handleToggleState(channel)}
-                      className={`px-4 py-2 rounded-lg transition-colors ${
-                        channel.state
-                          ? "bg-green-600 hover:bg-green-700"
-                          : "bg-gray-600 hover:bg-gray-700"
-                      } text-white`}
-                    >
-                      {channel.state ? t("turnOff") : t("turnOn")}
-                    </button>
-                    <button
-                      onClick={() => setEditingChannel(channel)}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                      {t("edit")}
-                    </button>
-                    <button
-                      onClick={() => handleDelete(channel.id)}
-                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                    >
-                      {t("delete")}
-                    </button>
+                </CardContent>
+              ) : (
+                <CardContent className="pt-6">
+                  <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 flex-wrap mb-3">
+                        <h3 className="text-lg font-semibold">
+                          {channel.name}
+                        </h3>
+                        <Badge variant="secondary">
+                          CH{channel.channelNum}
+                        </Badge>
+                        <Badge variant="outline">{channel.type}</Badge>
+                        {channel.pinNumber && (
+                          <Badge className="bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
+                            GPIO {channel.pinNumber}
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-4 text-sm">
+                        <span
+                          className={`font-medium ${
+                            channel.state
+                              ? "text-green-600 dark:text-green-400"
+                              : "text-muted-foreground"
+                          }`}
+                        >
+                          {t("state")}: {channel.state ? t("on") : t("off")}
+                        </span>
+                        {channel.value !== null && (
+                          <span className="text-muted-foreground">
+                            {t("value")}: {channel.value}
+                            {channel.unit || ""}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex gap-2 flex-wrap">
+                      <Button
+                        onClick={() => handleToggleState(channel)}
+                        variant={channel.state ? "default" : "secondary"}
+                        size="sm"
+                      >
+                        <Power className="mr-2 h-4 w-4" />
+                        {channel.state ? t("turnOff") : t("turnOn")}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setEditingChannel(channel)}
+                      >
+                        <Pencil className="mr-2 h-4 w-4" />
+                        {t("edit")}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                        onClick={() => handleDelete(channel.id)}
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        {t("delete")}
+                      </Button>
+                    </div>
                   </div>
-                </div>
+                </CardContent>
               )}
-            </div>
+            </Card>
           ))
         )}
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "@/hooks/use-translation";
@@ -24,15 +24,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
-import {
-  Wifi,
-  Send,
-  CheckCircle2,
-  Loader2,
-  Copy,
-  ArrowLeft,
-  AlertCircle,
-} from "lucide-react";
+import { Wifi, Loader2, Copy, Home as HomeIcon } from "lucide-react";
 import { apiFetchBrowser } from "@/lib/api/client.browser";
 import { qk } from "@/lib/api/queries";
 import { useToast } from "@/hooks/use-toast";
@@ -170,7 +162,7 @@ export default function DeviceRegistrationClient() {
 
       // Redirect to devices list after 2 seconds
       setTimeout(() => {
-        router.push("/devices");
+        router.push("/device-management");
       }, 2000);
     } catch (error: any) {
       toast({
@@ -186,8 +178,8 @@ export default function DeviceRegistrationClient() {
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     toast({
-      title: "Tersalin",
-      description: `${label} disalin ke clipboard`,
+      title: t("copied"),
+      description: `${label} ${t("copiedToClipboard")}`,
     });
   };
 
@@ -201,33 +193,29 @@ export default function DeviceRegistrationClient() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => router.push("/devices")}
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <button
+          onClick={() => router.push("/device-management")}
+          className="hover:text-foreground transition-colors flex items-center gap-1"
         >
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <div>
-          <h1 className="text-2xl font-semibold">{t("registerNewDevice")}</h1>
-          <p className="text-sm text-muted-foreground">
-            Daftarkan perangkat ESP32 ke sistem smart home Anda
-          </p>
-        </div>
+          <HomeIcon className="h-4 w-4" />
+          {t("deviceManagement")}
+        </button>
+        <span>/</span>
+        <span className="text-foreground font-medium">
+          {t("registerDevice")}
+        </span>
       </div>
 
       {/* Instructions Alert */}
       <Alert>
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Sebelum memulai</AlertTitle>
+        <AlertTitle>{t("beforeStarting")}</AlertTitle>
         <AlertDescription className="text-sm space-y-1">
           <ol className="list-decimal list-inside space-y-1">
-            <li>Upload firmware esp32-base ke ESP32 Anda</li>
-            <li>Buka serial monitor dan tunggu perangkat boot</li>
-            <li>
-              Catat alamat MAC yang ditampilkan (format: AA:BB:CC:DD:EE:FF)
-            </li>
+            <li>{t("uploadFirmwareInstruction")}</li>
+            <li>{t("openSerialMonitorInstruction")}</li>
+            <li>{t("noteMacAddressInstruction")}</li>
           </ol>
         </AlertDescription>
       </Alert>
@@ -236,9 +224,9 @@ export default function DeviceRegistrationClient() {
         {/* Step 1 & 2: Device Info and Create */}
         <Card className="rounded-2xl shadow-sm">
           <CardHeader>
-            <CardTitle>Informasi Perangkat</CardTitle>
+            <CardTitle>{t("deviceInformation")}</CardTitle>
             <CardDescription>
-              Masukkan detail perangkat dan buat di database
+              {t("enterDeviceDetailsAndCreate")}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -246,7 +234,7 @@ export default function DeviceRegistrationClient() {
               {/* MAC Address */}
               <div className="space-y-2">
                 <Label htmlFor="mac">
-                  Alamat MAC <span className="text-red-500">*</span>
+                  {t("macAddress")} <span className="text-red-500">*</span>
                 </Label>
                 <div className="flex gap-2">
                   <Input
@@ -261,14 +249,14 @@ export default function DeviceRegistrationClient() {
                     type="button"
                     variant="outline"
                     size="icon"
-                    onClick={() => copyToClipboard(macAddress, "Alamat MAC")}
+                    onClick={() => copyToClipboard(macAddress, t("macAddress"))}
                     disabled={!macAddress}
                   >
                     <Copy className="h-4 w-4" />
                   </Button>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Dari serial monitor ESP32
+                  {t("fromSerialMonitor")}
                 </p>
               </div>
 
@@ -339,14 +327,16 @@ export default function DeviceRegistrationClient() {
 
               {/* Room */}
               <div className="space-y-2">
-                <Label htmlFor="room">Ruangan ({t("optional")})</Label>
+                <Label htmlFor="room">
+                  {t("room")} ({t("optional")})
+                </Label>
                 <Select
                   value={selectedRoom}
                   onValueChange={setSelectedRoom}
                   disabled={!!createdDevice || !selectedHome}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Pilih ruangan" />
+                    <SelectValue placeholder={t("selectRoom")} />
                   </SelectTrigger>
                   <SelectContent>
                     {roomsQuery.data?.map((room) => (
@@ -372,10 +362,7 @@ export default function DeviceRegistrationClient() {
                       {t("creating")}
                     </>
                   ) : (
-                    <>
-                      <CheckCircle2 className="mr-2 h-4 w-4" />
-                      Buat Perangkat
-                    </>
+                    t("createDevice")
                   )}
                 </Button>
               )}
@@ -388,16 +375,11 @@ export default function DeviceRegistrationClient() {
           className={`rounded-2xl shadow-sm ${createdDevice ? "border-green-500" : ""}`}
         >
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              {createdDevice && (
-                <CheckCircle2 className="h-5 w-5 text-green-500" />
-              )}
-              {t("sendCredentials")}
-            </CardTitle>
+            <CardTitle>{t("sendCredentials")}</CardTitle>
             <CardDescription>
               {createdDevice
-                ? "Perangkat berhasil dibuat! Sekarang kirim kredensial ke ESP32"
-                : "Buat perangkat terlebih dahulu untuk mengirim kredensial"}
+                ? t("deviceCreatedSendCredentials")
+                : t("createDeviceFirstToSendCredentials")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -405,7 +387,7 @@ export default function DeviceRegistrationClient() {
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <Wifi className="h-12 w-12 text-muted-foreground mb-4" />
                 <p className="text-sm text-muted-foreground">
-                  Isi formulir dan buat perangkat terlebih dahulu
+                  {t("fillFormAndCreateDevice")}
                 </p>
               </div>
             ) : (
@@ -413,7 +395,9 @@ export default function DeviceRegistrationClient() {
                 {/* Device Credentials */}
                 <div className="space-y-3 p-4 bg-muted rounded-lg">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">ID Perangkat:</span>
+                    <span className="text-sm font-medium">
+                      {t("deviceId")}:
+                    </span>
                     <div className="flex items-center gap-2">
                       <Badge variant="default" className="font-mono">
                         {createdDevice.id}
@@ -424,7 +408,7 @@ export default function DeviceRegistrationClient() {
                         onClick={() =>
                           copyToClipboard(
                             createdDevice.id.toString(),
-                            "ID Perangkat",
+                            t("deviceId"),
                           )
                         }
                       >
@@ -435,7 +419,7 @@ export default function DeviceRegistrationClient() {
 
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-medium">
-                      Kunci Perangkat:
+                      {t("deviceKey")}:
                     </span>
                     <div className="flex items-center gap-2">
                       <code className="text-xs bg-background px-2 py-1 rounded">
@@ -447,7 +431,7 @@ export default function DeviceRegistrationClient() {
                         onClick={() =>
                           copyToClipboard(
                             createdDevice.deviceKey,
-                            "Kunci Perangkat",
+                            t("deviceKey"),
                           )
                         }
                       >
@@ -459,7 +443,7 @@ export default function DeviceRegistrationClient() {
                   <Separator />
 
                   <div className="flex justify-between">
-                    <span className="text-sm font-medium">Nama:</span>
+                    <span className="text-sm font-medium">{t("name")}:</span>
                     <span className="text-sm">{createdDevice.deviceName}</span>
                   </div>
 
@@ -471,17 +455,15 @@ export default function DeviceRegistrationClient() {
                   </div>
 
                   <div className="flex justify-between">
-                    <span className="text-sm font-medium">Tipe:</span>
+                    <span className="text-sm font-medium">{t("type")}:</span>
                     <Badge variant="outline">{createdDevice.deviceType}</Badge>
                   </div>
                 </div>
 
                 {/* Send Button */}
                 <Alert>
-                  <Send className="h-4 w-4" />
                   <AlertDescription className="text-sm">
-                    Klik tombol di bawah untuk mengirim kredensial ke ESP32 Anda
-                    via MQTT. Perangkat akan restart otomatis.
+                    {t("clickToSendCredentials")}
                   </AlertDescription>
                 </Alert>
 
@@ -497,29 +479,26 @@ export default function DeviceRegistrationClient() {
                       {t("sending")}
                     </>
                   ) : (
-                    <>
-                      <Send className="mr-2 h-4 w-4" />
-                      Kirim Kredensial ke Perangkat
-                    </>
+                    t("sendCredentialsToDevice")
                   )}
                 </Button>
 
                 {/* What happens next */}
                 <Alert>
                   <AlertTitle className="text-sm">
-                    Apa yang terjadi selanjutnya:
+                    {t("whatHappensNext")}:
                   </AlertTitle>
                   <AlertDescription className="text-xs space-y-1">
                     <ol className="list-decimal list-inside space-y-1">
                       <li>
-                        Kredensial dikirim via MQTT ke:{" "}
+                        {t("credentialsSentViaMqtt")}:{" "}
                         <code>
                           devices/register/{macAddress.replace(/:/g, "")}
                         </code>
                       </li>
-                      <li>ESP32 menerima dan menyimpan kredensial</li>
-                      <li>ESP32 restart otomatis</li>
-                      <li>Perangkat terhubung dan muncul online</li>
+                      <li>{t("esp32ReceivesAndSaves")}</li>
+                      <li>{t("esp32RestartsAutomatically")}</li>
+                      <li>{t("deviceConnectsAndAppearsOnline")}</li>
                     </ol>
                   </AlertDescription>
                 </Alert>
@@ -532,38 +511,40 @@ export default function DeviceRegistrationClient() {
       {/* Troubleshooting */}
       <Card className="rounded-2xl shadow-sm">
         <CardHeader>
-          <CardTitle className="text-base">Pemecahan Masalah</CardTitle>
+          <CardTitle className="text-base">{t("troubleshooting")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-3 text-sm">
             <div>
               <h4 className="font-medium mb-2">
-                Perangkat tidak menerima kredensial?
+                {t("deviceNotReceivingCredentials")}
               </h4>
               <ul className="list-disc list-inside text-muted-foreground space-y-1">
-                <li>Cek MQTT broker berjalan</li>
-                <li>Cek ESP32 masih online</li>
-                <li>Verifikasi alamat MAC benar</li>
+                <li>{t("checkMqttBrokerRunning")}</li>
+                <li>{t("checkEsp32StillOnline")}</li>
+                <li>{t("verifyMacAddressCorrect")}</li>
               </ul>
             </div>
 
             <div>
               <h4 className="font-medium mb-2">
-                Perangkat tidak muncul online?
+                {t("deviceNotAppearingOnline")}
               </h4>
               <ul className="list-disc list-inside text-muted-foreground space-y-1">
-                <li>Cek kredensial WiFi di firmware</li>
-                <li>Cek IP server MQTT benar</li>
-                <li>Tunggu 30 detik untuk heartbeat</li>
+                <li>{t("checkWifiCredentialsInFirmware")}</li>
+                <li>{t("checkMqttServerIpCorrect")}</li>
+                <li>{t("wait30SecondsForHeartbeat")}</li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-medium mb-2">Alamat MAC sudah ada?</h4>
+              <h4 className="font-medium mb-2">
+                {t("macAddressAlreadyExists")}
+              </h4>
               <ul className="list-disc list-inside text-muted-foreground space-y-1">
-                <li>Perangkat sudah terdaftar</li>
-                <li>Cek daftar perangkat</li>
-                <li>Hapus perangkat lama jika perlu</li>
+                <li>{t("deviceAlreadyRegistered")}</li>
+                <li>{t("checkDeviceList")}</li>
+                <li>{t("deleteOldDeviceIfNeeded")}</li>
               </ul>
             </div>
           </div>

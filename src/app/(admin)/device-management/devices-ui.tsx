@@ -8,7 +8,6 @@ import { apiFetchBrowser } from "@/lib/api/client.browser";
 import type { DeviceDTO } from "@/lib/api/dto/devices.dto";
 import { useTranslation } from "@/hooks/use-translation";
 import { useToast } from "@/hooks/use-toast";
-import { PageHeader } from "@/components/ui/page-header";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -78,12 +77,6 @@ function deviceTypeBadge(type: string) {
       {type.replace("_", " ")}
     </Badge>
   );
-}
-
-function fmtDateTime(v?: string | null) {
-  if (!v) return "-";
-  const d = new Date(v);
-  return Number.isNaN(d.getTime()) ? v : d.toLocaleString();
 }
 
 export default function DevicesClient() {
@@ -292,28 +285,43 @@ export default function DevicesClient() {
   return (
     <div className="space-y-6">
       {/* Header with Stats */}
-      <PageHeader
-        stats={[
-          {
-            label: t("totalDevices"),
-            value: filtered.length,
-            icon: Smartphone,
-            color: "text-purple-500",
-          },
-          {
-            label: t("onlineDevices"),
-            value: onlineCount,
-            icon: Wifi,
-            color: "text-green-500",
-          },
-          {
-            label: t("offlineDevices"),
-            value: offlineCount,
-            icon: WifiOff,
-            color: "text-gray-500",
-          },
-        ]}
-      />
+      <div className="space-y-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="relative overflow-hidden rounded-xl border bg-card p-4 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-muted-foreground">
+                {t("totalDevices")}
+              </span>
+              <Smartphone className="h-4 w-4 text-purple-500" />
+            </div>
+            <p className="text-2xl font-bold">{filtered.length}</p>
+          </div>
+          <div className="relative overflow-hidden rounded-xl border bg-card p-4 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-muted-foreground">
+                {t("onlineDevices")}
+              </span>
+              <Wifi className="h-4 w-4 text-green-500" />
+            </div>
+            <p className="text-2xl font-bold">{onlineCount}</p>
+          </div>
+          <div className="relative overflow-hidden rounded-xl border bg-card p-4 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-muted-foreground">
+                {t("offlineDevices")}
+              </span>
+              <WifiOff className="h-4 w-4 text-gray-500" />
+            </div>
+            <p className="text-2xl font-bold">{offlineCount}</p>
+          </div>
+        </div>
+
+        <div className="flex justify-end">
+          <Button onClick={() => router.push("/device-management/register")}>
+            {t("registerDevice")}
+          </Button>
+        </div>
+      </div>
 
       {/* Search */}
       <div ref={searchSectionRef}>
@@ -476,7 +484,7 @@ export default function DevicesClient() {
                         className="flex-1"
                         onClick={(e) => {
                           e.stopPropagation();
-                          router.push(`/ota?deviceId=${d.id}`);
+                          router.push(`/firmware?deviceId=${d.id}`);
                         }}
                       >
                         <Zap className="mr-1 h-3 w-3" />

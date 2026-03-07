@@ -8,21 +8,21 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useLanguage } from "@/contexts/language-context";
+import { useTranslation } from "@/hooks/use-translation";
 import { useToast } from "@/hooks/use-toast";
 import {
-  ArrowLeft,
   Save,
   RotateCcw,
   Settings,
   AlertCircle,
   CheckCircle2,
   Code,
+  Home as HomeIcon,
 } from "lucide-react";
 import { getDeviceConfig, upsertDeviceConfig } from "@/lib/api/device-config";
 
 export function DeviceConfigClient() {
-  const { t } = useLanguage();
+  const { t } = useTranslation();
   const { toast } = useToast();
   const router = useRouter();
   const params = useParams();
@@ -102,24 +102,35 @@ export function DeviceConfigClient() {
 
   return (
     <div className="space-y-6">
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <button
+          onClick={() => router.push("/device-management")}
+          className="hover:text-foreground transition-colors flex items-center gap-1"
+        >
+          <HomeIcon className="h-4 w-4" />
+          {t("deviceManagement")}
+        </button>
+        <span>/</span>
+        <button
+          onClick={() => router.push(`/device-management/devices/${deviceId}`)}
+          className="hover:text-foreground transition-colors"
+        >
+          {t("device")} #{deviceId}
+        </button>
+        <span>/</span>
+        <span className="text-foreground font-medium">
+          {t("configuration")}
+        </span>
+      </div>
+
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push(`/devices/${deviceId}`)}
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-              {t("deviceConfiguration")}
-            </h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {t("manageDeviceSettings")}
-            </p>
-          </div>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold">{t("deviceConfiguration")}</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            {t("manageDeviceSettings")}
+          </p>
         </div>
 
         <div className="flex gap-2">
@@ -128,14 +139,14 @@ export function DeviceConfigClient() {
             onClick={handleReset}
             disabled={!hasChanges || configQuery.isLoading}
           >
-            <RotateCcw className="h-4 w-4" />
+            <RotateCcw className="mr-2 h-4 w-4" />
             {t("reset")}
           </Button>
           <Button
             onClick={handleSave}
             disabled={!isValidJson || !hasChanges || updateMutation.isPending}
           >
-            <Save className="h-4 w-4" />
+            <Save className="mr-2 h-4 w-4" />
             {updateMutation.isPending ? t("saving") : t("saveChanges")}
           </Button>
         </div>
@@ -143,29 +154,25 @@ export function DeviceConfigClient() {
 
       {/* Status Cards */}
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+        <Card className="rounded-xl hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+              <div className="h-10 w-10 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
                 <Settings className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {t("deviceId")}
-                </p>
-                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  #{deviceId}
-                </p>
+                <p className="text-xs text-muted-foreground">{t("deviceId")}</p>
+                <p className="text-lg font-semibold">#{deviceId}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+        <Card className="rounded-xl hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div
-                className={`h-10 w-10 rounded-full flex items-center justify-center ${
+                className={`h-10 w-10 rounded-lg flex items-center justify-center ${
                   isValidJson
                     ? "bg-green-100 dark:bg-green-900"
                     : "bg-red-100 dark:bg-red-900"
@@ -178,10 +185,10 @@ export function DeviceConfigClient() {
                 )}
               </div>
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-xs text-muted-foreground">
                   {t("jsonStatus")}
                 </p>
-                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                <p className="text-lg font-semibold">
                   {isValidJson ? t("valid") : t("invalid")}
                 </p>
               </div>
@@ -189,11 +196,11 @@ export function DeviceConfigClient() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+        <Card className="rounded-xl hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div
-                className={`h-10 w-10 rounded-full flex items-center justify-center ${
+                className={`h-10 w-10 rounded-lg flex items-center justify-center ${
                   hasChanges
                     ? "bg-yellow-100 dark:bg-yellow-900"
                     : "bg-gray-100 dark:bg-gray-700"
@@ -202,10 +209,8 @@ export function DeviceConfigClient() {
                 <Code className="h-5 w-5 text-gray-600 dark:text-gray-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {t("status")}
-                </p>
-                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                <p className="text-xs text-muted-foreground">{t("status")}</p>
+                <p className="text-lg font-semibold">
                   {hasChanges ? t("modified") : t("saved")}
                 </p>
               </div>
@@ -215,10 +220,10 @@ export function DeviceConfigClient() {
       </div>
 
       {/* Config Editor */}
-      <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+      <Card className="rounded-2xl shadow-sm">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <CardTitle className="text-base">
               {t("configurationEditor")}
             </CardTitle>
             {configQuery.data && (
@@ -240,10 +245,10 @@ export function DeviceConfigClient() {
           ) : configQuery.error ? (
             <div className="text-center py-12">
               <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              <h3 className="text-lg font-semibold mb-2">
                 {t("errorLoadingConfig")}
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-muted-foreground">
                 {t("failedToLoadDeviceConfig")}
               </p>
               <Button
@@ -260,7 +265,7 @@ export function DeviceConfigClient() {
                 <Textarea
                   value={configText}
                   onChange={(e) => handleConfigChange(e.target.value)}
-                  className="font-mono text-sm min-h-[400px] bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-600"
+                  className="font-mono text-sm min-h-[400px] bg-muted/50"
                   placeholder={t("enterJSONConfig")}
                 />
                 {jsonError && (

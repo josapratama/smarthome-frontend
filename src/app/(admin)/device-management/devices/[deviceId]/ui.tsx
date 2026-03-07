@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -42,25 +41,30 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {
-  ArrowLeft,
   Activity,
-  Zap,
   Pencil,
   Trash2,
   Wifi,
-  Home,
+  WifiOff,
+  Home as HomeIcon,
   DoorOpen,
   Clock,
-  Power,
-  Key,
   Settings,
+  Key,
+  Zap,
 } from "lucide-react";
 
 function statusBadge(status: boolean, t: any) {
   return status ? (
-    <Badge className="bg-green-500">{t("onlineDevices")}</Badge>
+    <Badge className="bg-green-500 hover:bg-green-600">
+      <Wifi className="mr-1 h-3 w-3" />
+      {t("online")}
+    </Badge>
   ) : (
-    <Badge variant="secondary">{t("offlineDevices")}</Badge>
+    <Badge variant="secondary">
+      <WifiOff className="mr-1 h-3 w-3" />
+      {t("offline")}
+    </Badge>
   );
 }
 
@@ -121,13 +125,13 @@ export function DeviceDetailClient({ deviceId }: { deviceId: number }) {
     onSuccess: () => {
       toast({
         title: t("success"),
-        description: "Credentials sent to device successfully",
+        description: t("credentialsSent"),
       });
     },
     onError: (error: any) => {
       toast({
         title: t("error"),
-        description: error.message || "Failed to send credentials",
+        description: error.message || t("failedSendCredentials"),
         variant: "destructive",
       });
     },
@@ -160,7 +164,7 @@ export function DeviceDetailClient({ deviceId }: { deviceId: number }) {
       queryClient.invalidateQueries({ queryKey: qk.devices.detail(deviceId) });
       toast({
         title: t("success"),
-        description: "Device updated successfully",
+        description: t("deviceUpdated"),
       });
       setEditOpen(false);
     },
@@ -184,9 +188,9 @@ export function DeviceDetailClient({ deviceId }: { deviceId: number }) {
       queryClient.invalidateQueries({ queryKey: qk.devices.all });
       toast({
         title: t("success"),
-        description: "Device deleted successfully",
+        description: t("deviceDeleted"),
       });
-      router.push("/devices");
+      router.push("/device-management");
     },
     onError: (error: any) => {
       toast({
@@ -231,182 +235,198 @@ export function DeviceDetailClient({ deviceId }: { deviceId: number }) {
 
   if (deviceQuery.error || !device) {
     return (
-      <div className="space-y-6">
-        <Button variant="ghost" asChild>
-          <Link href="/devices">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Devices
-          </Link>
-        </Button>
-        <Card className="rounded-2xl shadow-sm">
-          <CardContent className="p-6">
-            <div className="text-center text-red-600">
-              {deviceQuery.error
-                ? (deviceQuery.error as Error).message
-                : "Device not found"}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <Card className="rounded-2xl shadow-sm">
+        <CardContent className="p-6">
+          <div className="text-center text-red-600">
+            {deviceQuery.error
+              ? (deviceQuery.error as Error).message
+              : t("deviceNotFound")}
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/devices">
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-          </Button>
-          <div>
-            <h1 className="text-2xl font-semibold">{device.deviceName}</h1>
-            <p className="text-sm text-muted-foreground">
-              Device #{device.id} • {device.deviceType}
-            </p>
-          </div>
+      {/* Breadcrumb & Header */}
+      <div className="space-y-4">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <button
+            onClick={() => router.push("/device-management")}
+            className="hover:text-foreground transition-colors flex items-center gap-1"
+          >
+            <HomeIcon className="h-4 w-4" />
+            {t("deviceManagement")}
+          </button>
+          <span>/</span>
+          <span className="text-foreground font-medium">
+            {device.deviceName}
+          </span>
         </div>
 
-        <div className="flex gap-2">
-          <Button variant="outline" asChild>
-            <Link href={`/devices/${deviceId}/config`}>
-              <Settings className="mr-2 h-4 w-4" />
-              {t("configuration")}
-            </Link>
-          </Button>
-          <Button variant="outline" onClick={handleEdit}>
-            <Pencil className="mr-2 h-4 w-4" />
-            {t("edit")}
-          </Button>
-          <Button
-            variant="outline"
-            className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
-            onClick={handleDelete}
-          >
-            <Trash2 className="mr-2 h-4 w-4" />
-            {t("delete")}
-          </Button>
+        {/* Header with Actions */}
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-bold">{device.deviceName}</h1>
+              {statusBadge(device.status, t)}
+            </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span>
+                {t("device")} #{device.id}
+              </span>
+              <span>•</span>
+              {deviceTypeBadge(device.deviceType)}
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" size="sm" onClick={handleEdit}>
+              <Pencil className="mr-2 h-4 w-4" />
+              {t("edit")}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+              onClick={handleDelete}
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              {t("delete")}
+            </Button>
+          </div>
         </div>
       </div>
 
-      {/* Status Card */}
+      {/* Status Overview */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="rounded-xl hover:shadow-md transition-shadow">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div
+                className={`flex h-10 w-10 items-center justify-center rounded-lg ${device.status ? "bg-green-100 dark:bg-green-900" : "bg-gray-100 dark:bg-gray-800"}`}
+              >
+                {device.status ? (
+                  <Wifi className="h-5 w-5 text-green-600 dark:text-green-400" />
+                ) : (
+                  <WifiOff className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                )}
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">{t("status")}</p>
+                <p className="text-sm font-semibold">
+                  {device.status ? t("online") : t("offline")}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-xl hover:shadow-md transition-shadow">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900">
+                <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">{t("lastSeen")}</p>
+                <p className="text-sm font-semibold">
+                  {device.lastSeenAt
+                    ? new Date(device.lastSeenAt).toLocaleString("id-ID", {
+                        day: "2-digit",
+                        month: "short",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : t("never")}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-xl hover:shadow-md transition-shadow">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900">
+                <HomeIcon className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">{t("home")}</p>
+                <p className="text-sm font-semibold">#{device.homeId}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-xl hover:shadow-md transition-shadow">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-100 dark:bg-orange-900">
+                <DoorOpen className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">{t("room")}</p>
+                <p className="text-sm font-semibold">
+                  {device.roomId ? `#${device.roomId}` : t("notAssigned")}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Device Information */}
       <Card className="rounded-2xl shadow-sm">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Power className="h-5 w-5" />
-            Device Status
-          </CardTitle>
+          <CardTitle className="text-base">{t("deviceInformation")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-                <Wifi className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Status</p>
-                <div className="mt-1">{statusBadge(device.status, t)}</div>
-              </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">
+                {t("deviceName")}
+              </Label>
+              <p className="text-sm font-medium">{device.deviceName}</p>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-                <Clock className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Last Seen</p>
-                <p className="font-medium">
-                  {device.lastSeenAt
-                    ? new Date(device.lastSeenAt).toLocaleString()
-                    : "Never"}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-                <Home className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Home</p>
-                <p className="font-medium">#{device.homeId}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-                <DoorOpen className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Room</p>
-                <p className="font-medium">
-                  {device.roomId ? `#${device.roomId}` : "Not assigned"}
-                </p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Device Info Card */}
-      <Card className="rounded-2xl shadow-sm">
-        <CardHeader>
-          <CardTitle>Device Information</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="grid gap-2">
-              <Label className="text-muted-foreground">Device Name</Label>
-              <p className="font-medium">{device.deviceName}</p>
-            </div>
-
-            <div className="grid gap-2">
-              <Label className="text-muted-foreground">Device Type</Label>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">
+                {t("deviceType")}
+              </Label>
               <div>{deviceTypeBadge(device.deviceType)}</div>
             </div>
 
-            <div className="grid gap-2">
-              <Label className="text-muted-foreground">MQTT Client ID</Label>
-              <p className="font-mono text-sm">
-                {device.mqttClientId || "Not set"}
-              </p>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">
+                MQTT Client ID
+              </Label>
+              <p className="text-sm font-mono">{device.mqttClientId || "-"}</p>
             </div>
 
-            <div className="grid gap-2">
-              <Label className="text-muted-foreground">Device Key</Label>
-              <p className="font-mono text-sm">
-                {device.deviceKey
-                  ? `${device.deviceKey.substring(0, 20)}...`
-                  : "Not set"}
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">
+                {t("pairedAt")}
+              </Label>
+              <p className="text-sm">
+                {device.pairedAt
+                  ? new Date(device.pairedAt).toLocaleString()
+                  : "-"}
               </p>
             </div>
 
             {device.capabilities && (
-              <div className="grid gap-2">
-                <Label className="text-muted-foreground">Capabilities</Label>
+              <div className="space-y-1 md:col-span-2">
+                <Label className="text-xs text-muted-foreground">
+                  {t("capabilities")}
+                </Label>
                 <pre className="rounded-lg bg-muted p-3 text-xs overflow-x-auto">
                   {JSON.stringify(device.capabilities, null, 2)}
                 </pre>
               </div>
             )}
-
-            <div className="grid gap-2">
-              <Label className="text-muted-foreground">Paired At</Label>
-              <p className="text-sm">
-                {device.pairedAt
-                  ? new Date(device.pairedAt).toLocaleString()
-                  : "Not paired"}
-              </p>
-            </div>
-
-            <div className="grid gap-2">
-              <Label className="text-muted-foreground">Updated At</Label>
-              <p className="text-sm">
-                {new Date(device.updatedAt).toLocaleString()}
-              </p>
-            </div>
           </div>
         </CardContent>
       </Card>
@@ -414,44 +434,58 @@ export function DeviceDetailClient({ deviceId }: { deviceId: number }) {
       {/* Quick Actions */}
       <Card className="rounded-2xl shadow-sm">
         <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
+          <CardTitle className="text-base">{t("quickActions")}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <Button
               variant="outline"
-              className="justify-start"
-              onClick={() => router.push(`/devices/${deviceId}/channels`)}
+              className="justify-start h-auto py-3"
+              onClick={() =>
+                router.push(`/device-management/devices/${deviceId}/config`)
+              }
+            >
+              <Settings className="mr-2 h-4 w-4" />
+              {t("configuration")}
+            </Button>
+            <Button
+              variant="outline"
+              className="justify-start h-auto py-3"
+              onClick={() =>
+                router.push(`/device-management/devices/${deviceId}/channels`)
+              }
             >
               <Zap className="mr-2 h-4 w-4" />
-              Manage Channels
+              {t("manageChannels")}
             </Button>
             <Button
               variant="outline"
-              className="justify-start"
-              onClick={() => router.push(`/devices/${deviceId}/telemetry`)}
+              className="justify-start h-auto py-3"
+              onClick={() =>
+                router.push(`/device-management/devices/${deviceId}/telemetry`)
+              }
             >
               <Activity className="mr-2 h-4 w-4" />
-              View Telemetry Data
+              {t("telemetry")}
             </Button>
             <Button
               variant="outline"
-              className="justify-start"
+              className="justify-start h-auto py-3"
               onClick={() => sendCredentialsMutation.mutate()}
               disabled={sendCredentialsMutation.isPending}
             >
               <Key className="mr-2 h-4 w-4" />
               {sendCredentialsMutation.isPending
-                ? "Sending..."
-                : "Send Credentials"}
+                ? t("sending")
+                : t("sendCredentials")}
             </Button>
             <Button
               variant="outline"
-              className="justify-start"
-              onClick={() => router.push(`/ota?deviceId=${deviceId}`)}
+              className="justify-start h-auto py-3"
+              onClick={() => router.push(`/firmware?deviceId=${deviceId}`)}
             >
               <Zap className="mr-2 h-4 w-4" />
-              OTA Update
+              {t("otaUpdate")}
             </Button>
           </div>
         </CardContent>
@@ -461,36 +495,38 @@ export function DeviceDetailClient({ deviceId }: { deviceId: number }) {
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t("edit")} Device</DialogTitle>
+            <DialogTitle>
+              {t("edit")} {t("device")}
+            </DialogTitle>
             <DialogDescription>
-              Update device information for #{deviceId}
+              {t("updateDeviceInfo")} #{deviceId}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-name">Device Name</Label>
+              <Label htmlFor="edit-name">{t("deviceName")}</Label>
               <Input
                 id="edit-name"
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
-                placeholder="Enter device name"
+                placeholder={t("enterDeviceName")}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="edit-type">Device Type</Label>
+              <Label htmlFor="edit-type">{t("deviceType")}</Label>
               <Select value={editType} onValueChange={setEditType}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="SENSOR_NODE">Sensor Node</SelectItem>
-                  <SelectItem value="LIGHT">Light</SelectItem>
-                  <SelectItem value="FAN">Fan</SelectItem>
-                  <SelectItem value="DOOR">Door</SelectItem>
-                  <SelectItem value="POWER_METER">Power Meter</SelectItem>
-                  <SelectItem value="OTHER">Other</SelectItem>
+                  <SelectItem value="SENSOR_NODE">{t("sensorNode")}</SelectItem>
+                  <SelectItem value="LIGHT">{t("light")}</SelectItem>
+                  <SelectItem value="FAN">{t("fan")}</SelectItem>
+                  <SelectItem value="DOOR">{t("door")}</SelectItem>
+                  <SelectItem value="POWER_METER">{t("powerMeter")}</SelectItem>
+                  <SelectItem value="OTHER">{t("other")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -518,11 +554,11 @@ export function DeviceDetailClient({ deviceId }: { deviceId: number }) {
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>{t("areYouSure")}</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete device{" "}
+              {t("deleteDeviceConfirm")}{" "}
               <span className="font-semibold">{device.deviceName}</span> (#
-              {deviceId}). This action cannot be undone.
+              {deviceId}). {t("cannotUndo")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -534,7 +570,7 @@ export function DeviceDetailClient({ deviceId }: { deviceId: number }) {
               disabled={deleteMutation.isPending}
               className="bg-red-600 hover:bg-red-700"
             >
-              {deleteMutation.isPending ? "Deleting..." : t("delete")}
+              {deleteMutation.isPending ? t("deleting") : t("delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

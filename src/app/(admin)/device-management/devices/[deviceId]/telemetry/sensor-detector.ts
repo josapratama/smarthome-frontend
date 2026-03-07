@@ -6,6 +6,10 @@ export type SensorType =
   | "FLAME_SENSOR" // Flame detector
   | "ULTRASONIC" // HC-SR04, JSN-SR04T
   | "CURRENT_SENSOR" // ACS712, etc
+  | "TEMPERATURE_HUMIDITY" // DHT11, DHT22, etc
+  | "PRESSURE" // BMP180, BMP280, etc
+  | "SOIL_MOISTURE" // Soil moisture sensor
+  | "LIGHT_SENSOR" // LDR, BH1750, etc
   | "UNKNOWN";
 
 /**
@@ -50,6 +54,27 @@ export function detectSensorType(data: TelemetryDTO | null): SensorType {
     data.current !== null && data.current !== undefined && data.current > 0;
   if (hasCurrentData) return "CURRENT_SENSOR";
 
+  // Check for Temperature/Humidity Sensor
+  const hasTempHumidityData =
+    (data.temperatureC !== null && data.temperatureC !== undefined) ||
+    (data.humidityPercent !== null && data.humidityPercent !== undefined);
+  if (hasTempHumidityData) return "TEMPERATURE_HUMIDITY";
+
+  // Check for Pressure Sensor
+  const hasPressureData =
+    (data.pressureHpa !== null && data.pressureHpa !== undefined) ||
+    (data.altitudeM !== null && data.altitudeM !== undefined);
+  if (hasPressureData) return "PRESSURE";
+
+  // Check for Soil Moisture Sensor
+  const hasSoilMoistureData =
+    data.soilMoisturePercent !== null && data.soilMoisturePercent !== undefined;
+  if (hasSoilMoistureData) return "SOIL_MOISTURE";
+
+  // Check for Light Sensor
+  const hasLightData = data.lightLux !== null && data.lightLux !== undefined;
+  if (hasLightData) return "LIGHT_SENSOR";
+
   return "UNKNOWN";
 }
 
@@ -74,7 +99,17 @@ export function hasSensorData(data: TelemetryDTO | null): boolean {
     // Other sensor fields
     data.distanceCm !== null ||
     data.binLevel !== null ||
-    data.current !== null
+    data.current !== null ||
+    // Temperature/Humidity fields
+    data.temperatureC !== null ||
+    data.humidityPercent !== null ||
+    // Pressure fields
+    data.pressureHpa !== null ||
+    data.altitudeM !== null ||
+    // Soil moisture fields
+    data.soilMoisturePercent !== null ||
+    // Light sensor fields
+    data.lightLux !== null
   );
 }
 
@@ -98,6 +133,14 @@ export function getSensorTypeName(
       return t("ultrasonicDistanceSensor");
     case "CURRENT_SENSOR":
       return t("currentSensor");
+    case "TEMPERATURE_HUMIDITY":
+      return t("temperatureHumiditySensor");
+    case "PRESSURE":
+      return t("pressureSensor");
+    case "SOIL_MOISTURE":
+      return t("soilMoistureSensor");
+    case "LIGHT_SENSOR":
+      return t("lightSensor");
     default:
       return t("unknownSensor");
   }
@@ -153,6 +196,30 @@ export function getSensorInfo(
         title: t("whatIsCurrentSensor"),
         description: t("currentSensorDesc"),
         metrics: [t("currentMetric")],
+      };
+    case "TEMPERATURE_HUMIDITY":
+      return {
+        title: t("whatIsTemperatureHumiditySensor"),
+        description: t("temperatureHumiditySensorDesc"),
+        metrics: [t("temperatureMetric"), t("humidityMetric")],
+      };
+    case "PRESSURE":
+      return {
+        title: t("whatIsPressureSensor"),
+        description: t("pressureSensorDesc"),
+        metrics: [t("pressureMetric"), t("altitudeMetric")],
+      };
+    case "SOIL_MOISTURE":
+      return {
+        title: t("whatIsSoilMoistureSensor"),
+        description: t("soilMoistureSensorDesc"),
+        metrics: [t("moistureMetric")],
+      };
+    case "LIGHT_SENSOR":
+      return {
+        title: t("whatIsLightSensor"),
+        description: t("lightSensorDesc"),
+        metrics: [t("lightLevelMetric")],
       };
     default:
       return {

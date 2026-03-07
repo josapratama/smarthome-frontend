@@ -24,4 +24,18 @@ export interface TelemetryDTO {
 
   // Ultrasonic sensor
   distanceCm: number | null;
+
+  // Temperature & Humidity sensor (DHT11/DHT22)
+  temperatureC: number | null;
+  humidityPercent: number | null;
+
+  // Pressure sensor (BMP180/BMP280)
+  pressureHpa: number | null;
+  altitudeM: number | null;
+
+  // Soil moisture sensor
+  soilMoisturePercent: number | null;
+
+  // Light sensor (LDR)
+  lightLux: number | null;
 }
