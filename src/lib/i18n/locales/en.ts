@@ -98,6 +98,51 @@ export const en = {
   failedRegisterDevice: "Failed to register device",
   deviceDeleted: "Device deleted successfully",
   failedDeleteDevice: "Failed to delete device",
+
+  // Invitations
+  invitations: "Invitations",
+  manageYourHomeInvitations: "Manage your home invitations",
+  pendingInvitations: "Pending Invitations",
+  acceptOrDeclineHomeInvitations: "Accept or decline home invitations",
+  aboutInvitations: "About Invitations",
+  receivingInvitations: "Receiving Invitations",
+  receivingInvitationsDesc:
+    "When someone invites you to their home, you'll receive an invitation that appears here. You can accept or decline at any time.",
+  acceptingInvitations: "Accepting Invitations",
+  acceptingInvitationsDesc:
+    "By accepting an invitation, you'll gain access to the home's devices and rooms based on your assigned role.",
+  decliningInvitations: "Declining Invitations",
+  decliningInvitationsDesc:
+    "If you decline an invitation, you won't have access to that home. The home owner can send you a new invitation if needed.",
+  memberRoles: "Member Roles",
+  memberRolesDesc:
+    "Members can control devices and view data. Guests have limited access. Owners have full control over the home.",
+
+  // Rooms Page
+  manageRoomsAcrossHomes: "Manage rooms across all your homes",
+  filterRooms: "Filter Rooms",
+  allHomes: "All Homes",
+  privateRooms: "Private Rooms",
+  tryDifferentFilters: "Try adjusting your filters",
+  createFirstRoom: "Create your first room to get started",
+  private: "Private",
+  shared: "Shared",
+  restricted: "Restricted",
+  public: "Public",
+  failedToLoadRooms: "Failed to load rooms",
+
+  // Members Page
+  members: "Members",
+  manageHomeMembersAndInvites: "Manage home members and invitations",
+  noHomesYet: "No Homes Yet",
+  createHomeToManageMembers: "Create a home first to manage members",
+  chooseHomeToManageMembers: "Choose a home to view and manage its members",
+  membersList: "Members List",
+  manageAccessAndPermissions: "Manage member access and permissions",
+  viewHomeMembersAndRoles: "View home members and their roles",
+  failedToLoadMembers: "Failed to load members",
+  failedToLoadHomes: "Failed to load homes",
+  owners: "Owners",
   deviceUpdated: "Device updated successfully",
   failedUpdateDevice: "Failed to update device",
   online: "Online",

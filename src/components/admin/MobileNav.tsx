@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Cpu, Home, Bell, Settings } from "lucide-react";
+import {
+  LayoutDashboard,
+  Cpu,
+  Home,
+  Bell,
+  Settings,
+  Activity,
+} from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
 import { cn } from "@/lib/utils";
 

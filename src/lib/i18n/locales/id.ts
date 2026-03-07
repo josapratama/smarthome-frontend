@@ -133,6 +133,53 @@ export const id = {
   online: "Online",
   offline: "Offline",
   lastSeen: "Terakhir Terlihat",
+
+  // Invitations
+  invitations: "Undangan",
+  manageYourHomeInvitations: "Kelola undangan rumah Anda",
+  pendingInvitations: "Undangan Tertunda",
+  acceptOrDeclineHomeInvitations: "Terima atau tolak undangan rumah",
+  aboutInvitations: "Tentang Undangan",
+  receivingInvitations: "Menerima Undangan",
+  receivingInvitationsDesc:
+    "Ketika seseorang mengundang Anda ke rumah mereka, Anda akan menerima undangan yang muncul di sini. Anda dapat menerima atau menolak kapan saja.",
+  acceptingInvitations: "Menerima Undangan",
+  acceptingInvitationsDesc:
+    "Dengan menerima undangan, Anda akan mendapatkan akses ke perangkat dan ruangan rumah berdasarkan peran yang diberikan.",
+  decliningInvitations: "Menolak Undangan",
+  decliningInvitationsDesc:
+    "Jika Anda menolak undangan, Anda tidak akan memiliki akses ke rumah tersebut. Pemilik rumah dapat mengirim undangan baru jika diperlukan.",
+  memberRoles: "Peran Anggota",
+  memberRolesDesc:
+    "Anggota dapat mengontrol perangkat dan melihat data. Tamu memiliki akses terbatas. Pemilik memiliki kontrol penuh atas rumah.",
+
+  // Rooms Page
+  manageRoomsAcrossHomes: "Kelola ruangan di semua rumah Anda",
+  filterRooms: "Filter Ruangan",
+  allHomes: "Semua Rumah",
+  privateRooms: "Ruangan Pribadi",
+  tryDifferentFilters: "Coba sesuaikan filter Anda",
+  createFirstRoom: "Buat ruangan pertama Anda untuk memulai",
+  private: "Pribadi",
+  shared: "Dibagikan",
+  restricted: "Terbatas",
+  public: "Publik",
+  failedToLoadRooms: "Gagal memuat ruangan",
+
+  // Members Page
+  members: "Anggota",
+  manageHomeMembersAndInvites: "Kelola anggota rumah dan undangan",
+  noHomesYet: "Belum Ada Rumah",
+  createHomeToManageMembers:
+    "Buat rumah terlebih dahulu untuk mengelola anggota",
+  chooseHomeToManageMembers:
+    "Pilih rumah untuk melihat dan mengelola anggotanya",
+  membersList: "Daftar Anggota",
+  manageAccessAndPermissions: "Kelola akses dan izin anggota",
+  viewHomeMembersAndRoles: "Lihat anggota rumah dan peran mereka",
+  failedToLoadMembers: "Gagal memuat anggota",
+  failedToLoadHomes: "Gagal memuat rumah",
+  owners: "Pemilik",
   deviceDetails: "Detail Perangkat",
   sendCredentials: "Kirim Kredensial",
   credentialsSent: "Kredensial berhasil dikirim",
