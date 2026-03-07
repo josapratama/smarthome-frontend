@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { qk } from "@/lib/api/queries";
 import { apiFetchBrowser } from "@/lib/api/client.browser";
@@ -11,6 +11,7 @@ import type {
   HomeCreateRequest,
 } from "@/lib/api/dto/homes.dto";
 import { useTranslation } from "@/hooks/use-translation";
+import { PageHeader } from "@/components/ui/page-header";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -22,10 +23,10 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { Home as HomeIcon, Users, DoorOpen, Search } from "lucide-react";
 
 function fmtDateTime(v?: string | null) {
   if (!v) return "-";
@@ -33,12 +34,16 @@ function fmtDateTime(v?: string | null) {
   return Number.isNaN(d.getTime()) ? v : d.toLocaleString();
 }
 
-function CreateHomeDialog() {
+interface CreateHomeDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+function CreateHomeDialog({ open, onOpenChange }: CreateHomeDialogProps) {
   const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<HomeCreateRequest>({
     name: "",
-    ownerUserId: 1, // Default, should be current user
+    ownerUserId: 1,
     addressText: "",
     city: "",
     postalCode: "",
@@ -56,7 +61,7 @@ function CreateHomeDialog() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: qk.homes.list() });
-      setOpen(false);
+      onOpenChange(false);
       setFormData({
         name: "",
         ownerUserId: 1,
@@ -76,10 +81,7 @@ function CreateHomeDialog() {
   });
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>{t("createHome")}</Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t("createNewHome")}</DialogTitle>
@@ -144,7 +146,7 @@ function CreateHomeDialog() {
             </div>
           </div>
           <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setOpen(false)}>
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
               {t("cancel")}
             </Button>
             <Button
@@ -163,6 +165,8 @@ function CreateHomeDialog() {
 export function HomesClient() {
   const { t } = useTranslation();
   const [searchText, setSearchText] = useState("");
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const searchSectionRef = useRef<HTMLDivElement>(null);
 
   const q = useQuery({
     queryKey: qk.homes.list(),
@@ -171,6 +175,37 @@ export function HomesClient() {
       return payload.data ?? [];
     },
   });
+
+  // Listen to topbar events
+  useEffect(() => {
+    const handleSearch = () => {
+      let searchInput: HTMLInputElement | null = null;
+      if (searchSectionRef.current) {
+        searchInput = searchSectionRef.current.querySelector(
+          "input",
+        ) as HTMLInputElement;
+      }
+      if (!searchInput) {
+        searchInput = document.querySelector("input") as HTMLInputElement;
+      }
+      if (searchInput) {
+        searchInput.focus();
+        searchInput.select();
+      }
+    };
+
+    const handleAdd = () => {
+      setCreateDialogOpen(true);
+    };
+
+    window.addEventListener("topbar-search", handleSearch);
+    window.addEventListener("topbar-add", handleAdd);
+
+    return () => {
+      window.removeEventListener("topbar-search", handleSearch);
+      window.removeEventListener("topbar-add", handleAdd);
+    };
+  }, []);
 
   const filtered = (q.data ?? []).filter((home: HomeDTO) => {
     const search = searchText.toLowerCase();
@@ -181,33 +216,62 @@ export function HomesClient() {
     );
   });
 
+  const totalMembers = filtered.reduce(
+    (sum, home) => sum + (home.memberCount || 0),
+    0,
+  );
+  const totalRooms = filtered.reduce(
+    (sum, home) => sum + (home.roomCount || 0),
+    0,
+  );
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">{t("homes")}</h1>
-          <p className="text-sm text-muted-foreground">
-            {t("manageHomesAndSettings")}
-          </p>
-        </div>
+      {/* Header with Stats */}
+      <PageHeader
+        stats={[
+          {
+            label: t("totalHomes"),
+            value: filtered.length,
+            icon: HomeIcon,
+            color: "text-blue-500",
+          },
+          {
+            label: t("totalMembers") || "Total Members",
+            value: totalMembers,
+            icon: Users,
+            color: "text-green-500",
+          },
+          {
+            label: t("totalRooms") || "Total Rooms",
+            value: totalRooms,
+            icon: DoorOpen,
+            color: "text-purple-500",
+          },
+        ]}
+      />
 
-        <div className="flex w-full gap-2 sm:w-auto">
-          <Input
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            placeholder={t("searchHomes")}
-            className="sm:w-[300px]"
-          />
-          <Button
-            variant="outline"
-            onClick={() => q.refetch()}
-            disabled={q.isFetching}
-          >
-            {t("refresh")}
-          </Button>
-          <CreateHomeDialog />
-        </div>
+      {/* Search */}
+      <div ref={searchSectionRef}>
+        <Card>
+          <CardContent className="p-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                placeholder={t("searchHomes")}
+                className="pl-9"
+              />
+            </div>
+          </CardContent>
+        </Card>
       </div>
+
+      <CreateHomeDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+      />
 
       <Card className="rounded-2xl shadow-sm">
         <CardHeader className="pb-3">
