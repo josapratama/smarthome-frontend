@@ -1,15 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { qk } from "@/lib/api/queries";
 import { apiFetchBrowser } from "@/lib/api/client.browser";
 import type { DeviceDTO } from "@/lib/api/dto/devices.dto";
+import { PageHeader } from "@/components/ui/page-header";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/contexts/language-context";
 import {
@@ -73,6 +73,9 @@ export function MonitoringClient() {
     "all" | "online" | "offline"
   >("all");
 
+  const searchSectionRef = useRef<HTMLDivElement>(null);
+  const filterSectionRef = useRef<HTMLDivElement>(null);
+
   const devicesQuery = useQuery({
     queryKey: qk.devices.list(),
     queryFn: async () => {
@@ -83,6 +86,42 @@ export function MonitoringClient() {
     },
     refetchInterval: 5_000,
   });
+
+  // Listen to topbar events
+  useEffect(() => {
+    const handleRefresh = () => {
+      devicesQuery.refetch();
+    };
+
+    const handleFilter = () => {
+      if (filterSectionRef.current) {
+        filterSectionRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+        filterSectionRef.current.classList.add(
+          "ring-2",
+          "ring-primary",
+          "ring-offset-2",
+        );
+        setTimeout(() => {
+          filterSectionRef.current?.classList.remove(
+            "ring-2",
+            "ring-primary",
+            "ring-offset-2",
+          );
+        }, 2000);
+      }
+    };
+
+    window.addEventListener("topbar-refresh", handleRefresh);
+    window.addEventListener("topbar-filter", handleFilter);
+
+    return () => {
+      window.removeEventListener("topbar-refresh", handleRefresh);
+      window.removeEventListener("topbar-filter", handleFilter);
+    };
+  }, [devicesQuery]);
 
   const devices = devicesQuery.data ?? [];
 
@@ -116,127 +155,36 @@ export function MonitoringClient() {
       : 0;
 
   return (
-    <div className="space-y-6 p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
-            {t("monitoringPage")}
-          </h1>
-          <p className="text-muted-foreground dark:text-gray-400 mt-1">
-            {t("realTimeMonitoring")}
-          </p>
-        </div>
-        <Button
-          onClick={() => devicesQuery.refetch()}
-          disabled={devicesQuery.isFetching}
-          className="w-full sm:w-auto"
-        >
-          <RefreshCw
-            className={`h-4 w-4 mr-2 ${devicesQuery.isFetching ? "animate-spin" : ""}`}
-          />
-          {t("refreshAll")}
-        </Button>
-      </div>
-
-      {/* Stats Overview */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-none shadow-md hover:shadow-lg transition-shadow bg-white dark:bg-gray-800">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground dark:text-gray-400">
-                  {t("totalDevices")}
-                </p>
-                <h3 className="text-3xl font-bold mt-2 text-gray-900 dark:text-gray-100">
-                  {devices.length}
-                </h3>
-                <p className="text-xs text-muted-foreground dark:text-gray-500 mt-1">
-                  {t("registeredDevices")}
-                </p>
-              </div>
-              <div className="h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                <Server className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-none shadow-md hover:shadow-lg transition-shadow bg-white dark:bg-gray-800">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground dark:text-gray-400">
-                  {t("onlineDevices")}
-                </p>
-                <h3 className="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">
-                  {onlineDevices.length}
-                </h3>
-                <p className="text-xs text-muted-foreground dark:text-gray-500 mt-1">
-                  {uptimePercentage}% {t("uptime")}
-                </p>
-              </div>
-              <div className="h-12 w-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
-                <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-green-400" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-none shadow-md hover:shadow-lg transition-shadow bg-white dark:bg-gray-800">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground dark:text-gray-400">
-                  {t("offlineDevices")}
-                </p>
-                <h3 className="text-3xl font-bold text-red-600 dark:text-red-400 mt-2">
-                  {offlineDevices.length}
-                </h3>
-                <p className="text-xs text-muted-foreground dark:text-gray-500 mt-1">
-                  {t("needsAttention")}
-                </p>
-              </div>
-              <div className="h-12 w-12 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center">
-                <XCircle className="h-6 w-6 text-red-600 dark:text-red-400" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-none shadow-md hover:shadow-lg transition-shadow bg-white dark:bg-gray-800">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground dark:text-gray-400">
-                  {t("criticalDevices")}
-                </p>
-                {devicesQuery.isLoading ? (
-                  <Skeleton className="h-9 w-16 mt-2" />
-                ) : (
-                  <>
-                    <h3
-                      className={`text-3xl font-bold mt-2 ${criticalDevices.length > 0 ? "text-orange-600 dark:text-orange-400" : "text-gray-400 dark:text-gray-600"}`}
-                    >
-                      {criticalDevices.length}
-                    </h3>
-                    <p className="text-xs text-muted-foreground dark:text-gray-500 mt-1">
-                      {t("offlineOver1Hour")}
-                    </p>
-                  </>
-                )}
-              </div>
-              <div
-                className={`h-12 w-12 rounded-full flex items-center justify-center ${criticalDevices.length > 0 ? "bg-orange-100 dark:bg-orange-900" : "bg-gray-100 dark:bg-gray-700"}`}
-              >
-                <AlertTriangle
-                  className={`h-6 w-6 ${criticalDevices.length > 0 ? "text-orange-600 dark:text-orange-400" : "text-gray-400 dark:text-gray-600"}`}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+    <div className="space-y-6">
+      {/* Header with Stats */}
+      <PageHeader
+        stats={[
+          {
+            label: t("totalDevices"),
+            value: devices.length,
+            icon: Server,
+            color: "text-blue-500",
+          },
+          {
+            label: t("onlineDevices"),
+            value: onlineDevices.length,
+            icon: CheckCircle2,
+            color: "text-green-500",
+          },
+          {
+            label: t("offlineDevices"),
+            value: offlineDevices.length,
+            icon: XCircle,
+            color: "text-red-500",
+          },
+          {
+            label: t("criticalDevices"),
+            value: criticalDevices.length,
+            icon: AlertTriangle,
+            color: "text-orange-500",
+          },
+        ]}
+      />
 
       {/* Critical Alerts Banner */}
       {criticalDevices.length > 0 && (
@@ -287,48 +235,65 @@ export function MonitoringClient() {
         </Card>
       )}
 
-      {/* Search and Filter */}
-      <Card className="border-none shadow-md bg-white dark:bg-gray-800">
-        <CardContent className="p-6">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground dark:text-gray-500" />
+      {/* Search */}
+      <div ref={searchSectionRef}>
+        <Card>
+          <CardContent className="p-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder={t("searchDevices")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-11"
+                className="pl-9"
               />
             </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Filter */}
+      <div ref={filterSectionRef}>
+        <Card className="transition-all duration-300">
+          <CardContent className="p-4">
             <div className="flex gap-2">
-              <Button
-                variant={statusFilter === "all" ? "default" : "outline"}
+              <button
                 onClick={() => setStatusFilter("all")}
-                className="flex-1 sm:flex-none"
+                className={`flex-1 px-4 py-2 rounded-lg border transition-colors ${
+                  statusFilter === "all"
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-background hover:bg-accent border-border"
+                }`}
               >
-                <Activity className="h-4 w-4 mr-2" />
-                {t("all")}
-              </Button>
-              <Button
-                variant={statusFilter === "online" ? "default" : "outline"}
+                <Activity className="h-4 w-4 mx-auto mb-1" />
+                <span className="text-sm">{t("all")}</span>
+              </button>
+              <button
                 onClick={() => setStatusFilter("online")}
-                className="flex-1 sm:flex-none"
+                className={`flex-1 px-4 py-2 rounded-lg border transition-colors ${
+                  statusFilter === "online"
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-background hover:bg-accent border-border"
+                }`}
               >
-                <Wifi className="h-4 w-4 mr-2" />
-                {t("online")}
-              </Button>
-              <Button
-                variant={statusFilter === "offline" ? "default" : "outline"}
+                <Wifi className="h-4 w-4 mx-auto mb-1" />
+                <span className="text-sm">{t("online")}</span>
+              </button>
+              <button
                 onClick={() => setStatusFilter("offline")}
-                className="flex-1 sm:flex-none"
+                className={`flex-1 px-4 py-2 rounded-lg border transition-colors ${
+                  statusFilter === "offline"
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-background hover:bg-accent border-border"
+                }`}
               >
-                <WifiOff className="h-4 w-4 mr-2" />
-                {t("offline")}
-              </Button>
+                <WifiOff className="h-4 w-4 mx-auto mb-1" />
+                <span className="text-sm">{t("offline")}</span>
+              </button>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Devices List */}
       <Card className="border-none shadow-md bg-white dark:bg-gray-800">

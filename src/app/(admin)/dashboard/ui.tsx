@@ -4,13 +4,13 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/ui/page-header";
 import { useLanguage } from "@/contexts/language-context";
 import {
   Activity,
   AlertTriangle,
   Bell,
   CheckCircle2,
-  Clock,
   Home as HomeIcon,
   Power,
   TrendingUp,
@@ -41,45 +41,6 @@ interface OverviewData {
 interface DashboardClientProps {
   data?: OverviewData;
   error?: { status?: number; payload?: unknown };
-}
-
-function Stat({
-  title,
-  value,
-  icon,
-  trend,
-}: {
-  title: string;
-  value: number;
-  icon?: React.ReactNode;
-  trend?: "positive" | "negative";
-}) {
-  return (
-    <Card className="rounded-2xl shadow-sm">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
-          {icon}
-          {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-center justify-between">
-          <div className="text-3xl font-semibold">{value}</div>
-          {trend && (
-            <div
-              className={`text-xs px-2 py-1 rounded-full ${
-                trend === "positive"
-                  ? "bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-300"
-                  : "bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300"
-              }`}
-            >
-              {trend === "positive" ? "✓" : "!"}
-            </div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  );
 }
 
 function extractMsg(payload: unknown): string | null {
@@ -155,28 +116,51 @@ export default function DashboardClient({ data, error }: DashboardClientProps) {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">{t("overview")}</h1>
-          <p className="text-sm text-muted-foreground">{t("systemOverview")}</p>
-        </div>
-
-        {typeof data.pendingInvitesCount === "number" &&
-        data.pendingInvitesCount > 0 ? (
-          <Link href="/invites">
-            <div className="inline-flex items-center gap-2 rounded-full border bg-amber-50 dark:bg-amber-950 border-amber-200 dark:border-amber-800 px-3 py-1 text-sm cursor-pointer hover:bg-amber-100 dark:hover:bg-amber-900 transition-colors">
-              <Bell className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-              <span className="text-muted-foreground">
-                {t("pendingInvites")}
-              </span>
-              <span className="font-semibold text-amber-600 dark:text-amber-400">
-                {data.pendingInvitesCount}
-              </span>
-            </div>
-          </Link>
-        ) : null}
-      </div>
+      {/* Header with Stats */}
+      <PageHeader
+        stats={[
+          {
+            label: t("totalHomes"),
+            value: data.homes,
+            icon: HomeIcon,
+            color: "text-blue-500",
+          },
+          {
+            label: t("totalDevices"),
+            value: data.devices,
+            icon: Zap,
+            color: "text-purple-500",
+          },
+          {
+            label: t("onlineDevices"),
+            value: data.onlineDevices,
+            icon: Wifi,
+            color: "text-green-500",
+          },
+          {
+            label: t("offlineDevices"),
+            value: data.offlineDevices,
+            icon: WifiOff,
+            color: "text-gray-500",
+          },
+        ]}
+        actions={
+          typeof data.pendingInvitesCount === "number" &&
+          data.pendingInvitesCount > 0 ? (
+            <Link href="/invites">
+              <div className="inline-flex items-center gap-2 rounded-full border bg-amber-50 dark:bg-amber-950 border-amber-200 dark:border-amber-800 px-3 py-1.5 text-sm cursor-pointer hover:bg-amber-100 dark:hover:bg-amber-900 transition-colors">
+                <Bell className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                <span className="text-muted-foreground">
+                  {t("pendingInvites")}
+                </span>
+                <span className="font-semibold text-amber-600 dark:text-amber-400">
+                  {data.pendingInvitesCount}
+                </span>
+              </div>
+            </Link>
+          ) : undefined
+        }
+      />
 
       {/* System Health Alert */}
       {healthPercentage < 80 && totalDevices > 0 ? (
@@ -234,37 +218,6 @@ export default function DashboardClient({ data, error }: DashboardClientProps) {
           </CardContent>
         </Card>
       ) : null}
-
-      {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-        <Stat
-          title={t("users")}
-          value={data.users}
-          icon={<Activity className="h-4 w-4" />}
-        />
-        <Stat
-          title={t("homes")}
-          value={data.homes}
-          icon={<HomeIcon className="h-4 w-4" />}
-        />
-        <Stat
-          title={t("devices")}
-          value={data.devices}
-          icon={<Zap className="h-4 w-4" />}
-        />
-        <Stat
-          title={t("online")}
-          value={data.onlineDevices}
-          icon={<Wifi className="h-4 w-4" />}
-          trend="positive"
-        />
-        <Stat
-          title={t("offline")}
-          value={data.offlineDevices}
-          icon={<WifiOff className="h-4 w-4" />}
-          trend={data.offlineDevices > 0 ? "negative" : undefined}
-        />
-      </div>
 
       {/* System Health Card */}
       <Card className="rounded-2xl shadow-sm">

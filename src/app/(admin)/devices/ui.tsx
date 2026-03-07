@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { qk } from "@/lib/api/queries";
@@ -9,6 +9,7 @@ import { apiFetchBrowser } from "@/lib/api/client.browser";
 import type { DeviceDTO } from "@/lib/api/dto/devices.dto";
 import { useTranslation } from "@/hooks/use-translation";
 import { useToast } from "@/hooks/use-toast";
+import { PageHeader } from "@/components/ui/page-header";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -41,7 +42,17 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
-import { Pencil, Trash2, Activity, Zap, Plus } from "lucide-react";
+import {
+  Pencil,
+  Trash2,
+  Activity,
+  Zap,
+  Plus,
+  Smartphone,
+  Wifi,
+  WifiOff,
+  Search,
+} from "lucide-react";
 
 function statusBadge(status: boolean, t: any) {
   return status ? (
@@ -94,6 +105,67 @@ export default function DevicesClient() {
 
   // Delete dialog state
   const [deleteDevice, setDeleteDevice] = useState<DeviceDTO | null>(null);
+
+  // Refs for search and filter
+  const searchSectionRef = useRef<HTMLDivElement>(null);
+  const filterSectionRef = useRef<HTMLDivElement>(null);
+
+  // Listen to topbar events
+  useEffect(() => {
+    const handleSearch = () => {
+      let searchInput: HTMLInputElement | null = null;
+
+      if (searchSectionRef.current) {
+        searchInput = searchSectionRef.current.querySelector(
+          "input",
+        ) as HTMLInputElement;
+      }
+
+      if (!searchInput) {
+        searchInput = document.querySelector("input") as HTMLInputElement;
+      }
+
+      if (searchInput) {
+        searchInput.focus();
+        searchInput.select();
+      }
+    };
+
+    const handleFilter = () => {
+      if (filterSectionRef.current) {
+        filterSectionRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+        filterSectionRef.current.classList.add(
+          "ring-2",
+          "ring-primary",
+          "ring-offset-2",
+        );
+        setTimeout(() => {
+          filterSectionRef.current?.classList.remove(
+            "ring-2",
+            "ring-primary",
+            "ring-offset-2",
+          );
+        }, 2000);
+      }
+    };
+
+    const handleAdd = () => {
+      router.push("/devices/register");
+    };
+
+    window.addEventListener("topbar-search", handleSearch);
+    window.addEventListener("topbar-filter", handleFilter);
+    window.addEventListener("topbar-add", handleAdd);
+
+    return () => {
+      window.removeEventListener("topbar-search", handleSearch);
+      window.removeEventListener("topbar-filter", handleFilter);
+      window.removeEventListener("topbar-add", handleAdd);
+    };
+  }, [router]);
 
   // Fetch homes for filter dropdown
   const homesQuery = useQuery({
@@ -216,69 +288,98 @@ export default function DevicesClient() {
     deleteMutation.mutate(deleteDevice.id);
   };
 
+  const onlineCount = filtered.filter((d) => d.status).length;
+  const offlineCount = filtered.filter((d) => !d.status).length;
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">{t("devices")}</h1>
-          <p className="text-sm text-muted-foreground">{t("manageDevices")}</p>
-        </div>
-
-        <div className="flex w-full gap-2 sm:w-auto">
-          <Input
-            value={qText}
-            onChange={(e) => setQText(e.target.value)}
-            placeholder={`${t("search")} ${t("devices").toLowerCase()}...`}
-            className="sm:w-[300px]"
-          />
-          <Button
-            variant="outline"
-            onClick={() => q.refetch()}
-            disabled={q.isFetching}
-          >
-            {t("refresh")}
-          </Button>
+      {/* Header with Stats */}
+      <PageHeader
+        stats={[
+          {
+            label: t("totalDevices"),
+            value: filtered.length,
+            icon: Smartphone,
+            color: "text-purple-500",
+          },
+          {
+            label: t("onlineDevices"),
+            value: onlineCount,
+            icon: Wifi,
+            color: "text-green-500",
+          },
+          {
+            label: t("offlineDevices"),
+            value: offlineCount,
+            icon: WifiOff,
+            color: "text-gray-500",
+          },
+        ]}
+        actions={
           <Link href="/devices/register">
             <Button>
               <Plus className="mr-2 h-4 w-4" />
               {t("registerDevice")}
             </Button>
           </Link>
-        </div>
+        }
+      />
+
+      {/* Search */}
+      <div ref={searchSectionRef}>
+        <Card>
+          <CardContent className="p-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                value={qText}
+                onChange={(e) => setQText(e.target.value)}
+                placeholder={`${t("search")} ${t("devices").toLowerCase()}...`}
+                className="pl-9"
+              />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-3">
-        <div className="flex items-center gap-2">
-          <label className="text-sm font-medium">{t("status")}:</label>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-32">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t("allDevices")}</SelectItem>
-              <SelectItem value="true">{t("onlineDevices")}</SelectItem>
-              <SelectItem value="false">{t("offlineDevices")}</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      <div ref={filterSectionRef}>
+        <Card className="transition-all duration-300">
+          <CardContent className="pt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">{t("status")}</label>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t("allDevices")}</SelectItem>
+                    <SelectItem value="true">{t("onlineDevices")}</SelectItem>
+                    <SelectItem value="false">{t("offlineDevices")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-        <div className="flex items-center gap-2">
-          <label className="text-sm font-medium">{t("homeId")}:</label>
-          <Select value={homeIdFilter} onValueChange={setHomeIdFilter}>
-            <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder={t("filterByHome")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t("allHomes")}</SelectItem>
-              {homesQuery.data?.map((home) => (
-                <SelectItem key={home.id} value={String(home.id)}>
-                  {home.homeName} (#{home.id})
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">{t("homeId")}</label>
+                <Select value={homeIdFilter} onValueChange={setHomeIdFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t("filterByHome")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t("allHomes")}</SelectItem>
+                    {homesQuery.data?.map((home) => (
+                      <SelectItem key={home.id} value={String(home.id)}>
+                        {home.homeName} (#{home.id})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <Card className="rounded-2xl shadow-sm">
