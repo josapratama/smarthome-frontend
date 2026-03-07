@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { UserInvites } from "@/components/invites/user-invites";
-import { SensorCard } from "@/components/devices/sensor-card";
+import { UserInvites } from "@/app/user/invites/user-invites";
+import { SensorCard } from "@/app/user/devices/sensor-card";
 import { homesApi, Home } from "@/lib/api/client/homes";
 import { devicesApi, DeviceWithDetails } from "@/lib/api/client/devices";
 import { devicesApi as devicesApiV1 } from "@/lib/api/devices";

@@ -1220,4 +1220,29 @@ export const id = {
     "Atur model AI khusus untuk rumah ini untuk menggantikan model global. Jika tidak ada model khusus yang diatur, model global akan digunakan secara otomatis.",
   removeHomeModelDescription:
     "Ini akan menghapus model khusus rumah dan menggunakan model global sebagai gantinya.",
+
+  // Energy Cost Settings
+  energyCostSettings: "Pengaturan Biaya Energi",
+  manageEnergyCostForHome: "Kelola tarif biaya listrik untuk rumah ini",
+  electricityCostRate: "Tarif Biaya Listrik",
+  globalDefault: "Default Global",
+  homeSpecific: "Khusus Rumah",
+  currentRate: "Tarif Saat Ini",
+  perKilowattHour: "per kilowatt-jam",
+  costPerKwh: "Biaya per kWh",
+  energyCostHint:
+    "Masukkan tarif biaya listrik dalam IDR. Ini akan digunakan untuk menghitung biaya energi.",
+  useGlobalDefault: "Gunakan Default Global",
+  useGlobalDefaultConfirm: "Gunakan Tarif Default Global?",
+  useGlobalDefaultDescription:
+    "Ini akan menghapus tarif khusus rumah dan menggunakan tarif default global sebagai gantinya.",
+  confirm: "Konfirmasi",
+  invalidCostValue: "Silakan masukkan nilai biaya yang valid",
+  energyCostUpdated: "Biaya energi berhasil diperbarui",
+  failedUpdateEnergyCost: "Gagal memperbarui biaya energi",
+  energyCostRemoved: "Biaya khusus rumah dihapus, menggunakan default global",
+  failedRemoveEnergyCost: "Gagal menghapus biaya energi",
+  aboutEnergyCost: "Tentang Biaya Energi",
+  energyCostDescription:
+    "Atur tarif listrik khusus untuk rumah ini. Jika tidak diatur, tarif default global akan digunakan. Rumah yang berbeda mungkin memiliki tarif berbeda berdasarkan penyedia listrik atau paket mereka.",
 } as const;

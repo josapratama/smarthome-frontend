@@ -40,7 +40,7 @@ import {
   UserCheck,
   ShieldAlert,
 } from "lucide-react";
-import { RoomAccessDialog } from "@/components/rooms/room-access-dialog";
+import { RoomAccessDialog } from "@/app/user/rooms/room-access-dialog";
 
 function AddRoomDialog() {
   const [open, setOpen] = useState(false);

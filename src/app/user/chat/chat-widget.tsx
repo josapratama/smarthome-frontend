@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MessageCircle, X } from "lucide-react";
-import { ChatWindow } from "@/components/chat/chat-window";
+import { ChatWindow } from "@/app/user/chat/chat-window";
 import { v4 as uuidv4 } from "uuid";
 
 export function ChatWidget() {

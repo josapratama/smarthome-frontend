@@ -4,8 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, MailPlus, Users, Clock, CheckCircle } from "lucide-react";
-import { InviteDialog } from "@/components/invites/invite-dialog";
-import { InviteList } from "@/components/invites/invite-list";
+import { InviteDialog } from "@/app/user/invites/invite-dialog";
+import { InviteList } from "@/app/user/invites/invite-list";
 import { apiFetchBrowser } from "@/lib/api/client.browser";
 import { useLanguage } from "@/contexts/language-context";
 

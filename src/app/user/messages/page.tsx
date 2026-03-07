@@ -6,8 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { MessageSquare, Users, Mail } from "lucide-react";
-import { ConversationList } from "@/components/messaging/conversation-list";
-import { ChatWindow } from "@/components/messaging/chat-window";
+import { ChatWindow } from "@/app/user/messages/chat-window";
 import {
   getDMConversations,
   getHomeConversations,
@@ -17,6 +16,7 @@ import {
   type HomeConversation,
 } from "@/lib/api/messaging";
 import { toast } from "sonner";
+import { ConversationList } from "./conversation-list";
 
 export default function UserMessagesPage() {
   const { t } = useTranslation();

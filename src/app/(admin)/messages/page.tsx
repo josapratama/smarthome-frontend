@@ -8,8 +8,8 @@ import {
   DirectConversation,
   HomeConversation,
 } from "@/lib/api/messaging";
-import { ConversationList } from "@/components/messaging/conversation-list";
-import { ChatWindow } from "@/components/messaging/chat-window";
+import { ConversationList } from "@/app/user/messages/conversation-list";
+import { ChatWindow } from "@/app/user/messages/chat-window";
 import { MessageSquare, Home, User } from "lucide-react";
 import { toast } from "sonner";
 

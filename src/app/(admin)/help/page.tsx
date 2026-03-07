@@ -14,7 +14,7 @@ import { Search, MessageCircle, HelpCircle } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
 import { getFAQs, getCategories, type FAQ } from "@/lib/api/faq";
 import { FAQList } from "./faq-list";
-import { ChatContent } from "@/components/chat/chat-content";
+import { ChatContent } from "@/app/user/chat/chat-content";
 import { v4 as uuidv4 } from "uuid";
 
 const CATEGORIES = [

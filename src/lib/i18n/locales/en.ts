@@ -1233,4 +1233,29 @@ export const en = {
     "Set specific AI models for this home to override global models. If no home-specific model is set, the global model will be used automatically.",
   removeHomeModelDescription:
     "This will remove the home-specific model and use the global model instead.",
+
+  // Energy Cost Settings
+  energyCostSettings: "Energy Cost Settings",
+  manageEnergyCostForHome: "Manage electricity cost rate for this home",
+  electricityCostRate: "Electricity Cost Rate",
+  globalDefault: "Global Default",
+  homeSpecific: "Home-Specific",
+  currentRate: "Current Rate",
+  perKilowattHour: "per kilowatt-hour",
+  costPerKwh: "Cost per kWh",
+  energyCostHint:
+    "Enter the electricity cost rate in IDR. This will be used to calculate energy costs.",
+  useGlobalDefault: "Use Global Default",
+  useGlobalDefaultConfirm: "Use Global Default Rate?",
+  useGlobalDefaultDescription:
+    "This will remove the home-specific rate and use the global default rate instead.",
+  confirm: "Confirm",
+  invalidCostValue: "Please enter a valid cost value",
+  energyCostUpdated: "Energy cost updated successfully",
+  failedUpdateEnergyCost: "Failed to update energy cost",
+  energyCostRemoved: "Home-specific cost removed, using global default",
+  failedRemoveEnergyCost: "Failed to remove energy cost",
+  aboutEnergyCost: "About Energy Cost",
+  energyCostDescription:
+    "Set a custom electricity rate for this home. If not set, the global default rate will be used. Different homes may have different rates based on their electricity provider or plan.",
 } as const;

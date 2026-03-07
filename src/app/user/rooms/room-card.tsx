@@ -18,7 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { RoomAccessDialog } from "@/components/rooms/room-access-dialog";
+import { RoomAccessDialog } from "@/app/user/rooms/room-access-dialog";
 
 interface RoomCardProps {
   room: Room;

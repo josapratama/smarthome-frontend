@@ -12,10 +12,10 @@ import {
   markDMAsRead,
   markHomeMessageAsRead,
 } from "@/lib/api/messaging";
-import { MessageBubble } from "./message-bubble";
-import { MessageInput } from "./message-input";
 import { User, Home, MoreVertical } from "lucide-react";
 import { toast } from "sonner";
+import { MessageBubble } from "./message-bubble";
+import { MessageInput } from "./message-input";
 
 interface ChatWindowProps {
   conversation: DirectConversation | HomeConversation;

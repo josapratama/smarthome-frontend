@@ -18,11 +18,12 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
-import { CreateRoomDialog } from "@/components/rooms/create-room-dialog";
-import { RoomCard } from "@/components/rooms/room-card";
-import { InviteMemberDialog } from "@/components/members/invite-member-dialog";
-import { MembersList } from "@/components/members/members-list";
-import { HomeAIModelsSection } from "@/components/homes/home-ai-models-section";
+import { CreateRoomDialog } from "@/app/user/rooms/create-room-dialog";
+import { RoomCard } from "@/app/user/rooms/room-card";
+import { InviteMemberDialog } from "@/app/user/members/invite-member-dialog";
+import { MembersList } from "@/app/user/members/members-list";
+import { HomeAIModelsSection } from "@/app/user/homes/home-ai-models-section";
+import { HomeEnergyCostSection } from "@/app/user/homes/home-energy-cost-section";
 import { useTranslation } from "@/hooks/use-translation";
 
 export default function HomeDetailPage() {
@@ -255,6 +256,9 @@ export default function HomeDetailPage() {
 
       {/* AI Models Section */}
       <HomeAIModelsSection homeId={homeId} isOwner={isOwner || false} />
+
+      {/* Energy Cost Section */}
+      <HomeEnergyCostSection homeId={homeId} isOwner={isOwner || false} />
 
       <CreateRoomDialog
         open={createRoomDialogOpen}
