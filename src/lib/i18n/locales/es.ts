@@ -9,14 +9,36 @@ export const es = {
   monitoring: "Monitoreo",
   alarms: "Alarmas",
   energy: "Energía",
+  energyCost: "Costo de Energía",
+  energyManagement: "Gestión de Energía",
+  energyMonitoring: "Monitoreo de Energía",
+  firmwareManagement: "Gestión de Firmware",
+  firmwareVersions: "Versiones de Firmware",
+  otaUpdates: "Actualizaciones OTA",
+  deviceManagement: "Gestión de Dispositivos",
+  locationManagement: "Gestión de Ubicación",
+  locationManagementDesc:
+    "Gestione casas y habitaciones en todo su sistema de casa inteligente",
+  communications: "Comunicaciones",
+  systemTools: "Herramientas del Sistema",
+  systemToolsDesc:
+    "Gestione comandos, invitaciones e información de la aplicación",
+  settingsHelp: "Configuración y Ayuda",
+  settingsAndHelp: "Configuración y Ayuda",
+  settingsAndHelpDesc:
+    "Configure ajustes de la aplicación y acceda a recursos de ayuda",
+  appInfo: "Información de la Aplicación",
   settings: "Configuración",
+  help: "Ayuda",
   logout: "Cerrar Sesión",
+  faq: "FAQ",
 
   // Dashboard
   overview: "Resumen",
   totalDevices: "Total de Dispositivos",
   onlineDevices: "En Línea",
   offlineDevices: "Fuera de Línea",
+  devicesOffline: "dispositivos fuera de línea",
   myHomes: "Mis Casas",
   pendingInvites: "Invitaciones Pendientes",
   welcomeBack: "Bienvenido de nuevo",
@@ -25,6 +47,38 @@ export const es = {
   quickActions: "Acciones Rápidas",
   viewAll: "Ver Todo",
   noActivity: "Sin actividad reciente",
+  users: "Usuarios",
+  openAlarms: "Alarmas Abiertas",
+  failedLoadDashboard: "Error al cargar el panel",
+  unknownError: "Error desconocido",
+  goToLogin: "Ir a la página de inicio de sesión",
+  commonHome: "Inicio",
+  monitorAndControl: "Monitoree y controle sus dispositivos IoT",
+
+  // Guest
+  guestPanel: "Panel de Invitado",
+  guest: "Invitado",
+  readOnlyAccess: "Acceso de Solo Lectura",
+  readOnlyMode: "Modo de Solo Lectura",
+  guestDashboardDesc: "Ver el estado de sus casas y dispositivos",
+  homesYouCanView: "Casas que puede ver",
+  devicesActive: "Dispositivos activos",
+  devicesInactive: "Dispositivos inactivos",
+  guestAccessInfo: "Acceso de Invitado - Solo Ver",
+  guestAccessDesc:
+    "Como invitado, solo puede ver el estado de dispositivos y casas. No puede controlar dispositivos ni cambiar configuraciones.",
+  yourHomes: "Sus Casas",
+  noHomesYet: "Aún no hay casas",
+  waitForInvitation:
+    "Espere una invitación del propietario de la casa para unirse",
+  failedLoadData: "Error al cargar datos",
+  viewDeviceStatus: "Ver estado del dispositivo",
+  viewOnly: "Solo Ver",
+  searchDevices: "Buscar dispositivos...",
+  failedLoadDevices: "Error al cargar dispositivos",
+  noDevicesYet: "Aún no hay dispositivos",
+  noDevicesInHomes: "Aún no hay dispositivos en sus casas",
+  tryDifferentSearch: "Intente con un término de búsqueda diferente",
 
   // Rooms
   manageRooms: "Administrar habitaciones en todas las casas",
@@ -41,10 +95,13 @@ export const es = {
   noRoomsFound: "No se encontraron habitaciones",
   getStartedRoom: "Comience creando su primera habitación",
   deleteRoom: "¿Está seguro de que desea eliminar",
+  deleteRoomConfirm: "¿Está seguro de que desea eliminar",
   roomDeleted: "Habitación eliminada exitosamente",
+  roomDeletedSuccess: "Habitación eliminada exitosamente",
   roomCreated: "Habitación creada exitosamente",
   failedDeleteRoom: "Error al eliminar habitación",
   failedCreateRoom: "Error al crear habitación",
+  failedToDeleteRoom: "Error al eliminar habitación",
   validationError: "Error de validación",
   fillAllFields: "Por favor complete todos los campos requeridos",
   backToHomes: "Volver a Casas",
@@ -54,9 +111,17 @@ export const es = {
   noRoomsMatchSearch: "No hay habitaciones que coincidan con su búsqueda",
   roomNamePlaceholder: "ej., Sala de Estar, Cocina",
   viewDevices: "Ver Dispositivos",
+  createNewRoom: "Crear Nueva Habitación",
   deleted: "Eliminado",
   created: "Creado",
-  tryDifferentSearch: "Intente con un término de búsqueda diferente",
+  device: "dispositivo",
+  deviceNotFound: "Dispositivo no encontrado",
+  invalidDeviceId: "ID de dispositivo no válido",
+  notAssigned: "No Asignado",
+  pairedAt: "Emparejado En",
+  otaUpdate: "Actualización OTA",
+  devicesWillBeUnassigned:
+    "Los dispositivos en esta habitación no se eliminarán, pero se desasignarán de la habitación",
 
   // Homes
   manageHomes: "Administre sus casas y propiedades",
@@ -82,7 +147,26 @@ export const es = {
   manageDevices: "Administrar y monitorear sus dispositivos IoT",
   registerDevice: "Registrar Dispositivo",
   registerNewDevice: "Registrar Nuevo Dispositivo",
+  registerNewDeviceToSystem: "Registrar nuevo dispositivo en el sistema",
+  deviceInformation: "Información del Dispositivo",
+  basicDeviceInfo: "Información básica sobre el dispositivo",
   deviceType: "Tipo de Dispositivo",
+  deviceKey: "Clave del Dispositivo",
+  enterDeviceKey: "Ingrese la clave del dispositivo",
+  mqttClientId: "ID de Cliente MQTT",
+  enterMqttClientId: "Ingrese el ID de cliente MQTT",
+  optionalMqttId: "Opcional - ID de cliente MQTT para el dispositivo",
+  selectHomeAndRoom: "Seleccione casa y habitación para el dispositivo",
+  selectRoom: "Seleccionar Habitación",
+  noRoom: "Sin Habitación",
+  optionalRoomSelection:
+    "Opcional - El dispositivo puede agregarse a una habitación más tarde",
+  advancedSettings: "Configuración Avanzada",
+  optionalAdvancedConfig: "Configuración opcional para el dispositivo",
+  capabilities: "Capacidades",
+  capabilitiesJsonFormat:
+    "Formato JSON para capacidades del dispositivo (opcional)",
+  registering: "Registrando...",
   macAddress: "Dirección MAC",
   selectDeviceType: "Seleccionar tipo de dispositivo",
   deviceRegistered: "Dispositivo registrado exitosamente",
@@ -94,6 +178,92 @@ export const es = {
   online: "En Línea",
   offline: "Fuera de Línea",
   lastSeen: "Última Vez Visto",
+
+  // Device Registration
+  beforeStarting: "Antes de comenzar",
+  uploadFirmwareInstruction: "Suba el firmware esp32-base a su ESP32",
+  openSerialMonitorInstruction:
+    "Abra el monitor serial y espere a que el dispositivo arranque",
+  noteMacAddressInstruction:
+    "Anote la dirección MAC mostrada (formato: AA:BB:CC:DD:EE:FF)",
+  enterDeviceDetailsAndCreate:
+    "Ingrese los detalles del dispositivo y créelo en la base de datos",
+  fromSerialMonitor: "Desde el monitor serial ESP32",
+  createDevice: "Crear Dispositivo",
+  deviceCreatedSendCredentials:
+    "¡Dispositivo creado exitosamente! Ahora envíe las credenciales al ESP32",
+  createDeviceFirstToSendCredentials:
+    "Cree el dispositivo primero para enviar credenciales",
+  fillFormAndCreateDevice:
+    "Complete el formulario y cree el dispositivo primero",
+  deviceId: "ID del Dispositivo",
+  name: "Nombre",
+  type: "Tipo",
+  clickToSendCredentials:
+    "Haga clic en el botón de abajo para enviar credenciales a su ESP32 vía MQTT. El dispositivo se reiniciará automáticamente",
+  sendCredentialsToDevice: "Enviar Credenciales al Dispositivo",
+  whatHappensNext: "Qué sucede a continuación",
+  credentialsSentViaMqtt: "Credenciales enviadas vía MQTT a",
+  esp32ReceivesAndSaves: "ESP32 recibe y guarda las credenciales",
+  esp32RestartsAutomatically: "ESP32 se reinicia automáticamente",
+  deviceConnectsAndAppearsOnline:
+    "El dispositivo se conecta y aparece en línea",
+  troubleshooting: "Solución de Problemas",
+  deviceNotReceivingCredentials: "¿El dispositivo no recibe credenciales?",
+  checkMqttBrokerRunning: "Verifique que el broker MQTT esté ejecutándose",
+  checkEsp32StillOnline: "Verifique que el ESP32 aún esté en línea",
+  verifyMacAddressCorrect: "Verifique que la dirección MAC sea correcta",
+  deviceNotAppearingOnline: "¿El dispositivo no aparece en línea?",
+  checkWifiCredentialsInFirmware:
+    "Verifique las credenciales WiFi en el firmware",
+  checkMqttServerIpCorrect:
+    "Verifique que la IP del servidor MQTT sea correcta",
+  wait30SecondsForHeartbeat: "Espere 30 segundos para el latido",
+  macAddressAlreadyExists: "¿La dirección MAC ya existe?",
+  deviceAlreadyRegistered: "El dispositivo ya está registrado",
+  checkDeviceList: "Verifique la lista de dispositivos",
+  deleteOldDeviceIfNeeded: "Elimine el dispositivo antiguo si es necesario",
+  copied: "Copiado",
+  copiedToClipboard: "copiado al portapapeles",
+
+  // Invitations
+  invitations: "Invitaciones",
+  manageYourHomeInvitations: "Gestione sus invitaciones de casa",
+  pendingInvitations: "Invitaciones Pendientes",
+  acceptOrDeclineHomeInvitations: "Acepte o rechace invitaciones de casa",
+  aboutInvitations: "Acerca de las Invitaciones",
+  receivingInvitations: "Recibir Invitaciones",
+  receivingInvitationsDesc:
+    "Cuando alguien lo invita a su casa, recibirá una invitación que aparece aquí. Puede aceptar o rechazar en cualquier momento.",
+  acceptingInvitations: "Aceptar Invitaciones",
+  acceptingInvitationsDesc:
+    "Al aceptar una invitación, obtendrá acceso a los dispositivos y habitaciones de la casa según el rol asignado.",
+  decliningInvitations: "Rechazar Invitaciones",
+  decliningInvitationsDesc:
+    "Si rechaza una invitación, no tendrá acceso a esa casa. El propietario puede enviar una nueva invitación si es necesario.",
+  memberRoles: "Roles de Miembros",
+  memberRolesDesc:
+    "Los miembros pueden controlar dispositivos y ver datos. Los invitados tienen acceso limitado. Los propietarios tienen control total sobre la casa.",
+
+  // Rooms Page
+  manageRoomsAcrossHomes: "Gestione habitaciones en todas sus casas",
+  filterRooms: "Filtrar Habitaciones",
+  privateRooms: "Habitaciones Privadas",
+  tryDifferentFilters: "Intente ajustar sus filtros",
+  createFirstRoom: "Cree su primera habitación para comenzar",
+  failedToLoadRooms: "Error al cargar habitaciones",
+
+  // Members Page
+  members: "Miembros",
+  manageHomeMembersAndInvites: "Gestione miembros de casa e invitaciones",
+  createHomeToManageMembers: "Cree una casa primero para gestionar miembros",
+  chooseHomeToManageMembers: "Elija una casa para ver y gestionar sus miembros",
+  membersList: "Lista de Miembros",
+  manageAccessAndPermissions: "Gestione acceso y permisos de miembros",
+  viewHomeMembersAndRoles: "Ver miembros de casa y sus roles",
+  failedToLoadMembers: "Error al cargar miembros",
+  failedToLoadHomes: "Error al cargar casas",
+  owners: "Propietarios",
   deviceDetails: "Detalles del Dispositivo",
   sendCredentials: "Enviar Credenciales",
   credentialsSent: "Credenciales enviadas exitosamente",
@@ -161,7 +331,6 @@ export const es = {
   jobDetails: "Detalles del Trabajo",
   status: "Estado",
   progress: "Progreso",
-  deviceId: "ID del Dispositivo",
   firmwareReleaseId: "ID de Lanzamiento de Firmware",
   startedAt: "Iniciado En",
   completedAt: "Completado En",
@@ -300,7 +469,6 @@ export const es = {
   customizeAppearance: "Personalice cómo se ve la aplicación",
   themeDescription: "Seleccione tema claro, oscuro o del sistema",
   languageDescription: "Elija su idioma preferido",
-  appInfo: "Información de la Aplicación",
   appInfoDescription: "Información de versión y build",
   buildDate: "Fecha de Build",
   appInfoNote: "Sistema de Control de Casa Inteligente v1.0.0",
@@ -338,7 +506,6 @@ export const es = {
   loading: "Cargando...",
   sending: "Enviando...",
   noData: "No hay datos disponibles",
-  unknownError: "Error desconocido",
   required: "*",
   homeId: "ID de Casa",
   filterByHome: "Filtrar por casa",
@@ -463,7 +630,6 @@ export const es = {
   addressPlaceholder: "Calle Ejemplo 123",
   cityPlaceholder: "Madrid",
   postalCodePlaceholder: "28001",
-  createNewRoom: "Crear Nueva Habitación",
   addNewRoomDesc:
     "Agregue una nueva habitación para organizar sus dispositivos.",
   livingRoom: "Sala de Estar",
@@ -582,13 +748,11 @@ export const es = {
     "Invitar a alguien a unirse a una casa como miembro o invitado",
   emailPlaceholder: "usuario@ejemplo.com",
   selectRole: "Seleccionar un rol",
-  guest: "Invitado",
   sendInvitation: "Enviar Invitación",
   inviteResent: "Invitación reenviada exitosamente",
   failedResendInvite: "Error al reenviar invitación",
   inviteRevoked: "Invitación revocada exitosamente",
   failedRevokeInvite: "Error al revocar invitación",
-  pendingInvitations: "Invitaciones Pendientes",
   noPendingInvitations: "No hay invitaciones pendientes",
   sentInvitationsWillAppear: "Las invitaciones enviadas aparecerán aquí",
   invited: "Invitado",
@@ -621,7 +785,6 @@ export const es = {
   thisMonth: "Este Mes",
   cost: "Costo",
   controlYourDevices: "Controla tus dispositivos IoT",
-  noDevicesYet: "Aún No Hay Dispositivos",
   startPairing:
     "Comienza emparejando tus dispositivos ESP32 para monitorear y controlar.",
   devicesWillAppear:
@@ -636,7 +799,6 @@ export const es = {
   telemetryWillAppear:
     "Los datos de telemetría aparecerán aquí después de que el dispositivo envíe datos.",
   failedLoadDevice: "Error al cargar dispositivo",
-  failedLoadDevices: "Error al cargar dispositivos",
   timestamp: "Marca de Tiempo",
 
   // Notifications Page
@@ -860,4 +1022,469 @@ export const es = {
   configurationNote: "Nota de Configuración",
   configWillBeSentToDevice:
     "Los cambios se enviarán al dispositivo vía MQTT después de guardar",
+
+  // Additional Sensor Types
+  temperatureHumiditySensor: "Sensor de Temperatura y Humedad (DHT11/DHT22)",
+  pressureSensor: "Sensor de Presión (BMP180/BMP280)",
+  soilMoistureSensor: "Sensor de Humedad del Suelo",
+  lightSensor: "Sensor de Luz (LDR)",
+
+  // Additional Sensor Info
+  whatIsTemperatureHumiditySensor:
+    "¿Qué es el Sensor de Temperatura y Humedad?",
+  temperatureHumiditySensorDesc:
+    "Datos de medición de temperatura y humedad del sensor DHT11/DHT22 enviados cada 30 segundos vía MQTT.",
+  temperatureMetric: "Temperatura: Temperatura del aire (°C)",
+  humidityMetric: "Humedad: Humedad relativa (%)",
+  heatIndexMetric: "Índice de Calor: Índice de calor (°C)",
+
+  whatIsPressureSensor: "¿Qué es el Sensor de Presión?",
+  pressureSensorDesc:
+    "Datos de medición de presión atmosférica del sensor BMP180/BMP280 enviados cada 30 segundos vía MQTT.",
+  pressureMetric: "Presión: Presión atmosférica (hPa)",
+  altitudeMetric: "Altitud: Altitud (m)",
+
+  whatIsSoilMoistureSensor: "¿Qué es el Sensor de Humedad del Suelo?",
+  soilMoistureSensorDesc:
+    "Datos de medición de humedad del suelo enviados cada 30 segundos vía MQTT.",
+  soilMoistureMetric: "Humedad del Suelo: Humedad del suelo (%)",
+  moistureMetric: "Humedad: Humedad del suelo (%)",
+
+  whatIsLightSensor: "¿Qué es el Sensor de Luz?",
+  lightSensorDesc:
+    "Datos de medición de intensidad de luz del sensor LDR enviados cada 30 segundos vía MQTT.",
+  lightLevelMetric: "Nivel de Luz: Intensidad de luz (lux)",
+
+  // Temperature & Humidity Sensor
+  hot: "Caliente",
+  warm: "Cálido",
+  cool: "Fresco",
+  cold: "Frío",
+  humid: "Húmedo",
+  comfortable: "Cómodo",
+  dry: "Seco",
+  heatIndex: "Índice de Calor",
+  feelsLike: "Sensación Térmica",
+
+  // Pressure Sensor
+  pressure: "Presión",
+  altitude: "Altitud",
+  highPressure: "Presión Alta",
+  normalPressure: "Presión Normal",
+  lowPressure: "Presión Baja",
+  aboveSeaLevel: "Sobre el Nivel del Mar",
+
+  // Soil Moisture Sensor
+  soilMoisture: "Humedad del Suelo",
+  wet: "Mojado",
+  moist: "Húmedo",
+  veryDry: "Muy Seco",
+
+  // Light Sensor
+  lightLevel: "Nivel de Luz",
+  bright: "Brillante",
+  moderate: "Moderado",
+  dark: "Oscuro",
+
+  // Dashboard Extended
+  systemHealth: "Salud del Sistema",
+  deviceConnectivity: "Conectividad de Dispositivos",
+  systemHealthWarning: "Advertencia de Salud del Sistema",
+  checkDeviceConnections:
+    "Verificar conexiones de dispositivos y fuentes de alimentación",
+  requireAttention: "requieren atención inmediata",
+  viewAlarms: "Ver Alarmas",
+  energyAnalytics: "Analítica de Energía",
+
+  // Energy Page
+  monitorEnergyConsumption:
+    "Monitorear consumo de energía y predicciones de IA",
+  totalConsumption: "Consumo Total",
+  estimatedCost: "Costo Estimado",
+  activePredictions: "Predicciones Activas",
+  energyConsumptionByDevice: "Consumo de Energía por Dispositivo",
+  currentUsage: "Uso Actual",
+  today: "Hoy",
+  energySavingTips: "Consejos para Ahorrar Energía",
+  tip1: "Apague los dispositivos cuando no estén en uso para reducir el consumo en espera",
+  tip2: "Use electrodomésticos eficientes en energía y bombillas LED",
+  tip3: "Programe dispositivos de alto consumo fuera de las horas pico",
+  powerMeters: "Medidores de Energía",
+  errorLoadingData: "Error al Cargar Datos",
+  noPowerMetersFound: "No se Encontraron Medidores de Energía",
+  addPowerMeterToTrack:
+    "Agregue dispositivos medidores de energía para rastrear el consumo de energía",
+
+  // Home AI Models
+  homeAIModels: "Modelos de IA por Casa",
+  manageHomeAIModels: "Gestionar modelos de IA para cada casa",
+  globalModel: "Modelo Global",
+  homeSpecificModel: "Modelo Específico de Casa",
+  usingGlobalModel: "Usando Modelo Global",
+  usingHomeModel: "Usando Modelo Específico",
+  setModelForHome: "Establecer Modelo para Casa",
+  removeHomeModel: "Eliminar Modelo Específico",
+  applyToAllHomes: "Aplicar a Todas las Casas",
+  useGlobalForAll: "Usar Modelo Global para Todas",
+  modelSource: "Fuente del Modelo",
+  homeModelSet: "Modelo de casa establecido exitosamente",
+  homeModelRemoved: "Modelo de casa eliminado exitosamente",
+  modelAppliedToAll: "Modelo aplicado a todas las casas",
+  globalModelApplied: "Modelo global aplicado a todas las casas",
+  failedSetHomeModel: "Error al establecer modelo de casa",
+  failedRemoveHomeModel: "Error al eliminar modelo de casa",
+  failedApplyToAll: "Error al aplicar a todas las casas",
+  selectModelForHome: "Seleccionar modelo para esta casa",
+  currentModel: "Modelo Actual",
+  noModelSet: "No hay modelo establecido",
+  willUseGlobal: "Usará el modelo global",
+  confirmRemoveHomeModel:
+    "¿Está seguro de que desea eliminar el modelo específico para esta casa?",
+  confirmApplyToAll:
+    "¿Está seguro de que desea aplicar este modelo a todas las casas?",
+  confirmUseGlobalForAll:
+    "¿Está seguro de que desea usar el modelo global para todas las casas?",
+  homeModelManagement: "Gestión de Modelos de IA de Casa",
+  predictionModel: "Modelo de Predicción",
+  anomalyModel: "Modelo de Anomalía",
+  setModel: "Establecer Modelo",
+  removeModel: "Eliminar Modelo",
+  applyModel: "Aplicar Modelo",
+  homeModels: "Modelos de Casa",
+  selectModel: "Seleccionar modelo",
+
+  // Help Center & FAQ
+  helpCenter: "Centro de Ayuda",
+  searchFAQ: "Buscar preguntas...",
+  frequentlyAskedQuestions: "Preguntas Frecuentes",
+  faqDescription:
+    "Encuentre respuestas a preguntas comunes sobre el sistema de casa inteligente",
+  totalFAQs: "Total de FAQ",
+  categories: "Categorías",
+  allCategories: "Todas las Categorías",
+  faqGeneral: "General",
+  faqDevices: "Dispositivos",
+  faqAiModels: "Modelos de IA",
+  faqAutomation: "Automatización",
+  faqAccount: "Cuenta",
+  faqEnergy: "Energía",
+  faqAlarms: "Alarmas",
+  faqTroubleshooting: "Solución de Problemas",
+  wasThisHelpful: "¿Fue esto útil?",
+  helpful: "Útil",
+  notHelpful: "No Útil",
+  thankYouFeedback: "¡Gracias por su comentario!",
+  thankYouForFeedback: "¡Gracias por su comentario!",
+  failedToSubmitFeedback: "Error al enviar comentario",
+  noFAQsFound: "No se encontraron FAQ",
+  noFAQFound: "No se encontraron FAQ",
+  tryDifferentFAQSearch: "Intente con una palabra clave de búsqueda diferente",
+  viewCount: "Visto",
+  helpfulVotes: "Votos Útiles",
+  stillNeedHelp: "¿Aún necesita ayuda?",
+  contactSupportMessage:
+    "¿No encontró lo que buscaba? Contacte a nuestro equipo de soporte o use el asistente de chat de IA",
+  chatWithAIAssistant: "Chat con Asistente de IA",
+
+  // Chat
+  aiAssistant: "Asistente de IA",
+  chatAIDescription:
+    "Obtenga ayuda instantánea y respuestas de nuestro asistente de IA",
+  startChatting: "Comience a preguntar sobre la aplicación",
+  clickChatButton:
+    "Haga clic en el botón de chat en la esquina inferior derecha",
+  chatWithAI: "Chat con Asistente de IA",
+  askMeAnything: "Pregunte cualquier cosa sobre el sistema de casa inteligente",
+  askAnything:
+    "Pregunte cualquier cosa sobre casa inteligente, dispositivos, uso de energía o solución de problemas",
+  typeMessage: "Escriba un mensaje...",
+  sendMessage: "Enviar",
+  newConversation: "Nueva Conversación",
+  conversations: "Conversaciones",
+  conversationHistory: "Historial de Conversaciones",
+  deleteConversation: "Eliminar Conversación",
+  confirmDeleteConversation:
+    "¿Está seguro de que desea eliminar esta conversación?",
+  thinking: "Pensando...",
+  noConversations: "No hay conversaciones",
+  noConversationsYet: "No hay conversaciones aún",
+  startNewConversation: "Iniciar nueva conversación con IA",
+  conversationDeleted: "Conversación eliminada exitosamente",
+  failedToDeleteConversation: "Error al eliminar conversación",
+  failedToSendMessage: "Error al enviar mensaje",
+  failedToLoadConversations: "Error al cargar conversaciones",
+  manageConversations: "Gestionar sus conversaciones y mensajes",
+  totalConversations: "Total de Conversaciones",
+  selectConversationDesc:
+    "Seleccione una conversación de la lista para comenzar a chatear",
+
+  // FAQ Management (Admin)
+  faqManagement: "Gestión de FAQ",
+  createFAQ: "Crear FAQ",
+  editFAQ: "Editar FAQ",
+  deleteFAQ: "Eliminar FAQ",
+  faqQuestion: "Pregunta",
+  faqAnswer: "Respuesta",
+  faqCategory: "Categoría",
+  tags: "Etiquetas",
+  searchTerms: "Términos de Búsqueda",
+  order: "Orden",
+  published: "Publicado",
+  draft: "Borrador",
+  faqCreated: "FAQ creado exitosamente",
+  faqUpdated: "FAQ actualizado exitosamente",
+  faqDeleted: "FAQ eliminado exitosamente",
+  confirmDeleteFAQ: "¿Está seguro de que desea eliminar este FAQ?",
+  manageFAQs: "Gestionar FAQ para ayudar a los usuarios",
+
+  // Privacy Levels
+  privacyPUBLIC: "Público",
+  privacyPRIVATE: "Privado",
+  privacySHARED: "Compartido",
+  privacyRESTRICTED: "Restringido",
+  privacyPUBLICDesc: "Todos los miembros de la casa pueden acceder",
+  privacyPRIVATEDesc: "Solo el propietario y los autorizados",
+  privacySHAREDDesc: "Propietario y miembros seleccionados",
+  privacyRESTRICTEDDesc: "Solo el propietario de la casa",
+
+  // Access Levels
+  accessOWNER: "Propietario",
+  accessLevelControl: "Control",
+  accessCONTROL: "Control",
+  accessVIEW: "Ver",
+  accessNONE: "Ninguno",
+  accessOWNERDesc: "Control total (editar, eliminar, dar acceso)",
+  accessCONTROLDesc: "Puede controlar dispositivos",
+  accessVIEWDesc: "Solo puede ver el estado",
+  accessNONEDesc: "Sin acceso",
+
+  // Access Management
+  setExpiration: "Establecer Expiración (Opcional)",
+  accessGranted: "Acceso otorgado exitosamente",
+  accessRevoked: "Acceso revocado exitosamente",
+  privacyUpdated: "Nivel de privacidad actualizado exitosamente",
+  ownerUpdated: "Propietario de la habitación actualizado exitosamente",
+  failedGrantAccess: "Error al otorgar acceso",
+  failedRevokeAccess: "Error al revocar acceso",
+  failedUpdatePrivacy: "Error al actualizar privacidad",
+  failedUpdateOwner: "Error al actualizar propietario",
+  confirmRevokeAccess: "¿Está seguro de que desea revocar el acceso de",
+  noAccessGrants: "No hay permisos de acceso",
+  noAccessLogs: "No hay registros de acceso",
+
+  // Access Log
+  allowed: "Permitido",
+  denied: "Denegado",
+  reason: "Razón",
+  accessDenied: "Acceso Denegado",
+  accessAllowed: "Acceso Permitido",
+
+  // Visual Indicators
+  privateRoom: "Habitación Privada",
+  publicRoom: "Habitación Pública",
+  sharedRoom: "Habitación Compartida",
+  restrictedRoom: "Habitación Restringida",
+  youDontHaveAccess: "No tiene acceso a esta habitación",
+  contactRoomOwner:
+    "Por favor contacte al propietario de la habitación para acceso",
+  insufficientPermissions: "No tiene permisos suficientes para esta acción",
+
+  // Homes Extended Keys
+  homeDeletedSuccess: "Casa eliminada exitosamente",
+  manageHomesLocations: "Gestionar casas y ubicaciones",
+  createFirstHomeDescription:
+    "Cree su primera casa para organizar dispositivos por ubicación",
+  deleteHome: "Eliminar Casa",
+  deleteHomeConfirmation: "¿Está seguro de que desea eliminar",
+  deleteHomeWarning:
+    "Esta acción no se puede deshacer y eliminará todos los dispositivos y habitaciones relacionados",
+  cancel: "Cancelar",
+  homeNotFound: "Casa No Encontrada",
+  homeNotFoundDesc: "La casa que busca no existe",
+  failedToLoadHomeDetails: "Error al cargar detalles de la casa",
+  createRoomsDesc: "Cree habitaciones para organizar mejor sus dispositivos",
+  inviteMember: "Invitar Miembro",
+  inviteMemberDescription:
+    "Invite a alguien a unirse a la casa como miembro o invitado",
+  description: "Descripción",
+  messagesDescription: "Chat con otros usuarios y miembros de la casa",
+  selectConversationDescription:
+    "Seleccione una conversación de la lista para comenzar a chatear",
+  failedToLoadMessages: "Error al cargar mensajes",
+  noMembersYet: "No hay miembros aún",
+  inviteMembersToHome: "Invite miembros para unirse a esta casa",
+  chatAI: "Chat IA",
+  memberRole: "Rol del Miembro",
+  memberRoleDesc: "Seleccione el rol para el miembro invitado",
+
+  // Messaging
+  messages: "Mensajes",
+  directMessages: "Mensajes Directos",
+  homeChats: "Chats de Casa",
+  homeChat: "Chat de Casa",
+  newMessage: "Nuevo Mensaje",
+  noMessages: "No hay mensajes",
+  startConversation: "Iniciar conversación",
+  unreadMessages: "Mensajes No Leídos",
+  deleteMessage: "Eliminar Mensaje",
+  confirmDeleteMessage: "¿Está seguro de que desea eliminar este mensaje?",
+  messageDeleted: "Mensaje eliminado exitosamente",
+  messageSent: "Mensaje enviado exitosamente",
+  failedSendMessage: "Error al enviar mensaje",
+  failedDeleteMessage: "Error al eliminar mensaje",
+  typing: "escribiendo...",
+  you: "Usted",
+  selectConversation:
+    "Seleccione una conversación para comenzar a enviar mensajes",
+  searchMessages: "Buscar mensajes...",
+  attachFile: "Adjuntar archivo",
+  addEmoji: "Agregar emoji",
+  sendingMessage: "Enviando...",
+  loadMore: "Cargar más",
+  loadingMessages: "Cargando mensajes...",
+  conversationWith: "Conversación con",
+  groupMembers: "Miembros del Grupo",
+  messageStatusSent: "Enviado",
+  messageDelivered: "Entregado",
+  messageRead: "Leído",
+
+  // Landing Page
+  smartHome: "Casa Inteligente",
+  publicHomes: "Casas Públicas",
+  publicDevices: "Dispositivos Públicos",
+  login: "Iniciar Sesión",
+  signUp: "Registrarse",
+  getStarted: "Comenzar",
+  learnMoreAbout: "Aprender Más",
+  features: "Características",
+  pricing: "Precios",
+  landingAbout: "Acerca de",
+
+  // Public Pages
+  publicHomesTitle: "Casas Públicas",
+  publicHomesDescription: "Explore casas inteligentes disponibles públicamente",
+  publicDevicesTitle: "Dispositivos Públicos",
+  publicDevicesDescription:
+    "Explore dispositivos inteligentes disponibles públicamente",
+  homeLocation: "Ubicación",
+  homeMembers: "Miembros",
+  noPublicHomes: "No hay casas públicas disponibles",
+  noPublicDevices: "No hay dispositivos públicos disponibles",
+  backToHome: "Volver al Inicio",
+
+  // Energy Extended
+  timeRange: "Rango de Tiempo",
+  thisWeek: "Esta Semana",
+  fromYesterday: "desde ayer",
+  perDay: "por día",
+  dailyAverage: "Promedio Diario",
+  total: "Total",
+
+  // Alarms Extended
+  allSeverity: "Todos los Niveles",
+  severity: "Gravedad",
+
+  // Home AI Models Extended
+  aboutHomeAIModels: "Acerca de los Modelos de IA de Casa",
+  homeAIModelsDescription:
+    "Establezca modelos de IA específicos para esta casa para reemplazar el modelo global. Si no se establece un modelo específico, el modelo global se usará automáticamente.",
+  removeHomeModelDescription:
+    "Esto eliminará el modelo específico de la casa y usará el modelo global en su lugar.",
+
+  // Energy Cost Settings
+  energyCostSettings: "Configuración de Costo de Energía",
+  manageEnergyCostForHome:
+    "Gestionar tarifas de costo de electricidad para esta casa",
+  electricityCostRate: "Tarifa de Costo de Electricidad",
+  globalDefault: "Predeterminado Global",
+  homeSpecific: "Específico de Casa",
+  currentRate: "Tarifa Actual",
+  perKilowattHour: "por kilovatio-hora",
+  costPerKwh: "Costo por kWh",
+  energyCostHint:
+    "Ingrese la tarifa de costo de electricidad en su moneda. Esto se usará para calcular los costos de energía.",
+  useGlobalDefault: "Usar Predeterminado Global",
+  useGlobalDefaultConfirm: "¿Usar Tarifa Predeterminada Global?",
+  useGlobalDefaultDescription:
+    "Esto eliminará la tarifa específica de la casa y usará la tarifa predeterminada global en su lugar.",
+  confirm: "Confirmar",
+  invalidCostValue: "Por favor ingrese un valor de costo válido",
+  energyCostUpdated: "Costo de energía actualizado exitosamente",
+  failedUpdateEnergyCost: "Error al actualizar costo de energía",
+  energyCostRemoved:
+    "Costo específico de casa eliminado, usando predeterminado global",
+  failedRemoveEnergyCost: "Error al eliminar costo de energía",
+  aboutEnergyCost: "Acerca del Costo de Energía",
+  energyCostDescription:
+    "Establezca una tarifa de electricidad específica para esta casa. Si no se establece, se usará la tarifa predeterminada global. Diferentes casas pueden tener diferentes tarifas según su proveedor de electricidad o plan.",
+
+  // Admin Energy Cost Management
+  energyCostManagement: "Gestión de Costo de Energía",
+  manageGlobalEnergyCost:
+    "Gestionar tarifa de costo de electricidad predeterminada global",
+  globalDefaultRate: "Tarifa Predeterminada Global",
+  currentGlobalRate: "Tarifa Global Actual",
+  newGlobalRate: "Nueva Tarifa Global",
+  globalRateHint:
+    "Esta tarifa se usará como predeterminada para todas las casas que no tengan una tarifa específica.",
+  globalEnergyCostUpdated: "Costo de energía global actualizado exitosamente",
+  aboutGlobalEnergyCost: "Acerca del Costo de Energía Global",
+  globalEnergyCostDescription:
+    "La tarifa predeterminada global se usa para todas las casas a menos que tengan una tarifa específica establecida por el propietario de la casa. Esto proporciona una tarifa base mientras permite flexibilidad para casas individuales.",
+  homesEnergyCostOverview: "Resumen de Costo de Energía de Casas",
+  usingGlobalRate: "Usando Tarifa Global",
+  customRates: "Tarifas Personalizadas",
+  perKwh: "por kWh",
+
+  // AI Training Management
+  aiTraining: "Entrenamiento de IA",
+  training: "Entrenamiento",
+  trainingSettings: "Configuración de Entrenamiento",
+  trainingControl: "Control de Entrenamiento",
+  trainingHistory: "Historial de Entrenamiento",
+  trainingAnalytics: "Analítica de Entrenamiento",
+  scheduleFrequency: "Frecuencia de Programación",
+  autoRetrain: "Reentrenamiento Automático",
+  minDataPoints: "Puntos de Datos Mínimos",
+  accuracyThreshold: "Umbral de Precisión",
+  batchSize: "Tamaño de Lote",
+  manualTraining: "Entrenamiento Manual",
+  deviceIdHelp: "Dejar vacío para entrenar todos los dispositivos",
+  trainingStarted: "Entrenamiento iniciado",
+  trainingInfo: "Información de Entrenamiento",
+  trainingInfoLine1: "El entrenamiento puede tomar varios minutos",
+  trainingInfoLine2: "Puede monitorear el progreso en la pestaña Historial",
+  trainingInfoLine3:
+    "El modelo se actualizará automáticamente después del entrenamiento",
+  jobId: "ID de Trabajo",
+  noJobs: "No hay trabajos de entrenamiento",
+  totalJobs: "Total de Trabajos",
+  completedJobs: "Completados",
+  failedJobs: "Fallidos",
+  runningJobs: "En Ejecución",
+  avgAccuracy: "Precisión Promedio",
+  avgDuration: "Duración Promedio",
+  successRate: "Tasa de Éxito",
+  timeline: "Línea de Tiempo",
+  lastTraining: "Último Entrenamiento",
+  nextScheduled: "Próximo Programado",
+  notScheduled: "No Programado",
+  jobDistribution: "Distribución de Trabajos",
+  noStats: "No hay estadísticas disponibles",
+  loadConfigError: "Error al cargar configuración de entrenamiento",
+  saveConfigError: "Error al guardar configuración de entrenamiento",
+  configSaved: "Configuración de entrenamiento guardada exitosamente",
+  startTrainingError: "Error al iniciar entrenamiento",
+  loadJobsError: "Error al cargar trabajos de entrenamiento",
+  loadStatsError: "Error al cargar estadísticas de entrenamiento",
+
+  // Additional Keys
+  models: "Modelos",
+  rules: "Reglas",
+  modelType: "Tipo de Modelo",
+  both: "Ambos",
+  showing: "Mostrando",
+  of: "de",
+  previous: "Anterior",
+  next: "Siguiente",
 } as const;
