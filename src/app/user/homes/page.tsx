@@ -7,7 +7,8 @@ import { CreateHomeDialog } from "@/app/user/homes/create-home-dialog";
 import { HomeCard } from "@/app/user/homes/home-card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Plus } from "lucide-react";
+import { PageHeader } from "@/components/ui/page-header";
+import { Home as HomeIcon, Plus } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -43,6 +44,21 @@ export default function UserHomesPage() {
     loadHomes();
   }, []);
 
+  // Listen to topbar events
+  useEffect(() => {
+    const handleAdd = () => {
+      if (userId) {
+        setCreateDialogOpen(true);
+      }
+    };
+
+    window.addEventListener("topbar-add", handleAdd);
+
+    return () => {
+      window.removeEventListener("topbar-add", handleAdd);
+    };
+  }, [userId]);
+
   const loadHomes = async () => {
     setIsLoading(true);
     try {
@@ -75,18 +91,21 @@ export default function UserHomesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">{t("homes") || "Homes"}</h1>
-          <p className="text-muted-foreground mt-1">
-            {t("manageHomesLocations") || "Manage your homes and locations"}
-          </p>
-        </div>
-        <Button onClick={() => setCreateDialogOpen(true)} disabled={!userId}>
-          <Plus className="h-4 w-4 mr-2" />
-          {t("createHome") || "Create Home"}
-        </Button>
-      </div>
+      {/* Header with Stats */}
+      <PageHeader
+        stats={
+          homes.length > 0
+            ? [
+                {
+                  label: t("totalHomes"),
+                  value: homes.length,
+                  icon: HomeIcon,
+                  color: "text-blue-500",
+                },
+              ]
+            : undefined
+        }
+      />
 
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

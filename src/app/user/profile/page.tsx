@@ -30,7 +30,6 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/language-context";
-import { useTheme } from "@/contexts/theme-context";
 
 interface UserProfile {
   id: number;
@@ -302,11 +301,6 @@ export default function UserProfilePage() {
 
   return (
     <div className="space-y-6 max-w-4xl">
-      <div>
-        <h1 className="text-3xl font-bold">{t("profileSettings")}</h1>
-        <p className="text-muted-foreground mt-1">{t("manageAccount")}</p>
-      </div>
-
       <div className="grid gap-6 md:grid-cols-3">
         {/* Profile Card */}
         <Card className="md:col-span-1">

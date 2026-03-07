@@ -24,6 +24,7 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/hooks/use-translation";
+import { PageHeader } from "@/components/ui/page-header";
 
 interface SensorDevice {
   id: string;
@@ -178,16 +179,35 @@ export default function UserDashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl md:text-3xl font-bold mb-1">
-          {t("welcomeBack") || "Welcome Back"} 👋
-        </h1>
-        <p className="text-sm md:text-base text-muted-foreground">
-          {t("monitorAndControl") ||
-            "Monitor and control your smart home devices"}
-        </p>
-      </div>
+      {/* Header with Stats */}
+      <PageHeader
+        stats={[
+          {
+            label: t("totalHomes"),
+            value: homesCount,
+            icon: HomeIcon,
+            color: "text-blue-500",
+          },
+          {
+            label: t("totalDevices"),
+            value: devicesCount,
+            icon: Smartphone,
+            color: "text-purple-500",
+          },
+          {
+            label: t("onlineDevices"),
+            value: onlineDevices.length,
+            icon: Wifi,
+            color: "text-green-500",
+          },
+          {
+            label: t("offlineDevices"),
+            value: offlineDevices.length,
+            icon: AlertCircle,
+            color: offlineDevices.length > 0 ? "text-red-500" : "text-gray-400",
+          },
+        ]}
+      />
 
       <UserInvites />
 
@@ -199,99 +219,6 @@ export default function UserDashboardPage() {
         </div>
       ) : (
         <>
-          {/* Stats Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-            <Link href="/user/homes">
-              <Card className="hover:shadow-lg transition-all hover:scale-[1.02] cursor-pointer border-2">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-xs md:text-sm font-medium">
-                    {t("homes") || "Homes"}
-                  </CardTitle>
-                  <HomeIcon className="h-4 w-4 text-blue-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl md:text-3xl font-bold">
-                    {homesCount}
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {homesCount === 0
-                      ? t("addHome") || "Add home"
-                      : t("active") || "Active"}
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link href="/user/devices">
-              <Card className="hover:shadow-lg transition-all hover:scale-[1.02] cursor-pointer border-2">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-xs md:text-sm font-medium">
-                    {t("devices") || "Devices"}
-                  </CardTitle>
-                  <Smartphone className="h-4 w-4 text-purple-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl md:text-3xl font-bold">
-                    {devicesCount}
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {devicesCount === 0
-                      ? t("pairDevice") || "Pair device"
-                      : t("registered") || "Registered"}
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Card className="border-2 border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-950/20">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xs md:text-sm font-medium">
-                  {t("online") || "Online"}
-                </CardTitle>
-                <Wifi className="h-4 w-4 text-green-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl md:text-3xl font-bold text-green-600">
-                  {onlineDevices.length}
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {offlineDevices.length} {t("offline") || "offline"}
-                </p>
-              </CardContent>
-            </Card>
-
-            <Link href="/user/alarms">
-              <Card
-                className={`hover:shadow-lg transition-all hover:scale-[1.02] cursor-pointer border-2 ${
-                  errorDevices.length > 0
-                    ? "border-red-200 dark:border-red-800 bg-red-50/50 dark:bg-red-950/20"
-                    : "border-gray-200 dark:border-gray-800"
-                }`}
-              >
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-xs md:text-sm font-medium">
-                    {t("alerts") || "Alerts"}
-                  </CardTitle>
-                  <AlertCircle
-                    className={`h-4 w-4 ${errorDevices.length > 0 ? "text-red-600" : "text-gray-600"}`}
-                  />
-                </CardHeader>
-                <CardContent>
-                  <div
-                    className={`text-2xl md:text-3xl font-bold ${errorDevices.length > 0 ? "text-red-600" : ""}`}
-                  >
-                    {errorDevices.length}
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {errorDevices.length === 0
-                      ? t("allGood") || "All good"
-                      : t("needAttention") || "Need attention"}
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
-          </div>
-
           {/* Sensor Monitoring Section */}
           {sensorDevices.length > 0 && (
             <div>

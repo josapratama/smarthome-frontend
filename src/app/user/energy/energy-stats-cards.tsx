@@ -55,7 +55,8 @@ export function EnergyStatsCards({
     }
   };
 
-  const formatEnergy = (kwh: number) => {
+  const formatEnergy = (kwh: number | undefined) => {
+    if (!kwh || kwh === 0) return "0 kWh";
     if (kwh >= 1000) {
       return `${(kwh / 1000).toFixed(2)} MWh`;
     }
@@ -74,13 +75,13 @@ export function EnergyStatsCards({
     if (!stats) return 0;
     switch (timeRange) {
       case "today":
-        return stats.today;
+        return stats.today ?? 0;
       case "week":
-        return stats.thisWeek;
+        return stats.thisWeek ?? 0;
       case "month":
-        return stats.thisMonth;
+        return stats.thisMonth ?? 0;
       default:
-        return stats.today;
+        return stats.today ?? 0;
     }
   };
 

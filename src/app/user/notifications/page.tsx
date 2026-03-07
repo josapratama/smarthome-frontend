@@ -16,6 +16,7 @@ import {
 } from "@/lib/api/alarms";
 import { homesApi } from "@/lib/api/client/homes";
 import type { AlarmDTO } from "@/lib/api/dto/alarm.dto";
+import { PageHeader } from "@/components/ui/page-header";
 import { formatDistanceToNow } from "date-fns";
 
 export default function NotificationsPage() {
@@ -26,6 +27,31 @@ export default function NotificationsPage() {
 
   useEffect(() => {
     loadNotifications();
+  }, []);
+
+  // Listen to topbar events
+  useEffect(() => {
+    const handleFilter = () => {
+      const filterSection = document.querySelector("[data-filter-section]");
+      if (filterSection) {
+        filterSection.scrollIntoView({ behavior: "smooth", block: "center" });
+        // Add highlight effect
+        filterSection.classList.add("ring-2", "ring-primary", "ring-offset-2");
+        setTimeout(() => {
+          filterSection.classList.remove(
+            "ring-2",
+            "ring-primary",
+            "ring-offset-2",
+          );
+        }, 2000);
+      }
+    };
+
+    window.addEventListener("topbar-filter", handleFilter);
+
+    return () => {
+      window.removeEventListener("topbar-filter", handleFilter);
+    };
   }, []);
 
   const loadNotifications = async () => {
@@ -170,52 +196,39 @@ export default function NotificationsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">
-            {t("notifications") || "Notifications"}
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            {t("manageNotifications") || "Manage your notifications and alerts"}
-          </p>
-        </div>
-        {unreadCount > 0 && (
-          <Button onClick={markAllAsRead} variant="outline">
-            <CheckCheck className="h-4 w-4 mr-2" />
-            {t("markAllAsRead") || "Mark All as Read"}
-          </Button>
-        )}
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold">{alarms.length}</div>
-              <div className="text-sm text-muted-foreground mt-1">
-                {t("allNotifications") || "All Notifications"}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary">
-                {unreadCount}
-              </div>
-              <div className="text-sm text-muted-foreground mt-1">
-                {t("unreadNotifications") || "Unread"}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Header with Stats */}
+      <PageHeader
+        stats={[
+          {
+            label: t("allNotifications") || "All Notifications",
+            value: alarms.length,
+            icon: Bell,
+            color: "text-primary",
+          },
+          {
+            label: t("unreadNotifications") || "Unread",
+            value: unreadCount,
+            icon: Bell,
+            color: "text-red-500",
+          },
+        ]}
+        actions={
+          unreadCount > 0 ? (
+            <Button onClick={markAllAsRead} variant="outline">
+              <CheckCheck className="h-4 w-4 mr-2" />
+              {t("markAllAsRead") || "Mark All as Read"}
+            </Button>
+          ) : undefined
+        }
+      />
 
       {/* Tabs */}
-      <Tabs value={filter} onValueChange={(v) => setFilter(v as any)}>
+      <Tabs
+        value={filter}
+        onValueChange={(v) => setFilter(v as any)}
+        data-filter-section
+        className="transition-all duration-300"
+      >
         <TabsList>
           <TabsTrigger value="all">
             {t("all") || "All"} ({alarms.length})

@@ -72,13 +72,6 @@ export default function UserAppInfoPage() {
 
   return (
     <div className="space-y-6 max-w-4xl">
-      <div>
-        <h1 className="text-3xl font-bold">App Information</h1>
-        <p className="text-muted-foreground mt-1">
-          Learn more about this application
-        </p>
-      </div>
-
       {Object.entries(appInfo).map(([category, items]) => (
         <Card key={category}>
           <CardHeader>

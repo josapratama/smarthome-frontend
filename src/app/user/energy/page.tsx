@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,13 +10,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Zap, RefreshCw, TrendingDown } from "lucide-react";
+import {
+  Zap,
+  RefreshCw,
+  TrendingDown,
+  Clock,
+  Home as HomeIcon,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "@/hooks/use-translation";
 import { energyApi } from "@/lib/api/energy";
 import { devicesApi, DeviceWithDetails } from "@/lib/api/client/devices";
 import { homesApi } from "@/lib/api/client/homes";
 import { getEnergyCost } from "@/lib/api/energy-cost";
+import { PageHeader } from "@/components/ui/page-header";
 import { EnergyStatsCards } from "./energy-stats-cards";
 import { DeviceEnergyList } from "./device-energy-list";
 import type { EnergyStats } from "@/lib/types";
@@ -49,7 +56,39 @@ export default function UserEnergyPage() {
 
   useEffect(() => {
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedHome, timeRange]);
+
+  // Listen to topbar events
+  useEffect(() => {
+    const handleRefresh = () => {
+      loadData();
+    };
+
+    const handleFilter = () => {
+      const filterSection = document.querySelector("[data-filter-section]");
+      if (filterSection) {
+        filterSection.scrollIntoView({ behavior: "smooth", block: "center" });
+        // Add highlight effect
+        filterSection.classList.add("ring-2", "ring-primary", "ring-offset-2");
+        setTimeout(() => {
+          filterSection.classList.remove(
+            "ring-2",
+            "ring-primary",
+            "ring-offset-2",
+          );
+        }, 2000);
+      }
+    };
+
+    window.addEventListener("topbar-refresh", handleRefresh);
+    window.addEventListener("topbar-filter", handleFilter);
+
+    return () => {
+      window.removeEventListener("topbar-refresh", handleRefresh);
+      window.removeEventListener("topbar-filter", handleFilter);
+    };
+  }, []);
 
   const loadData = async () => {
     setIsLoading(true);
@@ -176,33 +215,51 @@ export default function UserEnergyPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
-            <Zap className="h-7 w-7 text-yellow-500" />
-            {t("energy")}
-          </h1>
-          <p className="text-sm md:text-base text-muted-foreground mt-1">
-            {t("monitorEnergyConsumption")}
-          </p>
-        </div>
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={loadData}
-          disabled={isLoading}
-        >
-          <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
-        </Button>
-      </div>
+      {/* Header with Stats */}
+      <PageHeader
+        stats={[
+          {
+            label: t("totalDevices"),
+            value: devices.length,
+            icon: Zap,
+            color: "text-yellow-500",
+          },
+          {
+            label: t("onlineDevices"),
+            value: devices.filter((d) => d.status === "ONLINE").length,
+            icon: TrendingDown,
+            color: "text-green-500",
+          },
+          {
+            label: t("today"),
+            value: `${stats?.today?.toFixed(1) ?? "0"} kWh`,
+            icon: Zap,
+            color: "text-orange-500",
+          },
+        ]}
+        actions={
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={loadData}
+            disabled={isLoading}
+          >
+            <RefreshCw
+              className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
+            />
+          </Button>
+        }
+      />
 
       {/* Filters */}
-      <Card>
+      <Card data-filter-section className="transition-all duration-300">
         <CardContent className="pt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t("filterByHome")}</label>
+              <label className="text-sm font-medium flex items-center gap-2">
+                <HomeIcon className="h-4 w-4 text-muted-foreground" />
+                {t("filterByHome")}
+              </label>
               <Select value={selectedHome} onValueChange={setSelectedHome}>
                 <SelectTrigger>
                   <SelectValue />
@@ -211,7 +268,10 @@ export default function UserEnergyPage() {
                   <SelectItem value="all">{t("allHomes")}</SelectItem>
                   {homes.map((home) => (
                     <SelectItem key={home.id} value={home.id.toString()}>
-                      {home.name}
+                      <div className="flex items-center gap-2">
+                        <HomeIcon className="h-4 w-4" />
+                        {home.name}
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -219,7 +279,10 @@ export default function UserEnergyPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t("timeRange")}</label>
+              <label className="text-sm font-medium flex items-center gap-2">
+                <Clock className="h-4 w-4 text-muted-foreground" />
+                {t("timeRange")}
+              </label>
               <Select
                 value={timeRange}
                 onValueChange={(v: any) => setTimeRange(v)}

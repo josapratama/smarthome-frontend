@@ -6,8 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Send, Bot, User, Trash2, Plus } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Send, Bot, User, Trash2, Plus, Bell } from "lucide-react";
 import {
   sendMessage,
   getConversations,
@@ -38,6 +38,19 @@ export default function UserChatPage() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Listen to topbar events
+  useEffect(() => {
+    const handleAdd = () => {
+      handleNewConversation();
+    };
+
+    window.addEventListener("topbar-add", handleAdd);
+
+    return () => {
+      window.removeEventListener("topbar-add", handleAdd);
+    };
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -129,30 +142,13 @@ export default function UserChatPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl md:text-3xl font-bold mb-1 flex items-center gap-2">
-          <MessageCircle className="h-7 w-7" />
-          {t("chatAI") || "AI Assistant"}
-        </h1>
-        <p className="text-sm md:text-base text-muted-foreground">
-          {t("chatAIDescription") ||
-            "Get instant help and answers from our AI assistant"}
-        </p>
-      </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {/* Conversations Sidebar */}
         <Card className="lg:col-span-1">
           <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base">
-                {t("conversations") || "Conversations"}
-              </CardTitle>
-              <Button size="sm" variant="ghost" onClick={handleNewConversation}>
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
+            <CardTitle className="text-base">
+              {t("conversations") || "Conversations"}
+            </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             {isLoading ? (
@@ -295,7 +291,7 @@ export default function UserChatPage() {
                 placeholder={t("typeMessage") || "Type your message..."}
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
+                onKeyDown={handleKeyPress}
                 disabled={isSending}
                 className="flex-1"
               />

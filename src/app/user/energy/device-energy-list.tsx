@@ -27,7 +27,8 @@ export function DeviceEnergyList({
 }: DeviceEnergyListProps) {
   const { t } = useTranslation();
 
-  const formatEnergy = (kwh: number) => {
+  const formatEnergy = (kwh: number | undefined) => {
+    if (!kwh || kwh === 0) return "0 kWh";
     if (kwh >= 1000) {
       return `${(kwh / 1000).toFixed(2)} MWh`;
     }
