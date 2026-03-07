@@ -17,8 +17,8 @@ import { energyApi } from "@/lib/api/energy";
 import { devicesApi, DeviceWithDetails } from "@/lib/api/client/devices";
 import { homesApi } from "@/lib/api/client/homes";
 import { getEnergyCost } from "@/lib/api/energy-cost";
-import { EnergyStatsCards } from "@/components/energy/energy-stats-cards";
-import { DeviceEnergyList } from "@/components/energy/device-energy-list";
+import { EnergyStatsCards } from "./energy-stats-cards";
+import { DeviceEnergyList } from "./device-energy-list";
 import type { EnergyStats } from "@/lib/types";
 
 interface DeviceEnergyData {
