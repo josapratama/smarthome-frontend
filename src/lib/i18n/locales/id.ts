@@ -53,6 +53,16 @@ export const id = {
   goToLogin: "Ke halaman login",
   commonHome: "Beranda",
   monitorAndControl: "Monitor dan kontrol perangkat IoT Anda",
+  failedToLoadDashboard: "Gagal memuat data dashboard",
+  realTimeSensorData: "Data sensor real-time dari perangkat Anda",
+  live: "Live",
+  getStartedSmartHome: "Mulai dengan Smart Home",
+  createHomeAddRooms: "Buat rumah dan tambahkan ruangan",
+  pairESP32Devices: "Pasangkan perangkat ESP32 IoT Anda",
+  monitorRealTimeTelemetry: "Monitor telemetri real-time",
+  controlDevicesRemotely: "Kontrol perangkat dari jarak jauh",
+  createFirstHome: "Buat Rumah Pertama Anda",
+  gas: "Gas",
 
   // Guest
   guestPanel: "Panel Tamu",

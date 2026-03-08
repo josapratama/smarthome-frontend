@@ -116,9 +116,9 @@ export function EnergyStatsCards({
             </div>
           </div>
           <div className="flex items-center gap-1 mt-3 text-sm">
-            {getTrendIcon(stats.trend)}
-            <span className={getTrendColor(stats.trend)}>
-              {Math.abs(stats.percentageChange).toFixed(1)}%
+            {getTrendIcon(stats.trend || "stable")}
+            <span className={getTrendColor(stats.trend || "stable")}>
+              {Math.abs(stats.percentageChange || 0).toFixed(1)}%
             </span>
             <span className="text-muted-foreground">{t("fromYesterday")}</span>
           </div>
@@ -156,7 +156,7 @@ export function EnergyStatsCards({
                 {t("dailyAverage")}
               </p>
               <p className="text-2xl font-bold mt-1">
-                {formatEnergy(stats.dailyAverage)}
+                {formatEnergy(stats.dailyAverage || 0)}
               </p>
             </div>
             <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center">

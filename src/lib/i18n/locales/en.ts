@@ -54,6 +54,16 @@ export const en = {
   viewAll: "View All",
   noActivity: "No recent activity",
   monitorAndControl: "Monitor and control your IoT devices",
+  failedToLoadDashboard: "Failed to load dashboard data",
+  realTimeSensorData: "Real-time sensor data from your devices",
+  live: "Live",
+  getStartedSmartHome: "Get Started with Smart Home",
+  createHomeAddRooms: "Create a home and add rooms",
+  pairESP32Devices: "Pair your ESP32 IoT devices",
+  monitorRealTimeTelemetry: "Monitor real-time telemetry",
+  controlDevicesRemotely: "Control devices remotely",
+  createFirstHome: "Create Your First Home",
+  gas: "Gas",
 
   // Rooms
   manageRooms: "Manage rooms across all homes",
