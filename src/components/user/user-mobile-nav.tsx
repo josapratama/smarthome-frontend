@@ -21,31 +21,26 @@ export function UserMobileNav() {
       name: t("dashboard"),
       href: "/user/dashboard",
       icon: LayoutDashboard,
-      label: "Home",
     },
     {
       name: t("devices"),
       href: "/user/devices",
       icon: Cpu,
-      label: "Devices",
     },
     {
-      name: t("locations") || "Lokasi",
+      name: t("locations"),
       href: "/user/locations",
       icon: MapPin,
-      label: "Lokasi",
     },
     {
-      name: t("alerts") || "Peringatan",
+      name: t("alerts"),
       href: "/user/alerts",
       icon: AlertTriangle,
-      label: "Alerts",
     },
     {
       name: t("profile"),
       href: "/user/profile",
       icon: User,
-      label: "Profile",
     },
   ];
 
@@ -86,11 +81,11 @@ export function UserMobileNav() {
               </div>
               <span
                 className={cn(
-                  "truncate text-[10px] font-medium",
+                  "truncate text-[10px] font-medium max-w-[60px]",
                   isActive && "font-semibold",
                 )}
               >
-                {item.label}
+                {item.name}
               </span>
             </Link>
           );

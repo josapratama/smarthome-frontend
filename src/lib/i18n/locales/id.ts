@@ -7,6 +7,8 @@ export const id = {
   locations: "Lokasi",
   alerts: "Peringatan",
   support: "Bantuan",
+  userPanel: "Panel Pengguna",
+  user: "Pengguna",
   firmware: "Firmware",
   ota: "Pembaruan OTA",
   monitoring: "Monitoring",

@@ -8,6 +8,8 @@ export const en = {
   alerts: "Alerts",
   support: "Support",
   supportAndHelp: "Support & Help",
+  userPanel: "User Panel",
+  user: "User",
   firmware: "Firmware",
   ota: "OTA Updates",
   monitoring: "Monitoring",
