@@ -494,6 +494,7 @@ export const id = {
   enableEmailNotifications: "Notifikasi Email",
   enablePushNotifications: "Notifikasi Push",
   enableSoundNotifications: "Notifikasi Suara",
+  soundNotifications: "Notifikasi Suara",
   sound: "Suara",
   receiveEmail: "Terima notifikasi melalui email",
   receivePush: "Terima notifikasi push di perangkat Anda",

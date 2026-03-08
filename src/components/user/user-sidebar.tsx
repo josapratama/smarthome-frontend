@@ -48,7 +48,7 @@ export function UserSidebar({ className, onClose }: UserSidebarProps) {
 
   const loadUserProfile = async () => {
     try {
-      const response = await fetch("/api/v1/users/profile");
+      const response = await fetch("/api/profile");
       if (response.ok) {
         const data = await response.json();
         setUserProfile(data);
