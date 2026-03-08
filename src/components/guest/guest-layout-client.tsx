@@ -1,23 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { Sidebar } from "./Sidebar";
-import { Topbar } from "./Topbar";
-import { MobileNav } from "./MobileNav";
-import { ChatWidget } from "@/app/user/chat/chat-widget";
+import { GuestSidebar } from "./guest-sidebar";
+import { GuestTopbar } from "./guest-topbar";
+import { GuestMobileNav } from "./guest-mobile-nav";
 import { ThemeProvider } from "@/contexts/theme-context";
 import { LanguageProvider } from "@/contexts/language-context";
 
-export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
+export function GuestLayoutClient({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <ThemeProvider>
       <LanguageProvider>
-        <div className="h-screen bg-background overflow-hidden">
-          <div className="flex h-full">
+        <div className="min-h-screen bg-background">
+          <div className="flex h-screen overflow-hidden">
             {/* Desktop Sidebar */}
-            <Sidebar className="hidden lg:flex" />
+            <GuestSidebar className="hidden lg:flex" />
 
             {/* Mobile Sidebar Overlay */}
             {sidebarOpen && (
@@ -28,7 +27,7 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
             )}
 
             {/* Mobile Sidebar Drawer */}
-            <Sidebar
+            <GuestSidebar
               className={`fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 lg:hidden ${
                 sidebarOpen ? "translate-x-0" : "-translate-x-full"
               }`}
@@ -36,7 +35,7 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
             />
 
             <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-              <Topbar onMenuClick={() => setSidebarOpen(true)} />
+              <GuestTopbar onMenuClick={() => setSidebarOpen(true)} />
               <main className="flex-1 overflow-y-auto p-4 pb-20 md:p-6 lg:pb-6">
                 {children}
               </main>
@@ -44,10 +43,7 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
           </div>
 
           {/* Mobile Bottom Navigation */}
-          <MobileNav />
-
-          {/* Chat Widget */}
-          <ChatWidget />
+          <GuestMobileNav />
         </div>
       </LanguageProvider>
     </ThemeProvider>

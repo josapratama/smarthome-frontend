@@ -1292,6 +1292,13 @@ export const es = {
   // Homes Extended Keys
   homeDeletedSuccess: "Casa eliminada exitosamente",
   manageHomesLocations: "Gestionar casas y ubicaciones",
+  locations: "Ubicaciones",
+  alerts: "Alertas",
+  support: "Soporte",
+  supportAndHelp: "Soporte y Ayuda",
+  manageHomesAndRooms: "Gestionar sus casas y habitaciones",
+  manageAlarmsAndNotifications: "Gestionar alarmas y notificaciones",
+  messagesAndFAQ: "Mensajes y preguntas frecuentes para ayudarle",
   createFirstHomeDescription:
     "Cree su primera casa para organizar dispositivos por ubicación",
   deleteHome: "Eliminar Casa",

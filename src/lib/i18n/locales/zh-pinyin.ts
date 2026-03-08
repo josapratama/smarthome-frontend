@@ -1125,6 +1125,13 @@ export const zhPinyin = {
   // Homes Extended Keys
   homeDeletedSuccess: "Jiātíng shānchú chénggōng",
   manageHomesLocations: "Guǎnlǐ jiātíng hé wèizhì",
+  locations: "Wèizhì",
+  alerts: "Jǐngbào",
+  support: "Zhīchí",
+  supportAndHelp: "Zhīchí yǔ bāngzhù",
+  manageHomesAndRooms: "Guǎnlǐ nín de jiātíng hé fángjiān",
+  manageAlarmsAndNotifications: "Guǎnlǐ jǐngbào hé tōngzhī",
+  messagesAndFAQ: "Xiāoxī hé chángjiàn wèntí bāngzhù nín",
   createFirstHomeDescription:
     "Chuàngjiàn nín de dì yī gè jiātíng yǐ àn wèizhì zǔzhī shèbèi",
   deleteHome: "Shānchú jiātíng",

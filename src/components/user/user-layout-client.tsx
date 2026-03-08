@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { UserSidebar } from "./UserSidebar";
-import { UserTopbar } from "./UserTopbar";
-import { UserMobileNav } from "./UserMobileNav";
+import { UserSidebar } from "./user-sidebar";
+import { UserTopbar } from "./user-topbar";
+import { UserMobileNav } from "./user-mobile-nav";
 import { ThemeProvider } from "@/contexts/theme-context";
 import { LanguageProvider } from "@/contexts/language-context";
 

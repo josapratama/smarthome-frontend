@@ -1112,6 +1112,13 @@ export const ja = {
   // Homes Extended Keys
   homeDeletedSuccess: "ホームが正常に削除されました",
   manageHomesLocations: "ホームと場所を管理",
+  locations: "場所",
+  alerts: "アラート",
+  support: "サポート",
+  supportAndHelp: "サポートとヘルプ",
+  manageHomesAndRooms: "ホームと部屋を管理",
+  manageAlarmsAndNotifications: "アラームと通知を管理",
+  messagesAndFAQ: "メッセージとFAQでサポート",
   createFirstHomeDescription:
     "場所ごとにデバイスを整理するために最初のホームを作成",
   deleteHome: "ホームを削除",

@@ -13,11 +13,9 @@ import {
   X,
   LogOut,
   User,
-  Bell,
-  MessageSquare,
   HelpCircle,
 } from "lucide-react";
-import { useLanguage } from "@/contexts/language-context";
+import { useTranslation } from "@/hooks/use-translation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -30,17 +28,23 @@ interface UserSidebarProps {
 export function UserSidebar({ className, onClose }: UserSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t } = useTranslation();
 
   const navigation = [
     { name: t("dashboard"), href: "/user/dashboard", icon: LayoutDashboard },
     { name: t("devices"), href: "/user/devices", icon: Cpu },
-    { name: t("homes"), href: "/user/homes", icon: Home },
+    { name: t("locations") || "Lokasi", href: "/user/locations", icon: Home }, // Homes & Rooms
     { name: t("energy"), href: "/user/energy", icon: Zap },
-    { name: t("alarms"), href: "/user/alarms", icon: AlertTriangle },
-    { name: t("messages"), href: "/user/messages", icon: MessageSquare },
-    { name: t("faq"), href: "/user/faq", icon: HelpCircle },
-    { name: t("notifications"), href: "/user/notifications", icon: Bell },
+    {
+      name: t("alerts") || "Peringatan",
+      href: "/user/alerts",
+      icon: AlertTriangle,
+    }, // Alarms & Notifications
+    {
+      name: t("support") || "Bantuan",
+      href: "/user/support",
+      icon: HelpCircle,
+    }, // Messages & FAQ
     { name: t("appInformation"), href: "/user/app-info", icon: Info },
     { name: t("settings"), href: "/user/settings", icon: Settings },
   ];

@@ -1413,25 +1413,17 @@ export const id = {
   privacyPRIVATEDesc: "Hanya pemilik dan yang diberi izin",
   privacySHAREDDesc: "Pemilik dan anggota terpilih",
   privacyRestrictedDesc: "Hanya pemilik rumah",
-  privacyRESTRICTEDDesc: "Hanya pemilik rumah",
 
   // Access Levels
   accessOwner: "Pemilik",
-  accessOWNER: "Pemilik",
   accessLevelControl: "Kontrol",
   accessCONTROL: "Kontrol",
   accessView: "Lihat",
-  accessVIEW: "Lihat",
   accessNone: "Tidak Ada",
-  accessNONE: "Tidak Ada",
   accessOwnerDesc: "Kontrol penuh (edit, hapus, beri akses)",
-  accessOWNERDesc: "Kontrol penuh (edit, hapus, beri akses)",
   accessControlDesc: "Bisa kontrol perangkat",
-  accessCONTROLDesc: "Bisa kontrol perangkat",
   accessViewDesc: "Hanya bisa lihat status",
-  accessVIEWDesc: "Hanya bisa lihat status",
   accessNoneDesc: "Tidak ada akses",
-  accessNONEDesc: "Tidak ada akses",
 
   // Access Management
   setExpiration: "Atur Kadaluarsa (Opsional)",
@@ -1660,4 +1652,122 @@ export const id = {
   control: "Kontrol",
   history: "Riwayat",
   analytics: "Analitik",
+
+  // Device Detail - Fitur Baru
+  channels: "Channel",
+
+  // Channels
+  noChannelsFound: "Tidak Ada Channel",
+  noChannelsDescription:
+    "Perangkat ini tidak memiliki channel yang dikonfigurasi",
+
+  // Commands
+  quickCommands: "Perintah Cepat",
+  failedToSendCommand: "Gagal mengirim perintah",
+  commandRetried: "Perintah dicoba ulang",
+  failedToRetryCommand: "Gagal mencoba ulang perintah",
+
+  // Telemetry
+  dataVisualization: "Visualisasi Data",
+  metric: "Metrik",
+  allMetrics: "Semua Metrik",
+  last1Hour: "1 Jam Terakhir",
+  last6Hours: "6 Jam Terakhir",
+  last24Hours: "24 Jam Terakhir",
+  last7Days: "7 Hari Terakhir",
+  last30Days: "30 Hari Terakhir",
+  dataExported: "Data berhasil diekspor",
+  failedToExportData: "Gagal mengekspor data",
+  failedToLoadTelemetry: "Gagal memuat data telemetri",
+
+  // Device Config
+  jsonConfig: "Konfigurasi JSON",
+  unsavedChanges: "Perubahan belum disimpan",
+  unsavedChangesWarning: "Anda memiliki perubahan yang belum disimpan",
+  validJson: "JSON Valid",
+  jsonFormatted: "JSON diformat",
+  deviceConfigSaved: "Konfigurasi perangkat disimpan",
+  failedToSaveConfig: "Gagal menyimpan konfigurasi",
+  failedToLoadConfig: "Gagal memuat konfigurasi",
+  configurationGuide: "Panduan Konfigurasi",
+  commonFields: "Field Umum",
+  mqttSettings: "Pengaturan koneksi MQTT",
+  wifiSettings: "Pengaturan jaringan WiFi",
+  sensorConfiguration: "Array konfigurasi sensor",
+  actuatorConfiguration: "Array konfigurasi aktuator",
+  updateIntervalSeconds: "Interval update dalam detik",
+  exampleConfig: "Contoh Konfigurasi",
+  configHelpText:
+    "Edit konfigurasi JSON dengan hati-hati. JSON yang tidak valid tidak akan disimpan.",
+
+  // OTA Updates
+  availableFirmware: "Firmware Tersedia",
+  updateHistory: "Riwayat Update",
+  noFirmwareAvailable: "Tidak ada firmware tersedia",
+  noUpdateHistory: "Tidak ada riwayat update",
+  confirmFirmwareUpdate: "Konfirmasi Update Firmware",
+  firmwareUpdateWarning:
+    "Apakah Anda yakin ingin mengupdate firmware? Perangkat akan restart selama proses update.",
+  otaUpdateTriggered: "Update OTA dimulai",
+  failedToTriggerUpdate: "Gagal memulai update",
+  otaJobRetried: "Job OTA dicoba ulang",
+  failedToRetryJob: "Gagal mencoba ulang job",
+  otaJobCancelled: "Job OTA dibatalkan",
+  failedToCancelJob: "Gagal membatalkan job",
+  failedToLoadOTAData: "Gagal memuat data OTA",
+
+  // Device Overview
+  deleteDeviceWarning: "Tindakan ini tidak dapat dibatalkan.",
+
+  // General
+  failedToLoadChannels: "Gagal memuat channel",
+  channelUpdated: "Channel diperbarui",
+  failedToUpdateChannel: "Gagal memperbarui channel",
+
+  // Guest Features - Additional Keys
+  waitForHomeInvitation: "Tunggu undangan untuk mengakses rumah",
+  viewHomesYouHaveAccessTo: "Lihat rumah yang dapat Anda akses",
+  noNotificationsDesc: "Anda belum memiliki notifikasi",
+  aboutThisApplication: "Tentang aplikasi ini",
+  contactInformation: "Informasi Kontak",
+  supportEmail: "Email Dukungan",
+  legalInformation: "Informasi Legal",
+  termsOfService: "Ketentuan Layanan",
+  guestModeActive: "Mode Tamu Aktif",
+  guestModeDesc: "Anda melihat aplikasi dalam mode tamu dengan akses terbatas.",
+  noAppInfoAvailable: "Tidak ada informasi aplikasi tersedia",
+  contactAdminForInfo: "Hubungi administrator untuk informasi lebih lanjut",
+  selectThemePreference: "Pilih tema yang Anda sukai",
+  selectLanguage: "Pilih Bahasa",
+  receiveEmailUpdates: "Terima pembaruan email",
+  receivePushUpdates: "Terima notifikasi push",
+  notificationSettingsReadOnly:
+    "Pengaturan notifikasi hanya baca untuk pengguna tamu",
+  limitedSettings: "Pengaturan Terbatas",
+  guestSettingsLimited:
+    "Sebagai tamu, Anda hanya dapat mengubah pengaturan tampilan dan bahasa.",
+  viewYourProfileInfo: "Lihat informasi profil Anda",
+  profileNotFound: "Profil tidak ditemukan",
+  unableToLoadProfile: "Tidak dapat memuat profil Anda",
+  memberSince: "Anggota Sejak",
+  userId: "ID Pengguna",
+  profileReadOnly: "Profil Hanya Baca",
+  guestCannotEditProfile:
+    "Pengguna tamu tidak dapat mengedit profil mereka. Hubungi administrator untuk perubahan.",
+  failedLoadDeviceData: "Gagal memuat data perangkat",
+  deviceNotFoundDesc: "Perangkat yang Anda cari tidak ada",
+  viewOnlyMode: "Mode Lihat Saja",
+  guestCannotControlDevice:
+    "Sebagai tamu, Anda dapat melihat informasi perangkat tetapi tidak dapat mengontrolnya.",
+  recentTelemetry: "Telemetri Terbaru",
+  noTelemetryDataDesc: "Tidak ada data telemetri tersedia untuk perangkat ini",
+  languageChanged: "Bahasa berhasil diubah",
+  themeChanged: "Tema berhasil diubah",
+  failedMarkAsRead: "Gagal menandai sudah dibaca",
+  failedDeleteNotification: "Gagal menghapus notifikasi",
+  failedLoadHomeData: "Gagal memuat data rumah",
+  homeInformation: "Informasi Rumah",
+  country: "Negara",
+  noRoomsInHome: "Tidak ada ruangan di rumah ini",
+  noDevicesInHome: "Tidak ada perangkat di rumah ini",
 } as const;

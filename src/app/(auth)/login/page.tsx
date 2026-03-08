@@ -25,7 +25,7 @@ import {
   PublicSettingsProvider,
   usePublicSettings,
 } from "@/contexts/public-settings-context";
-import { AuthRedirect } from "@/components/landing/AuthRedirect";
+import { AuthRedirect } from "@/components/landing/auth-redirect";
 
 function cn(...c: Array<string | false | null | undefined>) {
   return c.filter(Boolean).join(" ");

@@ -5,12 +5,12 @@ import {
   usePublicSettings,
 } from "@/contexts/public-settings-context";
 import { useState } from "react";
-import { Header } from "@/components/landing/Header";
-import { HeroSection } from "@/components/landing/HeroSection";
-import { FeaturesSection } from "@/components/landing/FeaturesSection";
-import { CTASection } from "@/components/landing/CTASection";
-import { Footer } from "@/components/landing/Footer";
-import { AuthRedirect } from "@/components/landing/AuthRedirect";
+import { Header } from "@/components/landing/header";
+import { HeroSection } from "@/components/landing/hero-section";
+import { FeaturesSection } from "@/components/landing/features-section";
+import { CTASection } from "@/components/landing/cta-section";
+import { Footer } from "@/components/landing/footer";
+import { AuthRedirect } from "@/components/landing/auth-redirect";
 
 function LandingPageContent() {
   const { theme, language, toggleTheme, setLanguage, t } = usePublicSettings();

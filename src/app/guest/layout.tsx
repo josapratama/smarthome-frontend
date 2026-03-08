@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { GuestLayoutClient } from "@/components/guest/GuestLayoutClient";
+import { GuestLayoutClient } from "@/components/guest/guest-layout-client";
 
 export default async function GuestLayout({
   children,

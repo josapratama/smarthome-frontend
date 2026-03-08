@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { AdminLayoutClient } from "@/components/admin/AdminLayoutClient";
+import { AdminLayoutClient } from "@/components/admin/admin-layout-client";
 
 export default async function AdminLayout({
   children,

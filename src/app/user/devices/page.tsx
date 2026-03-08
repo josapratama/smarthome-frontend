@@ -171,6 +171,9 @@ export default function UserDevicesPage() {
   };
 
   const getDeviceIcon = (type: string) => {
+    if (!type) {
+      return <Smartphone className="h-6 w-6 text-primary" />;
+    }
     const lowerType = type.toLowerCase();
     if (lowerType.includes("light") || lowerType.includes("lampu")) {
       return <Lightbulb className="h-6 w-6 text-yellow-500" />;

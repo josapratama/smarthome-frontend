@@ -1111,6 +1111,13 @@ export const ko = {
   // Homes Extended Keys
   homeDeletedSuccess: "홈이 성공적으로 삭제되었습니다",
   manageHomesLocations: "홈 및 위치 관리",
+  locations: "위치",
+  alerts: "알림",
+  support: "지원",
+  supportAndHelp: "지원 및 도움말",
+  manageHomesAndRooms: "홈 및 방 관리",
+  manageAlarmsAndNotifications: "알람 및 알림 관리",
+  messagesAndFAQ: "메시지 및 FAQ로 도움받기",
   createFirstHomeDescription: "위치별로 장치를 정리하기 위해 첫 번째 홈 생성",
   deleteHome: "홈 삭제",
   deleteHomeConfirmation: "삭제하시겠습니까",

@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "@/hooks/use-translation";
 import { homesApi, Home } from "@/lib/api/client/homes";
-import { CreateHomeDialog } from "@/app/user/homes/create-home-dialog";
-import { HomeCard } from "@/app/user/homes/home-card";
+import { CreateHomeDialog } from "./create-home-dialog";
+import { HomeCard } from "./home-card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/ui/page-header";
@@ -21,7 +21,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-export default function UserHomesPage() {
+export default function HomesContent() {
   const { t } = useTranslation();
   const [homes, setHomes] = useState<Home[]>([]);
   const [isLoading, setIsLoading] = useState(true);

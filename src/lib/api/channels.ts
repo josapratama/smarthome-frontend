@@ -1,57 +1,109 @@
 import { api } from "./client";
-import type {
-  ChannelDTO,
-  CreateChannelDTO,
-  UpdateChannelDTO,
-  ChannelStateDTO,
-  ChannelStateHistoryDTO,
-} from "./dto/channel.dto";
 
-export async function getDeviceChannels(
-  deviceId: number,
-): Promise<ChannelDTO[]> {
-  const res = await api.get(`/v1/channels/device/${deviceId}`);
-  return res.data;
+export type ChannelType =
+  | "RELAY"
+  | "SENSOR"
+  | "DIMMER"
+  | "SERVO"
+  | "RGB_LED"
+  | "ANALOG_IN"
+  | "DIGITAL_IN";
+
+export interface Channel {
+  id: number;
+  deviceId: number;
+  channelNum: number;
+  name: string;
+  type: ChannelType;
+  pinNumber?: number;
+  pinMode?: string;
+  state: boolean;
+  value?: number;
+  sensorType?: string;
+  unit?: string;
+  minValue?: number;
+  maxValue?: number;
+  isEnabled: boolean;
+  lastUpdated?: string;
 }
 
-export async function getChannel(channelId: number): Promise<ChannelDTO> {
-  const res = await api.get(`/v1/channels/${channelId}`);
-  return res.data;
+export interface CreateChannelInput {
+  channelNum: number;
+  name: string;
+  type: ChannelType;
+  pinNumber?: number;
+  pinMode?: string;
+  sensorType?: string;
+  unit?: string;
+  minValue?: number;
+  maxValue?: number;
 }
 
-export async function createChannel(
-  data: CreateChannelDTO,
-): Promise<ChannelDTO> {
-  const res = await api.post("/v1/channels", data);
-  return res.data;
+export interface UpdateChannelInput {
+  name?: string;
+  state?: boolean;
+  value?: number;
+  isEnabled?: boolean;
 }
 
-export async function updateChannel(
-  channelId: number,
-  data: UpdateChannelDTO,
-): Promise<ChannelDTO> {
-  const res = await api.patch(`/v1/channels/${channelId}`, data);
-  return res.data;
-}
+export const channelsApi = {
+  // Get all channels for a device
+  list: async (deviceId: number): Promise<Channel[]> => {
+    const { data } = await api.get<{ data: { channels: Channel[] } }>(
+      `/v1/devices/${deviceId}/channels`,
+    );
+    return data.data.channels;
+  },
 
-export async function deleteChannel(channelId: number): Promise<void> {
-  await api.delete(`/v1/channels/${channelId}`);
-}
+  // Get single channel
+  get: async (deviceId: number, channelId: number): Promise<Channel> => {
+    const { data } = await api.get<{ data: { channel: Channel } }>(
+      `/v1/devices/${deviceId}/channels/${channelId}`,
+    );
+    return data.data.channel;
+  },
 
-export async function setChannelState(
-  channelId: number,
-  data: ChannelStateDTO,
-): Promise<void> {
-  await api.post(`/v1/channels/${channelId}/state`, data);
-}
+  // Create channel
+  create: async (
+    deviceId: number,
+    input: CreateChannelInput,
+  ): Promise<Channel> => {
+    const { data } = await api.post<{ data: { channel: Channel } }>(
+      `/v1/devices/${deviceId}/channels`,
+      input,
+    );
+    return data.data.channel;
+  },
 
-export async function getChannelHistory(
-  channelId: number,
-  limit?: number,
-): Promise<ChannelStateHistoryDTO[]> {
-  const params = limit ? { limit: limit.toString() } : {};
-  const res = await api.get(`/v1/channels/${channelId}/history`, {
-    params,
-  });
-  return res.data;
-}
+  // Update channel
+  update: async (
+    deviceId: number,
+    channelId: number,
+    input: UpdateChannelInput,
+  ): Promise<Channel> => {
+    const { data } = await api.put<{ data: { channel: Channel } }>(
+      `/v1/devices/${deviceId}/channels/${channelId}`,
+      input,
+    );
+    return data.data.channel;
+  },
+
+  // Delete channel
+  delete: async (deviceId: number, channelId: number): Promise<void> => {
+    await api.delete(`/v1/devices/${deviceId}/channels/${channelId}`);
+  },
+
+  // Control channel (set state/value)
+  control: async (
+    deviceId: number,
+    channelId: number,
+    state?: boolean,
+    value?: number,
+  ): Promise<Channel> => {
+    const { data } = await api.post<{ data: { channel: Channel } }>(
+      `/v1/devices/${deviceId}/channels/${channelId}/control`,
+      { state, value },
+    );
+    return data.data.channel;
+  },
+};

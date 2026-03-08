@@ -13,7 +13,7 @@ import {
   PublicSettingsProvider,
   usePublicSettings,
 } from "@/contexts/public-settings-context";
-import { AuthRedirect } from "@/components/landing/AuthRedirect";
+import { AuthRedirect } from "@/components/landing/auth-redirect";
 
 function ForgotPasswordContent() {
   const router = useRouter();

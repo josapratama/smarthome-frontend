@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { MessageSquare, Users, Mail, Search } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
-import { ChatWindow } from "@/app/user/messages/chat-window";
+import { ChatWindow } from "./chat-window";
 import {
   getDMConversations,
   getHomeConversations,

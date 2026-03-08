@@ -18,25 +18,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Search,
-  Home,
-  DoorOpen,
-  Shield,
-  Plus,
-  MapPin,
-  ChevronRight,
-} from "lucide-react";
+import { Search, Home, DoorOpen, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
-import { useLanguage } from "@/contexts/language-context";
+import { useTranslation } from "@/hooks/use-translation";
 import { roomsApi, Room } from "@/lib/api/client/rooms";
 import { homesApi, Home as HomeType } from "@/lib/api/client/homes";
 
-export default function UserRoomsPage() {
+export default function RoomsContent() {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t } = useTranslation();
 
   const [rooms, setRooms] = useState<(Room & { homeName?: string })[]>([]);
   const [homes, setHomes] = useState<HomeType[]>([]);
@@ -116,13 +107,6 @@ export default function UserRoomsPage() {
 
   return (
     <div className="space-y-6 max-w-6xl">
-      <div>
-        <h1 className="text-3xl font-bold">{t("rooms")}</h1>
-        <p className="text-muted-foreground mt-1">
-          {t("manageRoomsAcrossHomes")}
-        </p>
-      </div>
-
       {/* Statistics */}
       <div className="grid gap-4 md:grid-cols-3">
         <Card>

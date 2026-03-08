@@ -45,7 +45,7 @@ import type {
   AlarmSeverity,
 } from "@/lib/api/dto/alarm.dto";
 
-export default function UserAlarmsPage() {
+export default function AlarmsContent() {
   const { t } = useTranslation();
   const [alarms, setAlarms] = useState<AlarmDTO[]>([]);
   const [filteredAlarms, setFilteredAlarms] = useState<AlarmDTO[]>([]);
@@ -56,7 +56,6 @@ export default function UserAlarmsPage() {
   const [severityFilter, setSeverityFilter] = useState<string>("all");
   const [homeFilter, setHomeFilter] = useState<string>("all");
 
-  // Refs for filter section
   const filterSectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -67,7 +66,6 @@ export default function UserAlarmsPage() {
     filterAlarms();
   }, [alarms, searchQuery, statusFilter, severityFilter]);
 
-  // Listen to topbar events
   useEffect(() => {
     const handleRefresh = () => {
       loadData();
@@ -95,7 +93,6 @@ export default function UserAlarmsPage() {
     };
 
     const handleSearch = () => {
-      // Find input within the filter section using the ref
       let searchInput: HTMLInputElement | null = null;
 
       if (filterSectionRef.current) {
@@ -104,7 +101,6 @@ export default function UserAlarmsPage() {
         ) as HTMLInputElement;
       }
 
-      // Fallback to document-wide search
       if (!searchInput) {
         searchInput = document.querySelector(
           'input[type="text"]',
@@ -134,22 +130,18 @@ export default function UserAlarmsPage() {
       const homesData = await homesApi.list();
       setHomes(homesData);
 
-      // Load alarms from all homes or selected home
       let allAlarms: AlarmDTO[] = [];
       if (homeFilter === "all") {
-        // Load from all homes
         const alarmsPromises = homesData.map((home) =>
           listHomeAlarms(home.id).catch(() => ({ data: [] })),
         );
         const alarmsResults = await Promise.all(alarmsPromises);
         allAlarms = alarmsResults.flatMap((result) => result.data || []);
       } else {
-        // Load from selected home
         const result = await listHomeAlarms(parseInt(homeFilter));
         allAlarms = result.data || [];
       }
 
-      // Sort by triggered date (newest first)
       allAlarms.sort(
         (a, b) =>
           new Date(b.triggeredAt).getTime() - new Date(a.triggeredAt).getTime(),
@@ -167,7 +159,6 @@ export default function UserAlarmsPage() {
   const filterAlarms = () => {
     let filtered = [...alarms];
 
-    // Search filter
     if (searchQuery) {
       filtered = filtered.filter(
         (alarm) =>
@@ -177,12 +168,10 @@ export default function UserAlarmsPage() {
       );
     }
 
-    // Status filter
     if (statusFilter !== "all") {
       filtered = filtered.filter((alarm) => alarm.status === statusFilter);
     }
 
-    // Severity filter
     if (severityFilter !== "all") {
       filtered = filtered.filter((alarm) => alarm.severity === severityFilter);
     }
@@ -309,7 +298,6 @@ export default function UserAlarmsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header with Stats */}
       <PageHeader
         stats={[
           {
@@ -351,7 +339,6 @@ export default function UserAlarmsPage() {
         }
       />
 
-      {/* Critical Alert Banner */}
       {criticalCount > 0 && (
         <Card className="border-red-500 bg-red-50 dark:bg-red-950/20">
           <CardContent className="pt-6">
@@ -370,7 +357,6 @@ export default function UserAlarmsPage() {
         </Card>
       )}
 
-      {/* Statistics Cards */}
       {alarms.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Card>
@@ -422,12 +408,10 @@ export default function UserAlarmsPage() {
         </div>
       )}
 
-      {/* Filters */}
       <div ref={filterSectionRef}>
         <Card className="transition-all duration-300">
           <CardContent className="pt-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              {/* Search */}
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -438,7 +422,6 @@ export default function UserAlarmsPage() {
                 />
               </div>
 
-              {/* Status Filter */}
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger>
                   <div className="flex items-center gap-2">
@@ -469,7 +452,6 @@ export default function UserAlarmsPage() {
                 </SelectContent>
               </Select>
 
-              {/* Severity Filter */}
               <Select value={severityFilter} onValueChange={setSeverityFilter}>
                 <SelectTrigger>
                   <div className="flex items-center gap-2">
@@ -506,7 +488,6 @@ export default function UserAlarmsPage() {
                 </SelectContent>
               </Select>
 
-              {/* Home Filter */}
               <Select value={homeFilter} onValueChange={setHomeFilter}>
                 <SelectTrigger>
                   <div className="flex items-center gap-2">
@@ -531,7 +512,6 @@ export default function UserAlarmsPage() {
         </Card>
       </div>
 
-      {/* Alarms List */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -574,7 +554,6 @@ export default function UserAlarmsPage() {
                   }`}
                 >
                   <div className="flex items-start gap-4">
-                    {/* Icon */}
                     <div
                       className={`h-12 w-12 rounded-full flex items-center justify-center flex-shrink-0 ${
                         alarm.severity === "CRITICAL"
@@ -587,7 +566,6 @@ export default function UserAlarmsPage() {
                       {getAlarmIcon(alarm.type)}
                     </div>
 
-                    {/* Content */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <div>
@@ -604,7 +582,6 @@ export default function UserAlarmsPage() {
                         </div>
                       </div>
 
-                      {/* Metadata */}
                       <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground mt-3">
                         <div className="flex items-center gap-1">
                           <HomeIcon className="h-3 w-3" />
@@ -650,7 +627,6 @@ export default function UserAlarmsPage() {
                         )}
                       </div>
 
-                      {/* Actions */}
                       {alarm.status !== "RESOLVED" && (
                         <div className="flex gap-2 mt-3">
                           {alarm.status === "OPEN" && (

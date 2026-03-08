@@ -37,7 +37,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { AuthRedirect } from "@/components/landing/AuthRedirect";
+import { AuthRedirect } from "@/components/landing/auth-redirect";
 
 function RegisterPageContent() {
   const router = useRouter();

@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Cpu, Home, MessageSquare, User } from "lucide-react";
+import {
+  LayoutDashboard,
+  Cpu,
+  MapPin,
+  AlertTriangle,
+  User,
+} from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
 import { cn } from "@/lib/utils";
 
@@ -24,16 +30,16 @@ export function UserMobileNav() {
       label: "Devices",
     },
     {
-      name: t("homes"),
-      href: "/user/homes",
-      icon: Home,
-      label: "Homes",
+      name: t("locations") || "Lokasi",
+      href: "/user/locations",
+      icon: MapPin,
+      label: "Lokasi",
     },
     {
-      name: t("messages"),
-      href: "/user/messages",
-      icon: MessageSquare,
-      label: "Chat",
+      name: t("alerts") || "Peringatan",
+      href: "/user/alerts",
+      icon: AlertTriangle,
+      label: "Alerts",
     },
     {
       name: t("profile"),

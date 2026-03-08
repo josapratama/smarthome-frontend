@@ -1099,6 +1099,13 @@ export const zh = {
   // Homes Extended Keys
   homeDeletedSuccess: "家庭删除成功",
   manageHomesLocations: "管理家庭和位置",
+  locations: "位置",
+  alerts: "警报",
+  support: "支持",
+  supportAndHelp: "支持与帮助",
+  manageHomesAndRooms: "管理您的家庭和房间",
+  manageAlarmsAndNotifications: "管理警报和通知",
+  messagesAndFAQ: "消息和常见问题帮助您",
   createFirstHomeDescription: "创建您的第一个家庭以按位置组织设备",
   deleteHome: "删除家庭",
   deleteHomeConfirmation: "确定要删除吗",

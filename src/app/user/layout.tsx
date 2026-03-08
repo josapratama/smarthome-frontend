@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { UserLayoutClient } from "@/components/user/UserLayoutClient";
+import { UserLayoutClient } from "@/components/user/user-layout-client";
 
 export default async function UserLayout({
   children,
