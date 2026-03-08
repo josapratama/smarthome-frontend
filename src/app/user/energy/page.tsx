@@ -116,9 +116,10 @@ export default function UserEnergyPage() {
       // Filter only power meter devices
       const powerMeters = devicesData.filter(
         (d) =>
-          d.type.toLowerCase().includes("power") ||
-          d.type.toLowerCase().includes("meter") ||
-          d.type.toLowerCase().includes("pzem"),
+          d.type &&
+          (d.type.toLowerCase().includes("power") ||
+            d.type.toLowerCase().includes("meter") ||
+            d.type.toLowerCase().includes("pzem")),
       );
       setDevices(powerMeters);
 
