@@ -4,8 +4,7 @@
  */
 
 import { getAccessToken } from "./auth-cookies";
-
-const BACKEND_URL = process.env.BACKEND_BASE_URL || "http://localhost:3000";
+import { config } from "@/lib/config";
 
 interface FetchOptions extends RequestInit {
   auth?: "admin_cookie" | "none";
@@ -35,7 +34,7 @@ export async function backendFetch<T = any>(
     }
   }
 
-  const url = path.startsWith("http") ? path : `${BACKEND_URL}${path}`;
+  const url = path.startsWith("http") ? path : `${config.backendUrl}${path}`;
   console.log(`[BACKEND_FETCH] Calling: ${url}`);
 
   const response = await fetch(url, {
@@ -82,7 +81,7 @@ export async function backendUpload<T = any>(
     }
   }
 
-  const url = path.startsWith("http") ? path : `${BACKEND_URL}${path}`;
+  const url = path.startsWith("http") ? path : `${config.backendUrl}${path}`;
 
   const response = await fetch(url, {
     method: "POST",

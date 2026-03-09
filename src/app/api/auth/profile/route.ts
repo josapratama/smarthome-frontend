@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-
-const BACKEND_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
+import { getApiUrl } from "@/lib/config";
 
 export async function PATCH(req: NextRequest) {
   try {
@@ -15,7 +13,7 @@ export async function PATCH(req: NextRequest) {
 
     const body = await req.json();
 
-    const res = await fetch(`${BACKEND_URL}/api/v1/profile`, {
+    const res = await fetch(getApiUrl("/profile"), {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

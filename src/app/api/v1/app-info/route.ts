@@ -1,11 +1,9 @@
 import { NextResponse } from "next/server";
-
-const BACKEND_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
+import { getApiUrl } from "@/lib/config";
 
 export async function GET() {
   try {
-    const res = await fetch(`${BACKEND_URL}/api/v1/app-info`);
+    const res = await fetch(getApiUrl("/app-info"));
     const data = await res.json();
 
     if (!res.ok) {

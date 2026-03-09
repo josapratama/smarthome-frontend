@@ -3,16 +3,12 @@
  * Used in Next.js API routes to proxy authentication requests
  */
 
-const BACKEND_URL =
-  process.env.BACKEND_BASE_URL ||
-  process.env.NEXT_PUBLIC_API_URL ||
-  "http://localhost:3000";
-const API_PREFIX = process.env.BACKEND_API_PREFIX || "/api/v1";
+import { config } from "@/lib/config";
 
 // Log configuration in development
-if (process.env.NODE_ENV === "development") {
-  console.log("Backend URL:", BACKEND_URL);
-  console.log("API Prefix:", API_PREFIX);
+if (config.isDevelopment) {
+  console.log("Backend URL:", config.backendUrl);
+  console.log("API Prefix:", config.apiPrefix);
 }
 
 interface LoginResponse {
@@ -37,13 +33,13 @@ interface ErrorResponse {
 
 export const authUpstream = {
   async login(username: string, password: string) {
-    const url = `${BACKEND_URL}${API_PREFIX}/login`;
+    const url = `${config.backendUrl}${config.apiPrefix}/login`;
 
     console.log("Calling backend login:", url);
     console.log("Request body:", { username, password: "***" });
 
     // Validate backend URL - only check if it's completely missing
-    if (!BACKEND_URL) {
+    if (!config.backendUrl) {
       console.error("BACKEND_BASE_URL not configured properly!");
       return {
         res: { ok: false, status: 500 } as Response,
@@ -94,7 +90,7 @@ export const authUpstream = {
   },
 
   async refresh(sessionId: number, refreshToken: string) {
-    const url = `${BACKEND_URL}${API_PREFIX}/refresh`;
+    const url = `${config.backendUrl}${config.apiPrefix}/refresh`;
 
     try {
       const res = await fetch(url, {
@@ -115,7 +111,7 @@ export const authUpstream = {
   },
 
   async logout(sessionId: number) {
-    const url = `${BACKEND_URL}${API_PREFIX}/logout`;
+    const url = `${config.backendUrl}${config.apiPrefix}/logout`;
 
     try {
       const res = await fetch(url, {

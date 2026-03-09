@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-
-const BACKEND_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
+import { getApiUrl } from "@/lib/config";
 
 export async function PATCH(
   req: NextRequest,
@@ -19,7 +17,7 @@ export async function PATCH(
     const { key } = await params;
     const body = await req.json();
 
-    const res = await fetch(`${BACKEND_URL}/api/v1/app-info/admin/${key}`, {
+    const res = await fetch(getApiUrl(`/app-info/admin/${key}`), {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -58,7 +56,7 @@ export async function DELETE(
 
     const { key } = await params;
 
-    const res = await fetch(`${BACKEND_URL}/api/v1/app-info/admin/${key}`, {
+    const res = await fetch(getApiUrl(`/app-info/admin/${key}`), {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,

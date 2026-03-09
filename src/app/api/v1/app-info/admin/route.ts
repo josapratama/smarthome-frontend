@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-
-const BACKEND_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
+import { getApiUrl } from "@/lib/config";
 
 export async function GET() {
   try {
@@ -13,7 +11,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const res = await fetch(`${BACKEND_URL}/api/v1/app-info/admin/all`, {
+    const res = await fetch(getApiUrl("/app-info/admin/all"), {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -46,7 +44,7 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
-    const res = await fetch(`${BACKEND_URL}/api/v1/app-info/admin`, {
+    const res = await fetch(getApiUrl("/app-info/admin"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
