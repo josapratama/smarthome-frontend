@@ -107,3 +107,10 @@ export const channelsApi = {
     return data.data.channel;
   },
 };
+
+// Backward compatibility aliases
+export const getDeviceChannels = channelsApi.list;
+export const createChannel = channelsApi.create;
+export const updateChannel = channelsApi.update;
+export const deleteChannel = channelsApi.delete;
+export const setChannelState = channelsApi.control;

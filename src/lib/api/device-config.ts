@@ -47,3 +47,7 @@ export const deviceConfigApi = {
     return data.data.template;
   },
 };
+
+// Backward compatibility aliases
+export const getDeviceConfig = deviceConfigApi.get;
+export const upsertDeviceConfig = deviceConfigApi.update;

@@ -3,8 +3,9 @@ import axios, {
   AxiosInstance,
   InternalAxiosRequestConfig,
 } from "axios";
+import { config } from "../config";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+const API_URL = config.api.baseUrl;
 
 class ApiClient {
   private client: AxiosInstance;
@@ -31,12 +32,12 @@ class ApiClient {
         }
         return config;
       },
-      (error) => Promise.reject(error),
+      (error: any) => Promise.reject(error),
     );
 
     // Response interceptor
     this.client.interceptors.response.use(
-      (response) => response,
+      (response: any) => response,
       async (error: AxiosError) => {
         const originalRequest = error.config as InternalAxiosRequestConfig & {
           _retry?: boolean;
