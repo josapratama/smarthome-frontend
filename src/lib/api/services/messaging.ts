@@ -62,7 +62,7 @@ export interface HomeMessage {
   readBy: Array<{ readAt: string }>;
 }
 
-export interface HomeMember {
+export interface HomeConversationMember {
   id: number;
   homeId: number;
   userId: number;
@@ -239,7 +239,7 @@ export async function getHomeUnreadCount(): Promise<number> {
 
 export async function getHomeMembers(
   conversationId: number,
-): Promise<HomeMember[]> {
+): Promise<HomeConversationMember[]> {
   const response = await apiFetchBrowser(
     `/api/v1/home-chat/${conversationId}/members`,
   );
