@@ -6,13 +6,17 @@ export function middleware(request: NextRequest) {
   const userRole = request.cookies.get("user_role")?.value;
   const { pathname } = request.nextUrl;
 
-  // Public routes that don't require authentication
-  const publicRoutes = [
-    "/public", // Allow all /public/* routes
-  ];
+  // Public routes that don't require authentication - CHECK THIS FIRST
+  const publicRoutes = ["/public", "/invites"];
   const isPublicRoute = publicRoutes.some((route) =>
     pathname.startsWith(route),
   );
+
+  // If it's a public route, allow access immediately
+  if (isPublicRoute) {
+    console.log("[Middleware] Allowing public route:", pathname);
+    return NextResponse.next();
+  }
 
   // Auth pages (login, register, etc.)
   const authPages = [
@@ -34,7 +38,6 @@ export function middleware(request: NextRequest) {
     pathname.startsWith("/ota") ||
     pathname.startsWith("/monitoring") ||
     pathname.startsWith("/notifications") ||
-    pathname.startsWith("/invites") ||
     pathname.startsWith("/commands") ||
     pathname.startsWith("/homes") ||
     pathname.startsWith("/rooms") ||
@@ -43,7 +46,15 @@ export function middleware(request: NextRequest) {
     pathname.startsWith("/energy") ||
     pathname.startsWith("/messages") ||
     pathname.startsWith("/help") ||
-    pathname.startsWith("/device-config");
+    pathname.startsWith("/device-config") ||
+    pathname.startsWith("/location-management") ||
+    pathname.startsWith("/device-management") ||
+    pathname.startsWith("/communications") ||
+    pathname.startsWith("/room-access") ||
+    pathname.startsWith("/security") ||
+    pathname.startsWith("/settings-help") ||
+    pathname.startsWith("/system-tools") ||
+    pathname.startsWith("/profile");
 
   // User routes
   const isUserRoute = pathname.startsWith("/user");
@@ -58,7 +69,8 @@ export function middleware(request: NextRequest) {
   }
 
   // If user is not authenticated and trying to access protected routes, redirect to login
-  if (!token && !isPublicRoute && !isLandingPage && !isAuthPage) {
+  if (!token && !isLandingPage && !isAuthPage) {
+    console.log("[Middleware] No token, redirecting to login:", pathname);
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
