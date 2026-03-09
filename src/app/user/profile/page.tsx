@@ -285,7 +285,7 @@ export default function UserProfilePage() {
   if (!profile) {
     return (
       <div className="text-center py-12 p-4">
-        <p className="text-muted-foreground">Failed to load profile</p>
+        <p className="text-muted-foreground">{t("failedLoadProfile")}</p>
       </div>
     );
   }

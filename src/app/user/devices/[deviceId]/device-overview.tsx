@@ -177,7 +177,7 @@ export default function DeviceOverview({ deviceId }: DeviceOverviewProps) {
               </div>
               {device.mqttClientId && (
                 <div className="flex items-center gap-2 text-sm">
-                  <span className="text-muted-foreground">MQTT ID:</span>
+                  <span className="text-muted-foreground">{t("mqttId")}:</span>
                   <code className="text-xs bg-muted px-2 py-1 rounded">
                     {device.mqttClientId}
                   </code>

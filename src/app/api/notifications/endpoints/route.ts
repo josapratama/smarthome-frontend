@@ -2,6 +2,8 @@ import { backendFetch } from "@/lib/api/server/backend";
 import { handleApiError } from "@/lib/api/server/error-handler";
 import type { NotificationEndpointDTO } from "@/lib/api/dto/notifications.dto";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const data = await backendFetch<{ data: NotificationEndpointDTO[] }>(

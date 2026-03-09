@@ -3,6 +3,8 @@ import { backendFetch } from "@/lib/api/server/backend";
 import { handleApiError } from "@/lib/api/server/error-handler";
 import type { NotificationLogDTO } from "@/lib/api/dto/notifications.dto";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
