@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { TrendingUp, Download, RefreshCw, BarChart3 } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
-import { telemetryApi, SensorReading } from "@/lib/api/telemetry";
+import { telemetryApi, SensorReading } from "@/lib/api/services/telemetry";
 import { toast } from "sonner";
 import {
   LineChart,

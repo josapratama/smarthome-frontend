@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
 import { devicesApi } from "@/lib/api/services/devices";
-import { telemetryApi } from "@/lib/api/telemetry";
+import { telemetryApi } from "@/lib/api/services/telemetry";
 import { toast } from "sonner";
 import {
   AlertDialog,

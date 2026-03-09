@@ -14,7 +14,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
-import { deviceConfigApi } from "@/lib/api/device-config";
+import { deviceConfigApi } from "@/lib/api/services/device-config";
 import { toast } from "sonner";
 
 interface DeviceConfigProps {

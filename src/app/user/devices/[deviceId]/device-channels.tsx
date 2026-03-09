@@ -9,7 +9,7 @@ import { Slider } from "@/components/ui/slider";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Power, Sliders, Trash2 } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
-import { channelsApi, Channel } from "@/lib/api/channels";
+import { channelsApi, Channel } from "@/lib/api/services/channels";
 import { toast } from "sonner";
 
 interface DeviceChannelsProps {

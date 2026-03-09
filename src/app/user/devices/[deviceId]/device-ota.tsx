@@ -17,7 +17,12 @@ import {
   Package,
 } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
-import { otaApi, FirmwareRelease, OtaJob, OtaJobStatus } from "@/lib/api/ota";
+import {
+  otaApi,
+  FirmwareRelease,
+  OtaJob,
+  OtaJobStatus,
+} from "@/lib/api/services/ota";
 import { toast } from "sonner";
 import {
   AlertDialog,

@@ -19,7 +19,10 @@ import {
   Code,
   Home as HomeIcon,
 } from "lucide-react";
-import { getDeviceConfig, upsertDeviceConfig } from "@/lib/api/device-config";
+import {
+  getDeviceConfig,
+  upsertDeviceConfig,
+} from "@/lib/api/services/device-config";
 
 export function DeviceConfigClient() {
   const { t } = useTranslation();

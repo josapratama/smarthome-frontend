@@ -57,3 +57,10 @@ export const homesApi = {
     await api.delete(`/v1/homes/${homeId}`);
   },
 };
+
+// Backward compatibility exports
+export const getHomes = homesApi.list;
+export const getHomeMembers = async (homeId: number) => {
+  const res = await api.get<{ data: any[] }>(`/v1/homes/${homeId}/members`);
+  return res.data.data;
+};

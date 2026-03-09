@@ -8,7 +8,7 @@ import {
   updateChannel,
   deleteChannel,
   setChannelState,
-} from "@/lib/api/channels";
+} from "@/lib/api/services/channels";
 import type {
   ChannelDTO,
   CreateChannelDTO,

@@ -24,7 +24,11 @@ import {
   RotateCw,
 } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
-import { commandsApi, Command, CommandStatus } from "@/lib/api/commands";
+import {
+  commandsApi,
+  Command,
+  CommandStatus,
+} from "@/lib/api/services/commands";
 import { toast } from "sonner";
 
 interface DeviceCommandsProps {
