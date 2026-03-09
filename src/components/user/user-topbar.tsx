@@ -43,7 +43,7 @@ export function UserTopbar({ onMenuClick }: UserTopbarProps) {
   const getPageInfo = () => {
     if (pathname.includes("/dashboard"))
       return {
-        title: t("welcomeBack") || "Welcome Back 👋",
+        title: t("dashboard"),
         actions: ["notification"],
       };
     if (pathname.includes("/devices"))
@@ -51,40 +51,25 @@ export function UserTopbar({ onMenuClick }: UserTopbarProps) {
         title: t("devices"),
         actions: ["search", "filter", "notification"],
       };
-    if (pathname.includes("/homes"))
+    if (pathname.includes("/locations"))
       return {
-        title: t("homes"),
-        actions: ["add", "notification"],
-      };
-    if (pathname.includes("/rooms"))
-      return {
-        title: t("rooms"),
-        actions: ["add", "notification"],
+        title: t("locations"),
+        actions: ["notification"],
       };
     if (pathname.includes("/energy"))
       return {
         title: t("energy"),
         actions: ["refresh", "filter", "notification"],
       };
-    if (pathname.includes("/alarms"))
+    if (pathname.includes("/alerts"))
       return {
-        title: t("alarms"),
+        title: t("alerts"),
         actions: ["refresh", "filter", "notification"],
       };
-    if (pathname.includes("/messages"))
+    if (pathname.includes("/support"))
       return {
-        title: t("messages"),
+        title: t("support"),
         actions: ["search", "notification"],
-      };
-    if (pathname.includes("/faq"))
-      return {
-        title: t("faq"),
-        actions: ["search", "notification"],
-      };
-    if (pathname.includes("/chat"))
-      return {
-        title: t("chatAI") || "Chat AI",
-        actions: ["add", "notification"],
       };
     if (pathname.includes("/notifications"))
       return {
@@ -107,7 +92,7 @@ export function UserTopbar({ onMenuClick }: UserTopbarProps) {
         actions: ["notification"],
       };
 
-    return { title: "Smart Home", actions: ["notification"] };
+    return { title: t("dashboard"), actions: ["notification"] };
   };
 
   const pageInfo = getPageInfo();

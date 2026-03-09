@@ -13,16 +13,15 @@ import {
   Info,
   X,
   LogOut,
-  User,
+  UserCircle,
   HelpCircle,
-  ChevronRight,
 } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+import { browserApi } from "@/lib/api/client.browser";
 
 interface UserSidebarProps {
   className?: string;
@@ -30,7 +29,6 @@ interface UserSidebarProps {
 }
 
 interface UserProfile {
-  id: number;
   username: string;
   email: string;
   avatarUrl?: string;
@@ -41,6 +39,7 @@ export function UserSidebar({ className, onClose }: UserSidebarProps) {
   const router = useRouter();
   const { t } = useTranslation();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     loadUserProfile();
@@ -48,14 +47,23 @@ export function UserSidebar({ className, onClose }: UserSidebarProps) {
 
   const loadUserProfile = async () => {
     try {
-      const response = await fetch("/api/profile");
-      if (response.ok) {
-        const data = await response.json();
-        setUserProfile(data);
-      }
+      const result = await browserApi.get<{ data: UserProfile }>("/api/v1/me");
+      setUserProfile(result.data);
     } catch (error) {
       console.error("Failed to load user profile:", error);
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const getInitials = (name: string) => {
+    if (!name) return "U";
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
   };
 
   const navigation = [
@@ -71,24 +79,14 @@ export function UserSidebar({ className, onClose }: UserSidebarProps) {
 
   const handleLogout = async () => {
     try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
+      await browserApi.post("/api/v1/logout", {});
       router.push("/login");
       router.refresh();
     } catch (error) {
       console.error("Logout failed:", error);
+      // Still redirect even if logout fails
+      router.push("/login");
     }
-  };
-
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
   };
 
   return (
@@ -98,63 +96,48 @@ export function UserSidebar({ className, onClose }: UserSidebarProps) {
         className,
       )}
     >
-      {/* Header */}
-      <div className="flex h-16 shrink-0 items-center justify-between border-b px-4">
-        <div className="flex items-center gap-2">
-          <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-md">
-            <span className="text-white font-bold text-lg">SH</span>
+      {/* Header with User Profile */}
+      <div className="flex items-center gap-3 border-b px-4 py-3 bg-accent/30">
+        <div className="relative flex-shrink-0">
+          <Avatar className="h-11 w-11 border-2 border-primary/30 shadow-md">
+            {userProfile?.avatarUrl && (
+              <AvatarImage
+                src={userProfile.avatarUrl}
+                alt={userProfile.username}
+              />
+            )}
+            <AvatarFallback className="bg-gradient-to-br from-primary via-primary/80 to-primary/60 text-white font-semibold">
+              {isLoading ? (
+                <UserCircle className="h-6 w-6" />
+              ) : userProfile?.username ? (
+                getInitials(userProfile.username)
+              ) : (
+                <UserCircle className="h-6 w-6" />
+              )}
+            </AvatarFallback>
+          </Avatar>
+          {/* Online Status Indicator */}
+          <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-green-500 border-2 border-card shadow-sm">
+            <div className="h-1.5 w-1.5 rounded-full bg-white animate-pulse absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
           </div>
-          <div>
-            <h1 className="text-lg font-bold leading-none">Smart Home</h1>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {t("userPanel") || "Panel Pengguna"}
-            </p>
-          </div>
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="text-sm font-semibold text-foreground truncate">
+            {isLoading ? t("loading") : (userProfile?.username ?? t("user"))}
+          </h3>
+          <p className="text-xs text-muted-foreground truncate">
+            {isLoading ? "" : (userProfile?.email ?? "")}
+          </p>
         </div>
         {onClose && (
           <button
             onClick={onClose}
-            className="rounded-lg p-2 hover:bg-muted lg:hidden transition-colors"
+            className="rounded-lg p-2 hover:bg-muted lg:hidden transition-colors flex-shrink-0"
           >
             <X className="h-5 w-5" />
           </button>
         )}
       </div>
-
-      {/* User Profile Card */}
-      {userProfile && (
-        <div className="p-4 border-b">
-          <Link
-            href="/user/profile"
-            onClick={onClose}
-            className="flex items-center gap-3 p-3 rounded-xl hover:bg-accent transition-all group"
-          >
-            <Avatar className="h-12 w-12 border-2 border-primary/20 ring-2 ring-transparent group-hover:ring-primary/20 transition-all">
-              <AvatarImage
-                src={userProfile.avatarUrl}
-                alt={userProfile.username}
-              />
-              <AvatarFallback className="bg-gradient-to-br from-primary to-primary/60 text-white font-semibold">
-                {getInitials(userProfile.username)}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-semibold truncate">
-                  {userProfile.username}
-                </p>
-                <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
-                  {t("user") || "User"}
-                </Badge>
-              </div>
-              <p className="text-xs text-muted-foreground truncate">
-                {userProfile.email}
-              </p>
-            </div>
-            <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
-          </Link>
-        </div>
-      )}
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto p-3 space-y-1">
@@ -184,8 +167,21 @@ export function UserSidebar({ className, onClose }: UserSidebarProps) {
 
       <Separator />
 
-      {/* Logout Button */}
-      <div className="p-3">
+      {/* Profile & Logout Buttons */}
+      <div className="p-3 space-y-1">
+        <Link
+          href="/user/profile"
+          onClick={onClose}
+          className={cn(
+            "flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-all",
+            pathname === "/user/profile"
+              ? "bg-primary text-primary-foreground shadow-sm"
+              : "text-foreground hover:bg-accent",
+          )}
+        >
+          <UserCircle className="h-5 w-5 shrink-0" />
+          <span>{t("profile")}</span>
+        </Link>
         <Button
           variant="ghost"
           onClick={handleLogout}
