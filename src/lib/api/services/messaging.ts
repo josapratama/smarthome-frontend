@@ -237,7 +237,7 @@ export async function getHomeUnreadCount(): Promise<number> {
   return data.data.count;
 }
 
-export async function getHomeMembers(
+export async function getHomeConversationMembers(
   conversationId: number,
 ): Promise<HomeConversationMember[]> {
   const response = await apiFetchBrowser(
