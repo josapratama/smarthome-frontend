@@ -8,6 +8,7 @@ export const id = {
   alerts: "Peringatan",
   support: "Bantuan",
   userPanel: "Panel Pengguna",
+  adminPanel: "Panel Admin",
   user: "Pengguna",
   firmware: "Firmware",
   ota: "Pembaruan OTA",
@@ -170,6 +171,7 @@ export const id = {
   deviceKey: "Kunci Perangkat",
   enterDeviceKey: "Masukkan kunci perangkat",
   mqttClientId: "MQTT Client ID",
+  mqttId: "MQTT ID",
   enterMqttClientId: "Masukkan MQTT Client ID",
   optionalMqttId: "Opsional - ID klien MQTT untuk perangkat",
   selectHomeAndRoom: "Pilih rumah dan ruangan untuk perangkat",
@@ -581,6 +583,7 @@ export const id = {
   // Profile
   profile: "Profil",
   profileSettings: "Pengaturan Profil",
+  viewProfile: "Lihat Profil",
   manageAccount: "Kelola pengaturan akun dan preferensi Anda",
   accountInformation: "Informasi Akun",
   updateAccountDetails: "Perbarui detail akun Anda",
@@ -1789,4 +1792,116 @@ export const id = {
   country: "Negara",
   noRoomsInHome: "Tidak ada ruangan di rumah ini",
   noDevicesInHome: "Tidak ada perangkat di rumah ini",
+
+  // Landing Page Extended - Additional Keys
+  tagline: "Kontrol Smart Home Anda dari Mana Saja",
+  landingDescription:
+    "Kelola semua perangkat IoT Anda dari satu platform yang aman dan mudah digunakan. Monitor, kontrol, dan otomatisasi smart home Anda dengan mudah.",
+  securePrivate: "Aman & Privat",
+  secureDesc:
+    "Keamanan tingkat enterprise dengan enkripsi end-to-end untuk melindungi data Anda.",
+  realTimeControl: "Kontrol Real-time",
+  realTimeDesc:
+    "Kontrol dan monitoring perangkat secara real-time dari mana saja.",
+  roleBasedAccess: "Akses Berbasis Peran",
+  roleBasedDesc:
+    "Sistem manajemen user dengan role-based access control untuk keamanan maksimal.",
+  roleBasedAccessDesc:
+    "Sistem manajemen user dengan role-based access control untuk keamanan maksimal.",
+  automationDesc:
+    "Buat otomasi dan scene pintar untuk membuat rumah Anda bekerja untuk Anda.",
+  energyMonitoringDesc:
+    "Lacak konsumsi energi dan optimalkan efisiensi rumah Anda.",
+  multiDevice: "Dukungan Multi-perangkat",
+  multiDeviceDesc:
+    "Dukungan untuk berbagai perangkat IoT dan protokol dalam satu platform.",
+  readyToStart: "Siap Memulai?",
+  readyDesc:
+    "Bergabunglah dengan ribuan pengguna yang sudah mempercayai Smart Home",
+  alreadyHaveAccount: "Sudah punya akun?",
+
+  // Public Pages Extended
+  noPublicHomesDescription: "Rumah publik akan muncul di sini ketika tersedia",
+  noPublicDevicesDescription:
+    "Perangkat publik akan muncul di sini ketika tersedia",
+
+  // Auth Pages Extended
+  signIn: "Masuk",
+  signInSubtitle: "Masuk ke akun Anda untuk melanjutkan",
+  signingIn: "Masuk...",
+  enterUsername: "Masukkan username",
+  enterEmail: "Masukkan email",
+  enterPassword: "Masukkan password",
+  forgotPassword: "Lupa password?",
+  continueWith: "Atau lanjutkan dengan",
+  orContinueWith: "Atau lanjutkan dengan",
+  continueWithGoogle: "Lanjutkan dengan Google",
+  dontHaveAccount: "Belum punya akun?",
+  registerNow: "Daftar sekarang",
+  byLoggingIn: "Dengan login, Anda menyetujui",
+  loginFailed: "Login gagal",
+  loginSuccess: "Login Berhasil",
+  networkError: "Kesalahan jaringan. Coba lagi.",
+  connectionFailed: "Koneksi Gagal",
+  welcomeToSmartHome: "Selamat Datang di Smart Home",
+  loginDescription:
+    "Kelola semua perangkat IoT Anda dari satu platform yang aman dan mudah digunakan.",
+  securePrivateDesc:
+    "Keamanan tingkat enterprise dengan enkripsi end-to-end untuk melindungi data Anda.",
+  realtimeControl: "Kontrol Real-time",
+  realtimeControlDesc:
+    "Kontrol dan monitoring perangkat secara real-time dari mana saja.",
+  demoCredentials: "Kredensial Demo",
+  footerText: "Smart Home Platform. Semua hak dilindungi.",
+
+  // Register Extended
+  createAccount: "Buat Akun",
+  registerDesc: "Daftar untuk mulai menggunakan Smart Home",
+  registerWithGoogle: "Daftar dengan Google",
+  orRegisterWith: "Atau daftar dengan email",
+  minChars: "Minimal 8 karakter",
+  confirmPassword: "Konfirmasi Password",
+  repeatPassword: "Ulangi password",
+  agreeToTerms: "Dengan mendaftar, Anda menyetujui",
+  registerButton: "Daftar",
+  kami: "kami",
+  registrationSuccess: "Registrasi berhasil! Silakan login.",
+  registrationFailed: "Registrasi gagal",
+
+  // Forgot Password Extended
+  forgotPasswordTitle: "Lupa Password",
+  forgotPasswordDesc: "Masukkan email Anda. Kami akan kirim instruksi reset.",
+  forgotPasswordSubtitle:
+    "Masukkan email Anda. Kami akan kirim instruksi reset.",
+  sendResetLink: "Kirim Link Reset",
+  sendResetInstructions: "Kirim instruksi reset",
+  backToLogin: "Kembali ke Login",
+  requestSent: "Permintaan terkirim",
+  requestSentDesc:
+    "Jika email terdaftar, Anda akan menerima instruksi reset password.",
+  sendAgain: "Kirim lagi",
+  didntReceiveEmail:
+    "Tidak menerima email? Cek folder spam / tunggu beberapa menit.",
+  failedSendResetRequest: "Gagal mengirim permintaan reset",
+
+  // Reset Password Extended
+  resetPasswordDesc: "Masukkan token reset dan password baru.",
+  resetToken: "Token reset",
+  pasteTokenFromEmail: "paste token dari email",
+  tokenHint:
+    "Token biasanya ada di link email. Contoh: /reset-password?token=...",
+  repeatNewPassword: "ulang password baru",
+  confirmMismatch: "Konfirmasi tidak sama.",
+  tokenRequired: "Token reset wajib diisi.",
+  passwordResetSuccess: "Password berhasil diubah",
+  passwordResetSuccessDesc: "Silakan login menggunakan password baru.",
+  resetPasswordFailed: "Gagal reset password",
+  processing: "Memproses...",
+  resetPasswordButton: "Reset password",
+  resetPasswordHelpText:
+    "Jika masih bermasalah, minta reset ulang dari menu lupa password.",
+
+  // Common Extended
+  copyright: "Hak Cipta Dilindungi",
+  allRightsReserved: "Semua Hak Dilindungi",
 } as const;

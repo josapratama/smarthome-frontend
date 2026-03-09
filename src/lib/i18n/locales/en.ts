@@ -9,6 +9,7 @@ export const en = {
   support: "Support",
   supportAndHelp: "Support & Help",
   userPanel: "User Panel",
+  adminPanel: "Admin Panel",
   user: "User",
   firmware: "Firmware",
   ota: "OTA Updates",
@@ -141,6 +142,7 @@ export const en = {
   deviceKey: "Device Key",
   enterDeviceKey: "Enter device key",
   mqttClientId: "MQTT Client ID",
+  mqttId: "MQTT ID",
   enterMqttClientId: "Enter MQTT Client ID",
   optionalMqttId: "Optional - MQTT client ID for the device",
   selectHomeAndRoom: "Select home and room for the device",
@@ -465,6 +467,7 @@ export const en = {
   // Profile
   profile: "Profile",
   profileSettings: "Profile Settings",
+  viewProfile: "View Profile",
   manageAccount: "Manage your account settings and preferences",
   accountInformation: "Account Information",
   updateAccountDetails: "Update your account details",
@@ -1798,4 +1801,112 @@ export const en = {
   country: "Country",
   noRoomsInHome: "No rooms in this home",
   noDevicesInHome: "No devices in this home",
+
+  // Landing Page Extended - Additional Keys
+  tagline: "Control Your Smart Home from Anywhere",
+  landingDescription:
+    "Manage all your IoT devices from one secure and easy-to-use platform. Monitor, control, and automate your smart home with ease.",
+  securePrivate: "Secure & Private",
+  secureDesc:
+    "Enterprise-grade security with end-to-end encryption to protect your data.",
+  realTimeControl: "Real-time Control",
+  realTimeDesc: "Control and monitor devices in real-time from anywhere.",
+  roleBasedAccess: "Role-based Access",
+  roleBasedDesc:
+    "User management system with role-based access control for maximum security.",
+  roleBasedAccessDesc:
+    "User management system with role-based access control for maximum security.",
+  automationDesc:
+    "Create smart automations and scenes to make your home work for you.",
+  energyMonitoringDesc:
+    "Track energy consumption and optimize your home's efficiency.",
+  multiDevice: "Multi-device Support",
+  multiDeviceDesc:
+    "Support for various IoT devices and protocols in one platform.",
+  readyToStart: "Ready to Start?",
+  readyDesc: "Join thousands of users who trust Smart Home",
+  alreadyHaveAccount: "Already have an account?",
+
+  // Public Pages Extended
+  noPublicHomesDescription: "Public homes will appear here when available",
+  noPublicDevicesDescription: "Public devices will appear here when available",
+
+  // Auth Pages Extended
+  signIn: "Sign In",
+  signInSubtitle: "Sign in to your account to continue",
+  signingIn: "Signing in...",
+  enterUsername: "Enter username",
+  enterEmail: "Enter email",
+  enterPassword: "Enter password",
+  forgotPassword: "Forgot password?",
+  continueWith: "Or continue with",
+  orContinueWith: "Or continue with",
+  continueWithGoogle: "Continue with Google",
+  dontHaveAccount: "Don't have an account?",
+  registerNow: "Register now",
+  byLoggingIn: "By logging in, you agree to our",
+  loginFailed: "Login failed",
+  loginSuccess: "Login Successful",
+  networkError: "Network error. Try again.",
+  connectionFailed: "Connection Failed",
+  welcomeToSmartHome: "Welcome to Smart Home",
+  loginDescription:
+    "Manage all your IoT devices from one secure and easy-to-use platform.",
+  securePrivateDesc:
+    "Enterprise-grade security with end-to-end encryption to protect your data.",
+  realtimeControl: "Real-time Control",
+  realtimeControlDesc:
+    "Control and monitor devices in real-time from anywhere.",
+  demoCredentials: "Demo Credentials",
+  footerText: "Smart Home Platform. All rights reserved.",
+
+  // Register Extended
+  createAccount: "Create Account",
+  registerDesc: "Register to start using Smart Home",
+  registerWithGoogle: "Sign up with Google",
+  orRegisterWith: "Or register with email",
+  minChars: "Minimum 8 characters",
+  confirmPassword: "Confirm Password",
+  repeatPassword: "Repeat password",
+  agreeToTerms: "By registering, you agree to our",
+  registerButton: "Register",
+  kami: "ours",
+  registrationSuccess: "Registration successful! Please login.",
+  registrationFailed: "Registration failed",
+
+  // Forgot Password Extended
+  forgotPasswordTitle: "Forgot Password",
+  forgotPasswordDesc: "Enter your email. We'll send reset instructions.",
+  forgotPasswordSubtitle: "Enter your email. We'll send reset instructions.",
+  sendResetLink: "Send Reset Link",
+  sendResetInstructions: "Send reset instructions",
+  backToLogin: "Back to Login",
+  requestSent: "Request sent",
+  requestSentDesc:
+    "If the email is registered, you will receive password reset instructions.",
+  sendAgain: "Send again",
+  didntReceiveEmail:
+    "Didn't receive email? Check spam folder / wait a few minutes.",
+  failedSendResetRequest: "Failed to send reset request",
+
+  // Reset Password Extended
+  resetPasswordDesc: "Enter reset token and new password.",
+  resetToken: "Reset token",
+  pasteTokenFromEmail: "paste token from email",
+  tokenHint:
+    "Token is usually in the email link. Example: /reset-password?token=...",
+  repeatNewPassword: "repeat new password",
+  confirmMismatch: "Confirmation does not match.",
+  tokenRequired: "Reset token is required.",
+  passwordResetSuccess: "Password successfully changed",
+  passwordResetSuccessDesc: "Please login using your new password.",
+  resetPasswordFailed: "Failed to reset password",
+  processing: "Processing...",
+  resetPasswordButton: "Reset password",
+  resetPasswordHelpText:
+    "If still having issues, request a new reset from the forgot password menu.",
+
+  // Common Extended
+  copyright: "Copyright",
+  allRightsReserved: "All Rights Reserved",
 } as const;
