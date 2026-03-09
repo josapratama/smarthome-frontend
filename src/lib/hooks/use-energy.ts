@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { energyApi } from "../api/energy";
 import type { EnergyFilters } from "../types";
+import { energyApi } from "../api/services";
 
 export function useEnergyUsage(filters: EnergyFilters) {
   return useQuery({

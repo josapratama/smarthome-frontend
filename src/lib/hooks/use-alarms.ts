@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import * as alarmsApi from "../api/alarms";
+import * as alarmsApi from "../api/services";
 import type { AlarmsQuery, AlarmCreateRequest } from "../api/dto/alarm.dto";
 
 export function useHomeAlarms(homeId: number, query?: AlarmsQuery) {
