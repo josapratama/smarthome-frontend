@@ -1,12 +1,18 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 export function AuthRedirect() {
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
+    // Don't redirect if user is on public pages
+    if (pathname?.startsWith("/public")) {
+      return;
+    }
+
     // Get cookies using native browser API
     const getCookie = (name: string) => {
       const value = `; ${document.cookie}`;
@@ -26,7 +32,7 @@ export function AuthRedirect() {
         router.push("/user/dashboard");
       }
     }
-  }, [router]);
+  }, [router, pathname]);
 
   return null; // This component doesn't render anything
 }
