@@ -30,21 +30,31 @@ function ForgotPasswordContent() {
     setLoading(true);
 
     try {
+      console.log("[Forgot Password Page] Sending request with email:", email);
+
       const res = await fetch("/api/auth/forgot-password", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ email: email.trim() }),
       });
 
+      console.log("[Forgot Password Page] Response status:", res.status);
+
       const payload = await res.json().catch(() => null);
+      console.log("[Forgot Password Page] Response payload:", payload);
 
       if (!res.ok) {
-        setErr(payload?.message ?? t("failedSendResetRequest"));
+        console.error("[Forgot Password Page] Request failed:", payload);
+        setErr(
+          payload?.error || payload?.message || t("failedSendResetRequest"),
+        );
         return;
       }
 
+      console.log("[Forgot Password Page] Success! Setting sent=true");
       setSent(true);
-    } catch {
+    } catch (error) {
+      console.error("[Forgot Password Page] Network error:", error);
       setErr(t("networkError"));
     } finally {
       setLoading(false);
