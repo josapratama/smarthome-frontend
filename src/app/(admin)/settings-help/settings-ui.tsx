@@ -204,6 +204,24 @@ export default function SettingsUI() {
                   <span>English</span>
                 </div>
               </SelectItem>
+              <SelectItem value="jv">
+                <div className="flex items-center gap-3 py-1">
+                  <span className="text-xl">🇮🇩</span>
+                  <span>Basa Jawa</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="su">
+                <div className="flex items-center gap-3 py-1">
+                  <span className="text-xl">🇮🇩</span>
+                  <span>Basa Sunda</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="plm">
+                <div className="flex items-center gap-3 py-1">
+                  <span className="text-xl">🇮🇩</span>
+                  <span>Baso Palembang</span>
+                </div>
+              </SelectItem>
               <SelectItem value="es">
                 <div className="flex items-center gap-3 py-1">
                   <span className="text-xl">🇪🇸</span>
@@ -222,10 +240,22 @@ export default function SettingsUI() {
                   <span>中文</span>
                 </div>
               </SelectItem>
+              <SelectItem value="zhPinyin">
+                <div className="flex items-center gap-3 py-1">
+                  <span className="text-xl">🇨🇳</span>
+                  <span>中文 (Pīnyīn)</span>
+                </div>
+              </SelectItem>
               <SelectItem value="ko">
                 <div className="flex items-center gap-3 py-1">
                   <span className="text-xl">🇰🇷</span>
                   <span>한국어</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="ar">
+                <div className="flex items-center gap-3 py-1">
+                  <span className="text-xl">🇸🇦</span>
+                  <span>العربية</span>
                 </div>
               </SelectItem>
             </SelectContent>

@@ -97,8 +97,17 @@ export default function GuestSettingsPage() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="id">English</SelectItem>
                 <SelectItem value="en">English</SelectItem>
-                <SelectItem value="id">Indonesia</SelectItem>
+                <SelectItem value="jv">Basa Jawa</SelectItem>
+                <SelectItem value="su">Basa Sunda</SelectItem>
+                <SelectItem value="plm">Baso Palembang</SelectItem>
+                <SelectItem value="es">Español</SelectItem>
+                <SelectItem value="ja">日本語</SelectItem>
+                <SelectItem value="zh">中文</SelectItem>
+                <SelectItem value="zhPinyin">中文 (Pīnyīn)</SelectItem>
+                <SelectItem value="ko">한국어</SelectItem>
+                <SelectItem value="ar">العربية</SelectItem>
               </SelectContent>
             </Select>
           </div>
