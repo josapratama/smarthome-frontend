@@ -3,18 +3,7 @@
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import {
-  Eye,
-  EyeOff,
-  Loader2,
-  Home,
-  Zap,
-  Shield,
-  Lock,
-  Moon,
-  Sun,
-  Globe,
-} from "lucide-react";
+import { Eye, EyeOff, Loader2, Home, Zap, Shield, Lock } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -36,7 +25,7 @@ function LoginForm() {
   const sp = useSearchParams();
   const next = sp.get("next") ?? "/dashboard";
   const { toast } = useToast();
-  const { t, language, setLanguage, theme, setTheme } = usePublicSettings();
+  const { t } = usePublicSettings();
 
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -116,39 +105,11 @@ function LoginForm() {
             <Home className="h-6 w-6 text-primary" />
             <span className="text-xl font-bold">Smart Home</span>
           </Link>
-          <div className="flex items-center gap-2">
-            {/* Language Toggle */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setLanguage(language === "id" ? "en" : "id")}
-              className="gap-2"
-            >
-              <Globe className="h-4 w-4" />
-              <span className="hidden sm:inline">
-                {language === "id" ? "ID" : "EN"}
-              </span>
+          <Link href="/">
+            <Button variant="ghost" size="sm">
+              {t("backToHome")}
             </Button>
-
-            {/* Theme Toggle */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            >
-              {theme === "dark" ? (
-                <Sun className="h-4 w-4" />
-              ) : (
-                <Moon className="h-4 w-4" />
-              )}
-            </Button>
-
-            <Link href="/">
-              <Button variant="ghost" size="sm">
-                {t("backToHome")}
-              </Button>
-            </Link>
-          </div>
+          </Link>
         </div>
       </header>
 

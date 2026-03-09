@@ -14,34 +14,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import {
-  Eye,
-  EyeOff,
-  Mail,
-  Lock,
-  User,
-  Home,
-  Loader2,
-  Globe,
-  Moon,
-  Sun,
-} from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, Home, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   PublicSettingsProvider,
   usePublicSettings,
 } from "@/contexts/public-settings-context";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { AuthRedirect } from "@/components/landing/auth-redirect";
 
 function RegisterPageContent() {
   const router = useRouter();
-  const { theme, language, toggleTheme, setLanguage, t } = usePublicSettings();
+  const { t } = usePublicSettings();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -65,34 +48,22 @@ function RegisterPageContent() {
 
     // Validation
     if (!formData.username || !formData.email || !formData.password) {
-      toast.error(
-        language === "id"
-          ? "Mohon isi semua field yang diperlukan"
-          : "Please fill all required fields",
-      );
+      toast.error(t("fillAllFields"));
       return;
     }
 
     if (formData.password.length < 8) {
-      toast.error(
-        language === "id"
-          ? "Password minimal 8 karakter"
-          : "Password must be at least 8 characters",
-      );
+      toast.error(t("passwordMinLength"));
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      toast.error(
-        language === "id"
-          ? "Password dan konfirmasi password tidak cocok"
-          : "Passwords do not match",
-      );
+      toast.error(t("passwordsDoNotMatch"));
       return;
     }
 
     if (!formData.email.includes("@")) {
-      toast.error(language === "id" ? "Email tidak valid" : "Invalid email");
+      toast.error(t("emailInvalid"));
       return;
     }
 
@@ -112,24 +83,13 @@ function RegisterPageContent() {
       const data = await res.json();
 
       if (res.ok) {
-        toast.success(
-          language === "id"
-            ? "Registrasi berhasil! Silakan login."
-            : "Registration successful! Please login.",
-        );
+        toast.success(t("registrationSuccess"));
         router.push("/login");
       } else {
-        toast.error(
-          data.error ||
-            (language === "id" ? "Registrasi gagal" : "Registration failed"),
-        );
+        toast.error(data.error || t("registrationFailed"));
       }
     } catch (error) {
-      toast.error(
-        language === "id"
-          ? "Terjadi kesalahan. Silakan coba lagi."
-          : "An error occurred. Please try again.",
-      );
+      toast.error(t("errorOccurred"));
     } finally {
       setIsLoading(false);
     }
@@ -142,35 +102,15 @@ function RegisterPageContent() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
       <AuthRedirect />
-      {/* Settings in top right */}
-      <div className="fixed top-4 right-4 flex gap-2 z-50">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon">
-              <Globe className="h-5 w-5" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setLanguage("id")}>
-              <span className={language === "id" ? "font-bold" : ""}>
-                🇮🇩 Bahasa Indonesia
-              </span>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setLanguage("en")}>
-              <span className={language === "en" ? "font-bold" : ""}>
-                🇬🇧 English
-              </span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
 
-        <Button variant="outline" size="icon" onClick={toggleTheme}>
-          {theme === "dark" ? (
-            <Sun className="h-5 w-5" />
-          ) : (
-            <Moon className="h-5 w-5" />
-          )}
-        </Button>
+      {/* Back to Home Button */}
+      <div className="fixed top-4 right-4 z-50">
+        <Link href="/">
+          <Button variant="outline" size="sm">
+            <Home className="h-4 w-4 mr-2" />
+            {t("backToHome")}
+          </Button>
+        </Link>
       </div>
 
       <div className="w-full max-w-md">
