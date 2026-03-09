@@ -15,7 +15,7 @@ export function HeroSection({ t }: HeroSectionProps) {
           {t("tagline")}
         </h1>
         <p className="text-sm xs:text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-2 xs:px-4 leading-relaxed">
-          {t("description")}
+          {t("landingDescription")}
         </p>
         <div className="flex flex-col sm:flex-row gap-2.5 xs:gap-3 sm:gap-4 justify-center px-2 xs:px-4 pt-2">
           <Link href="/register" className="w-full sm:w-auto">
