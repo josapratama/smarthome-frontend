@@ -5,7 +5,7 @@ import axios, {
 } from "axios";
 import { config } from "../config";
 
-const API_URL = config.api.baseUrl;
+const API_URL = config.publicBackendUrl;
 
 class ApiClient {
   private client: AxiosInstance;

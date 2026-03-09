@@ -5,7 +5,7 @@
 
 import { config } from "../config";
 
-const API_BASE = config.api.baseUrl;
+const API_BASE = config.publicBackendUrl;
 
 interface FetchOptions extends RequestInit {
   params?: Record<string, string | number | boolean | undefined>;
