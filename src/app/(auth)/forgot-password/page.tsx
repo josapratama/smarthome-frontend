@@ -111,7 +111,7 @@ function ForgotPasswordContent() {
                   </div>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="space-y-3">
                   <Button
                     className="w-full"
                     onClick={() => router.push("/login")}
