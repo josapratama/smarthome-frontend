@@ -4,6 +4,7 @@
  */
 
 import { cookies } from "next/headers";
+import { config } from "@/lib/config";
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -16,7 +17,7 @@ export async function setAuthCookies(
   // Set access token (shorter expiry)
   cookieStore.set("access_token", accessToken, {
     httpOnly: true,
-    secure: isProduction,
+    secure: config.isProduction,
     sameSite: "lax",
     path: "/",
     maxAge: 60 * 60 * 24 * 7, // 7 days
@@ -26,7 +27,7 @@ export async function setAuthCookies(
   if (refreshToken) {
     cookieStore.set("refresh_token", refreshToken, {
       httpOnly: true,
-      secure: isProduction,
+      secure: config.isProduction,
       sameSite: "lax",
       path: "/",
       maxAge: 60 * 60 * 24 * 30, // 30 days

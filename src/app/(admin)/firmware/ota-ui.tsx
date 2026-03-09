@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { qk } from "@/lib/api/queries";
-import { apiFetchBrowser } from "@/lib/api/client.browser";
+import { apiFetchBrowser } from "@/lib/api/client/fetch";
 import type { DeviceDTO } from "@/lib/api/dto/devices.dto";
 import type { OtaJobDTO } from "@/lib/api/dto/ota.dto";
 import { useTranslation } from "@/hooks/use-translation";

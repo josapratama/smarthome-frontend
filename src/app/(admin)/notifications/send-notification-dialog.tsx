@@ -25,7 +25,7 @@ import { Send } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/language-context";
 import type { SendNotificationForm } from "./types";
-import { apiFetchBrowser } from "@/lib/api/client.browser";
+import { apiFetchBrowser } from "@/lib/api/client/fetch";
 
 interface SendNotificationDialogProps {
   open: boolean;

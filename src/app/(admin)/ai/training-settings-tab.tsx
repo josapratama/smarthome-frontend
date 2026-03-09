@@ -6,7 +6,7 @@ import {
   getTrainingConfig,
   updateTrainingConfig,
   type TrainingConfig,
-} from "@/lib/api/ai-training";
+} from "@/lib/api/services/ai-training";
 import { toast } from "sonner";
 
 export function TrainingSettingsTab() {

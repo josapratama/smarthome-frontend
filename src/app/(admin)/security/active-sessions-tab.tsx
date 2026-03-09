@@ -25,7 +25,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { api } from "@/lib/api/client";
+import { api } from "@/lib/api/client/axios";
 import { useLanguage } from "@/contexts/language-context";
 
 interface UserSession {

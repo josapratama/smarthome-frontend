@@ -1,4 +1,4 @@
-import { apiFetchBrowser } from "./client.browser";
+import { apiFetchBrowser } from "../client/fetch";
 
 export type RoomPrivacy = "PUBLIC" | "PRIVATE" | "SHARED" | "RESTRICTED";
 export type RoomAccessLevel = "OWNER" | "CONTROL" | "VIEW" | "NONE";

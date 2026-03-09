@@ -7,7 +7,7 @@ import {
   getHomeConversations,
   DirectConversation,
   HomeConversation,
-} from "@/lib/api/messaging";
+} from "@/lib/api/services/messaging";
 import { ConversationList } from "@/app/user/support/conversation-list";
 import { ChatWindow } from "@/app/user/support/chat-window";
 import { PageHeader } from "@/components/ui/page-header";

@@ -2,7 +2,7 @@
 
 import { formatDistanceToNow } from "date-fns";
 import { User, Home } from "lucide-react";
-import { DirectConversation, HomeConversation } from "@/lib/api/messaging";
+import { DirectConversation, HomeConversation } from "@/lib/api/services/messaging";
 
 interface ConversationItemProps {
   conversation: DirectConversation | HomeConversation;

@@ -13,7 +13,7 @@ import {
   ThumbsDown,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
-import { markFAQFeedback, type FAQ } from "@/lib/api/faq";
+import { markFAQFeedback, type FAQ } from "@/lib/api/services/faq";
 import { toast } from "sonner";
 
 interface FAQListProps {

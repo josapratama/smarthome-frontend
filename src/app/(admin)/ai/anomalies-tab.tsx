@@ -9,7 +9,7 @@ import {
   Activity,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
-import type { Anomaly } from "@/lib/api/ai";
+import type { Anomaly } from "@/lib/api/services/ai";
 import { getSeverityColor } from "./utils";
 
 interface AnomaliesTabProps {

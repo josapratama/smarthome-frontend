@@ -1,4 +1,4 @@
-import { apiFetchBrowser } from "./client.browser";
+import { apiFetchBrowser } from "../client/fetch";
 
 export interface EnergyCostSettings {
   id: number;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { devicesApi, DeviceWithDetails } from "@/lib/api/client/devices";
+import { devicesApi, DeviceWithDetails } from "@/lib/api/services/devices";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -33,7 +33,7 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { useTranslation } from "@/hooks/use-translation";
-import { homesApi } from "@/lib/api/client/homes";
+import { homesApi } from "@/lib/api/services/homes";
 
 export default function UserDevicesPage() {
   const { t } = useTranslation();

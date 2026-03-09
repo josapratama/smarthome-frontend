@@ -39,7 +39,7 @@ import {
   preferencesApi,
   UserPreferences,
   NotificationPreferences,
-} from "@/lib/api/preferences";
+} from "@/lib/api/services/preferences";
 
 export default function SettingsUI() {
   const { theme, setTheme } = useTheme();

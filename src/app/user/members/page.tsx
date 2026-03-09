@@ -21,8 +21,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Users, Home, Crown, UserCheck, Mail, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/language-context";
-import { membersApi, HomeMember } from "@/lib/api/client/members";
-import { homesApi, Home as HomeType } from "@/lib/api/client/homes";
+import { membersApi, HomeMember } from "@/lib/api/services/members";
+import { homesApi, Home as HomeType } from "@/lib/api/services/homes";
 import { MembersList } from "./members-list";
 import { InviteMemberDialog } from "./invite-member-dialog";
 

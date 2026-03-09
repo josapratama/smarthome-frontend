@@ -16,7 +16,7 @@ import {
   getHomeUnreadCount,
   type DirectConversation,
   type HomeConversation,
-} from "@/lib/api/messaging";
+} from "@/lib/api/services/messaging";
 import { ConversationList } from "./conversation-list";
 
 export default function UserMessagesPage() {

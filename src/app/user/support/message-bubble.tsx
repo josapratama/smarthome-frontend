@@ -1,7 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { DirectMessage, HomeMessage } from "@/lib/api/messaging";
+import { DirectMessage, HomeMessage } from "@/lib/api/services/messaging";
 import { Check, CheckCheck } from "lucide-react";
 
 interface MessageBubbleProps {

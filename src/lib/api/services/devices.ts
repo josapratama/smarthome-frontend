@@ -1,4 +1,4 @@
-import { api, apiClient } from "../client";
+import { api, apiClient } from "../client/axios";
 
 export interface Device {
   id: number;

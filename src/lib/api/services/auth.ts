@@ -1,10 +1,10 @@
-import { api, apiClient } from "./client";
+import { api, apiClient } from "../client/axios";
 import type {
   AuthResponse,
   LoginRequest,
   RegisterRequest,
   User,
-} from "../types";
+} from "../../types";
 
 export const authApi = {
   async login(credentials: LoginRequest): Promise<AuthResponse> {

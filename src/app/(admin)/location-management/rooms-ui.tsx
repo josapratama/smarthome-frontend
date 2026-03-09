@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { qk } from "@/lib/api/queries";
-import { apiFetchBrowser } from "@/lib/api/client.browser";
+import { apiFetchBrowser } from "@/lib/api/client/fetch";
 import type { RoomDTO, RoomCreateRequest } from "@/lib/api/dto/rooms.dto";
 import type { HomeDTO } from "@/lib/api/dto/homes.dto";
 import { useTranslation } from "@/hooks/use-translation";

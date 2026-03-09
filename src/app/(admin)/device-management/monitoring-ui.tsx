@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { qk } from "@/lib/api/queries";
-import { apiFetchBrowser } from "@/lib/api/client.browser";
+import { apiFetchBrowser } from "@/lib/api/client/fetch";
 import type { DeviceDTO } from "@/lib/api/dto/devices.dto";
 import { PageHeader } from "@/components/ui/page-header";
 

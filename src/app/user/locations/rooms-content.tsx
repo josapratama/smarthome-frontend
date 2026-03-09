@@ -22,8 +22,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Search, Home, DoorOpen, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "@/hooks/use-translation";
-import { roomsApi, Room } from "@/lib/api/client/rooms";
-import { homesApi, Home as HomeType } from "@/lib/api/client/homes";
+import { roomsApi, Room } from "@/lib/api/services/rooms";
+import { homesApi, Home as HomeType } from "@/lib/api/services/homes";
 
 export default function RoomsContent() {
   const router = useRouter();

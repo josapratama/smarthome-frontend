@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send, Bot, User, Loader2 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
-import { sendMessage, getConversation, type ChatMessage } from "@/lib/api/chat";
+import { sendMessage, getConversation, type ChatMessage } from "@/lib/api/services/chat";
 import { toast } from "sonner";
 
 interface ChatContentProps {

@@ -23,7 +23,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { roomsApi } from "@/lib/api/client/rooms";
+import { roomsApi } from "@/lib/api/services/rooms";
 import { toast } from "sonner";
 import { useTranslation } from "@/hooks/use-translation";
 

@@ -18,7 +18,7 @@ import {
   BookOpen,
   MessageCircle,
 } from "lucide-react";
-import { getFAQs, markFAQFeedback, type FAQ } from "@/lib/api/faq";
+import { getFAQs, markFAQFeedback, type FAQ } from "@/lib/api/services/faq";
 import { toast } from "sonner";
 
 export default function UserFAQPage() {

@@ -14,8 +14,8 @@ import { Badge } from "@/components/ui/badge";
 import { Home, Globe, Check, X, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/language-context";
-import { getHomes, type Home as HomeType } from "@/lib/api/homes";
-import { aiModelsApi, type AIModel } from "@/lib/api/ai-models";
+import { getHomes, type Home as HomeType } from "@/lib/api/services/homes";
+import { aiModelsApi, type AIModel } from "@/lib/api/services/ai-models";
 import {
   getHomeModels,
   setHomeModel,
@@ -24,7 +24,7 @@ import {
   applyModelToAllHomes,
   type HomeAIModel,
   type ActiveModelForHome,
-} from "@/lib/api/home-ai-models";
+} from "@/lib/api/services/home-ai-models";
 
 export function HomeModelsTab() {
   const { t } = useLanguage();

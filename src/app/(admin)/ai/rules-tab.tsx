@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Settings, Power, PowerOff, Trash2 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
-import type { AIRule } from "@/lib/api/ai";
+import type { AIRule } from "@/lib/api/services/ai";
 import { getRuleTypeColor, getActiveStatusColor } from "./utils";
 
 interface RulesTabProps {

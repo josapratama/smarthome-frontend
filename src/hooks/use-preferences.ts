@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiFetchBrowser } from "@/lib/api/client.browser";
+import { apiFetchBrowser } from "@/lib/api/client/fetch";
 import type {
   UserPreferencesDTO,
   PreferencesResponse,

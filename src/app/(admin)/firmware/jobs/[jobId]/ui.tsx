@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { apiFetchBrowser } from "@/lib/api/client.browser";
+import { apiFetchBrowser } from "@/lib/api/client/fetch";
 import type { OtaJobDTO } from "@/lib/api/dto/ota.dto";
 import { useTranslation } from "@/hooks/use-translation";
 

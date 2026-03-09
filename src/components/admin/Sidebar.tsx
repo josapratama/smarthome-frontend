@@ -26,7 +26,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { browserApi } from "@/lib/api/client.browser";
+import { browserApi } from "@/lib/api/client/fetch";
 
 interface SidebarProps {
   className?: string;

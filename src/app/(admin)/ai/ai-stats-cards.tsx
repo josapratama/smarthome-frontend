@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TrendingUp, Zap, Brain } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
-import type { AIStats } from "@/lib/api/ai";
+import type { AIStats } from "@/lib/api/services/ai";
 
 interface AIStatsCardsProps {
   stats: AIStats | undefined;

@@ -25,7 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { Wifi, Loader2, Copy, Home as HomeIcon } from "lucide-react";
-import { apiFetchBrowser } from "@/lib/api/client.browser";
+import { apiFetchBrowser } from "@/lib/api/client/fetch";
 import { qk } from "@/lib/api/queries";
 import { useToast } from "@/hooks/use-toast";
 

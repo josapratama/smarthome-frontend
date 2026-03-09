@@ -43,7 +43,7 @@ import {
   type CreateAIModelInput,
   type AIModelAlgorithm,
   type AIModelType,
-} from "@/lib/api/ai-models";
+} from "@/lib/api/services/ai-models";
 
 export function ModelsTab() {
   const { t } = useLanguage();

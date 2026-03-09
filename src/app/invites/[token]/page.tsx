@@ -22,7 +22,7 @@ import {
   Loader2,
   AlertCircle,
 } from "lucide-react";
-import { apiFetchBrowser } from "@/lib/api/client.browser";
+import { apiFetchBrowser } from "@/lib/api/client/fetch";
 
 interface InviteDetails {
   homeId: number;

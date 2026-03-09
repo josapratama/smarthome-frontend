@@ -6,7 +6,7 @@ import { Bell, Menu, RefreshCw, Search, Filter, Plus } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { getUnreadAlarmCount } from "@/lib/api/alarms";
+import { getUnreadAlarmCount } from "@/lib/api/services/alarms";
 
 interface UserTopbarProps {
   onMenuClick?: () => void;

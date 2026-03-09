@@ -7,7 +7,7 @@ import {
   sendHomeMessage,
   DirectConversation,
   HomeConversation,
-} from "@/lib/api/messaging";
+} from "@/lib/api/services/messaging";
 import { Send, Paperclip, Smile } from "lucide-react";
 import { toast } from "sonner";
 

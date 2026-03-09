@@ -3,7 +3,7 @@
  * Uses fetch with credentials for cookie-based auth
  */
 
-import { config } from "../config";
+import { config } from "../../config";
 
 const API_BASE = config.publicBackendUrl;
 

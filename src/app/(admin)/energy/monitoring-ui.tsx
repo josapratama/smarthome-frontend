@@ -17,7 +17,7 @@ import {
   RefreshCw,
   AlertCircle,
 } from "lucide-react";
-import { apiFetchBrowser } from "@/lib/api/client.browser";
+import { apiFetchBrowser } from "@/lib/api/client/fetch";
 
 interface EnergyStats {
   totalDevices: number;

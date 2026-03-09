@@ -32,12 +32,12 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "@/hooks/use-translation";
-import { homesApi } from "@/lib/api/client/homes";
+import { homesApi } from "@/lib/api/services/homes";
 import {
   listHomeAlarms,
   acknowledgeAlarm,
   resolveAlarm,
-} from "@/lib/api/alarms";
+} from "@/lib/api/services/alarms";
 import { PageHeader } from "@/components/ui/page-header";
 import type {
   AlarmDTO,

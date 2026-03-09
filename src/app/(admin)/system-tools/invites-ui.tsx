@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { InviteDialog } from "@/app/user/invites/invite-dialog";
 import { InviteList } from "@/app/user/invites/invite-list";
-import { apiFetchBrowser } from "@/lib/api/client.browser";
+import { apiFetchBrowser } from "@/lib/api/client/fetch";
 import { useLanguage } from "@/contexts/language-context";
 import { useState } from "react";
 

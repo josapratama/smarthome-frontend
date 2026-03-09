@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TrendingUp } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
-import type { EnergyPrediction } from "@/lib/api/ai";
+import type { EnergyPrediction } from "@/lib/api/services/ai";
 
 interface PredictionsTabProps {
   predictions: EnergyPrediction[] | undefined;

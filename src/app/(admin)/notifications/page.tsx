@@ -10,7 +10,7 @@ import type { NotificationTemplate } from "./types";
 import { SendNotificationDialog } from "./send-notification-dialog";
 import { TemplateCard } from "./template-card";
 import { EditTemplateDialog } from "./edit-template-dialog";
-import { apiFetchBrowser } from "@/lib/api/client.browser";
+import { apiFetchBrowser } from "@/lib/api/client/fetch";
 
 export default function NotificationsPage() {
   const { t } = useLanguage();

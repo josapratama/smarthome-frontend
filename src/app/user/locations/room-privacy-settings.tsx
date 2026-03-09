@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { updateRoomPrivacy, type RoomPrivacy } from "@/lib/api/room-access";
+import { updateRoomPrivacy, type RoomPrivacy } from "@/lib/api/services/room-access";
 import { Lock, Users, UserCheck, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "@/hooks/use-translation";

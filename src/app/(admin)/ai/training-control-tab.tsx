@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useLanguage } from "@/contexts/language-context";
-import { startTraining } from "@/lib/api/ai-training";
+import { startTraining } from "@/lib/api/services/ai-training";
 import { toast } from "sonner";
 
 export function TrainingControlTab() {

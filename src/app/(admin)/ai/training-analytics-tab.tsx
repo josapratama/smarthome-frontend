@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/language-context";
-import { getTrainingStats, type TrainingStats } from "@/lib/api/ai-training";
+import { getTrainingStats, type TrainingStats } from "@/lib/api/services/ai-training";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 

@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { membersApi, InviteMemberInput } from "@/lib/api/client/members";
+import { membersApi, InviteMemberInput } from "@/lib/api/services/members";
 import { toast } from "sonner";
 
 const inviteSchema = z.object({

@@ -15,7 +15,7 @@ import {
   deleteConversation,
   type ChatConversation,
   type ChatMessage,
-} from "@/lib/api/chat";
+} from "@/lib/api/services/chat";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";

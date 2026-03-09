@@ -20,7 +20,7 @@ import {
   PowerOff,
 } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
-import { devicesApi } from "@/lib/api/client/devices";
+import { devicesApi } from "@/lib/api/services/devices";
 import { telemetryApi } from "@/lib/api/telemetry";
 import { toast } from "sonner";
 import {

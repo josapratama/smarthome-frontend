@@ -19,10 +19,10 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "@/hooks/use-translation";
-import { energyApi } from "@/lib/api/energy";
-import { devicesApi, DeviceWithDetails } from "@/lib/api/client/devices";
-import { homesApi } from "@/lib/api/client/homes";
-import { getEnergyCost } from "@/lib/api/energy-cost";
+import { energyApi } from "@/lib/api/services/energy";
+import { devicesApi, DeviceWithDetails } from "@/lib/api/services/devices";
+import { homesApi } from "@/lib/api/services/homes";
+import { getEnergyCost } from "@/lib/api/services/energy-cost";
 import { PageHeader } from "@/components/ui/page-header";
 import { EnergyStatsCards } from "./energy-stats-cards";
 import { DeviceEnergyList } from "./device-energy-list";

@@ -34,7 +34,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, Plus, Mail } from "lucide-react";
-import { apiFetchBrowser } from "@/lib/api/client.browser";
+import { apiFetchBrowser } from "@/lib/api/client/fetch";
 
 const inviteSchema = z.object({
   homeId: z.string().min(1, "Please select a home"),

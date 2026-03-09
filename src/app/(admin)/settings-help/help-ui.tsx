@@ -19,7 +19,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
-import { getFAQs, getCategories, type FAQ } from "@/lib/api/faq";
+import { getFAQs, getCategories, type FAQ } from "@/lib/api/services/faq";
 import { FAQList } from "./faq-list";
 import { ChatContent } from "@/app/user/chat/chat-content";
 import { v4 as uuidv4 } from "uuid";

@@ -29,7 +29,7 @@ import {
   setHomeModel,
   removeHomeModel,
   type ActiveModelForHome,
-} from "@/lib/api/home-ai-models";
+} from "@/lib/api/services/home-ai-models";
 
 interface HomeAIModelsSectionProps {
   homeId: number;

@@ -1,11 +1,11 @@
 "use client";
 
 import { useTranslation } from "@/hooks/use-translation";
-import { Room } from "@/lib/api/client/rooms";
+import { Room } from "@/lib/api/services/rooms";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DoorOpen, Trash2, Shield } from "lucide-react";
-import { roomsApi } from "@/lib/api/client/rooms";
+import { roomsApi } from "@/lib/api/services/rooms";
 import { toast } from "sonner";
 import { useState } from "react";
 import {

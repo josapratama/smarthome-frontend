@@ -26,12 +26,12 @@ import {
 import { useLanguage } from "@/contexts/language-context";
 import { useToast } from "@/hooks/use-toast";
 import { qk } from "@/lib/api/queries";
-import { apiFetchBrowser } from "@/lib/api/client.browser";
+import { apiFetchBrowser } from "@/lib/api/client/fetch";
 import {
   listHomeAlarms,
   acknowledgeAlarm,
   resolveAlarm,
-} from "@/lib/api/alarms";
+} from "@/lib/api/services/alarms";
 import type { AlarmDTO, AlarmStatus } from "./types";
 import { AlarmCard } from "./alarm-card";
 

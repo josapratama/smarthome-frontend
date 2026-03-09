@@ -13,8 +13,8 @@ import {
   listHomeAlarms,
   acknowledgeAlarm,
   resolveAlarm,
-} from "@/lib/api/alarms";
-import { homesApi } from "@/lib/api/client/homes";
+} from "@/lib/api/services/alarms";
+import { homesApi } from "@/lib/api/services/homes";
 import type { AlarmDTO } from "@/lib/api/dto/alarm.dto";
 import { PageHeader } from "@/components/ui/page-header";
 import { formatDistanceToNow } from "date-fns";

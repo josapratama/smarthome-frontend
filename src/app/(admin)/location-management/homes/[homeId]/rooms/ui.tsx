@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { qk } from "@/lib/api/queries";
-import { apiFetchBrowser } from "@/lib/api/client.browser";
+import { apiFetchBrowser } from "@/lib/api/client/fetch";
 import type { RoomDTO, RoomCreateRequest } from "@/lib/api/dto/rooms.dto";
 import { useLanguage } from "@/contexts/language-context";
 

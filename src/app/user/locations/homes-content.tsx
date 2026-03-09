@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslation } from "@/hooks/use-translation";
-import { homesApi, Home } from "@/lib/api/client/homes";
+import { homesApi, Home } from "@/lib/api/services/homes";
 import { CreateHomeDialog } from "./create-home-dialog";
 import { HomeCard } from "./home-card";
 import { Button } from "@/components/ui/button";

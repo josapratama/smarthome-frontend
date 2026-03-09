@@ -7,8 +7,8 @@ import {
   revokeRoomAccess,
   type RoomAccessGrant,
   type RoomAccessLevel,
-} from "@/lib/api/room-access";
-import { getHomeMembers } from "@/lib/api/homes";
+} from "@/lib/api/services/room-access";
+import { getHomeMembers } from "@/lib/api/services/homes";
 import { UserPlus, Trash2, Clock, User } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";

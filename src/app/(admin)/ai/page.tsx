@@ -18,7 +18,7 @@ import {
   type EnergyPrediction,
   type Anomaly,
   type AIRule,
-} from "@/lib/api/ai";
+} from "@/lib/api/services/ai";
 import { AIStatsCards } from "./ai-stats-cards";
 import { PredictionsTab } from "./predictions-tab";
 import { AnomaliesTab } from "./anomalies-tab";

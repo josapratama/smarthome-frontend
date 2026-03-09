@@ -22,8 +22,8 @@ import {
   getEnergyCost,
   setGlobalEnergyCost,
   type EnergyCostSettings,
-} from "@/lib/api/energy-cost";
-import { homesApi } from "@/lib/api/client/homes";
+} from "@/lib/api/services/energy-cost";
+import { homesApi } from "@/lib/api/services/homes";
 
 interface HomeWithCost {
   id: number;

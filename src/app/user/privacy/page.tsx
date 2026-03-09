@@ -34,7 +34,7 @@ import {
   downloadUserData,
   deleteUserData,
   type PrivacySettings,
-} from "@/lib/api/privacy";
+} from "@/lib/api/services/privacy";
 
 export default function PrivacyPage() {
   const { t } = useLanguage();

@@ -1,6 +1,6 @@
 "use client";
 
-import { Home } from "@/lib/api/client/homes";
+import { Home } from "@/lib/api/services/homes";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Home as HomeIcon, MapPin, Edit, Trash2 } from "lucide-react";

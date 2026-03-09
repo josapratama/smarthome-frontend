@@ -1,9 +1,9 @@
-import { apiFetchBrowser } from "./client.browser";
+import { apiFetchBrowser } from "../client/fetch";
 import type {
   AlarmDTO,
   AlarmCreateRequest,
   AlarmsQuery,
-} from "./dto/alarm.dto";
+} from "../dto/alarm.dto";
 
 export async function listHomeAlarms(homeId: number, query?: AlarmsQuery) {
   const params = new URLSearchParams();

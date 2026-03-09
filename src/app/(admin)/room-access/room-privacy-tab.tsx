@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, Edit, Shield, Lock, Users, Eye } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { api } from "@/lib/api/client";
+import { api } from "@/lib/api/client/axios";
 import {
   Dialog,
   DialogContent,

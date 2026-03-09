@@ -11,7 +11,7 @@ import {
   HomeMessage,
   markDMAsRead,
   markHomeMessageAsRead,
-} from "@/lib/api/messaging";
+} from "@/lib/api/services/messaging";
 import { User, Home, MoreVertical } from "lucide-react";
 import { toast } from "sonner";
 import { MessageBubble } from "./message-bubble";

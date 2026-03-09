@@ -3,7 +3,7 @@ import axios, {
   AxiosInstance,
   InternalAxiosRequestConfig,
 } from "axios";
-import { config } from "../config";
+import { config } from "../../config";
 
 const API_URL = config.publicBackendUrl;
 

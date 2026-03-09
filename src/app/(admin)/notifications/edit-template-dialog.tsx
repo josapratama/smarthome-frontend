@@ -23,7 +23,7 @@ import {
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/language-context";
 import type { NotificationTemplate } from "./types";
-import { apiFetchBrowser } from "@/lib/api/client.browser";
+import { apiFetchBrowser } from "@/lib/api/client/fetch";
 
 interface EditTemplateDialogProps {
   template: NotificationTemplate | null;

@@ -23,7 +23,7 @@ import {
   setHomeEnergyCost,
   removeHomeEnergyCost,
   type EnergyCostSettings,
-} from "@/lib/api/energy-cost";
+} from "@/lib/api/services/energy-cost";
 
 interface HomeEnergyCostSectionProps {
   homeId: number;
