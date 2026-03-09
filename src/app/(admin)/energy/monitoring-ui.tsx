@@ -117,7 +117,7 @@ export default function EnergyMonitoringUI() {
       setPredictions(predictionsRes.data.predictions);
     } catch (err) {
       console.error("Failed to load energy data:", err);
-      setError(err instanceof Error ? err.message : "Failed to load data");
+      setError(err instanceof Error ? err.message : t("errorLoadingData"));
     } finally {
       setLoading(false);
     }

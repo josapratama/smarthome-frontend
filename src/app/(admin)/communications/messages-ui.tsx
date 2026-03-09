@@ -8,8 +8,8 @@ import {
   DirectConversation,
   HomeConversation,
 } from "@/lib/api/messaging";
-import { ConversationList } from "@/app/user/messages/conversation-list";
-import { ChatWindow } from "@/app/user/messages/chat-window";
+import { ConversationList } from "@/app/user/support/conversation-list";
+import { ChatWindow } from "@/app/user/support/chat-window";
 import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -78,7 +78,7 @@ export default function MessagesPage() {
       }
     } catch (error: any) {
       console.error("Failed to load conversations:", error);
-      setError(error.message || "Failed to load conversations");
+      setError(error.message || t("failedToLoadConversations"));
       setDmConversations([]);
       setHomeConversations([]);
     } finally {

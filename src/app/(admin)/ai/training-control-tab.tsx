@@ -22,7 +22,7 @@ export function TrainingControlTab() {
       }
 
       const result = await startTraining(params);
-      toast.success(`${t("trainingStarted")} (Job #${result.jobId})`);
+      toast.success(`${t("trainingStarted")} (${t("job")} #${result.jobId})`);
     } catch (error) {
       toast.error(t("startTrainingError"));
     } finally {

@@ -44,7 +44,7 @@ import {
   Smartphone,
   Search,
 } from "lucide-react";
-import { RoomAccessDialog } from "@/app/user/rooms/room-access-dialog";
+import { RoomAccessDialog } from "@/app/user/locations/room-access-dialog";
 
 function AddRoomDialog() {
   const [open, setOpen] = useState(false);
