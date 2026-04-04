@@ -3,8 +3,14 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,14 +21,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { DollarSign, Globe, Home, Trash2, Save, Edit } from "lucide-react";
+import { Zap, Save, Edit, X, AlertCircle, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "@/hooks/use-translation";
 import {
-  getEnergyCost,
-  setHomeEnergyCost,
-  removeHomeEnergyCost,
-  type EnergyCostSettings,
+  adminGetTariffs,
+  getHomeTariff,
+  setHomeTariff,
+  removeHomeTariff,
+  type PLNTariff,
+  type HomeTariff,
 } from "@/lib/api/services/energy-cost";
 
 interface HomeEnergyCostSectionProps {
@@ -35,57 +43,55 @@ export function HomeEnergyCostSection({
   isOwner,
 }: HomeEnergyCostSectionProps) {
   const { t } = useTranslation();
-  const [costSettings, setCostSettings] = useState<EnergyCostSettings | null>(
-    null,
-  );
+  const [homeTariff, setHomeTariffState] = useState<HomeTariff | null>(null);
+  const [tariffs, setTariffs] = useState<PLNTariff[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [costPerKwh, setCostPerKwh] = useState("");
-  const [showRemoveDialog, setShowRemoveDialog] = useState(false);
+  const [selectedKey, setSelectedKey] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [showRemoveDialog, setShowRemoveDialog] = useState(false);
 
   useEffect(() => {
-    loadCostSettings();
+    loadData();
   }, [homeId]);
 
-  const loadCostSettings = async () => {
+  const loadData = async () => {
     setIsLoading(true);
     try {
-      const settings = await getEnergyCost(homeId);
-      setCostSettings(settings);
-      setCostPerKwh(settings.costPerKwh.toString());
-    } catch (error) {
-      console.error("Failed to load energy cost settings:", error);
-      // Set default if API not available
-      setCostSettings({
-        id: 0,
-        homeId: null,
-        costPerKwh: 1500,
-        currency: "IDR",
-        updatedAt: new Date().toISOString(),
-        updatedBy: 0,
+      const [ht, ts] = await Promise.all([
+        getHomeTariff(homeId),
+        adminGetTariffs(),
+      ]);
+      setHomeTariffState(ht);
+      setTariffs(ts);
+      setSelectedKey(ht.selectedTariffKey ?? "");
+    } catch {
+      // API belum ada, set empty state
+      setHomeTariffState({
+        homeId,
+        homeName: "",
+        selectedTariffKey: null,
+        tariff: null,
+        costPerKwh: 0,
       });
-      setCostPerKwh("1500");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleSave = async () => {
-    const cost = parseFloat(costPerKwh);
-    if (isNaN(cost) || cost <= 0) {
-      toast.error(t("invalidCostValue"));
+    if (!selectedKey) {
+      toast.error("Pilih golongan tarif terlebih dahulu");
       return;
     }
-
     setIsSaving(true);
     try {
-      await setHomeEnergyCost(homeId, { costPerKwh: cost });
-      toast.success(t("energyCostUpdated"));
+      await setHomeTariff(homeId, selectedKey);
+      toast.success("Golongan tarif listrik diperbarui");
       setIsEditing(false);
-      loadCostSettings();
+      loadData();
     } catch (error: any) {
-      toast.error(error.message || t("failedUpdateEnergyCost"));
+      toast.error(error.message || "Gagal memperbarui tarif");
     } finally {
       setIsSaving(false);
     }
@@ -93,79 +99,117 @@ export function HomeEnergyCostSection({
 
   const handleRemove = async () => {
     try {
-      await removeHomeEnergyCost(homeId);
-      toast.success(t("energyCostRemoved"));
+      await removeHomeTariff(homeId);
+      toast.success("Pilihan golongan tarif dihapus");
       setShowRemoveDialog(false);
-      loadCostSettings();
+      loadData();
     } catch (error: any) {
-      toast.error(error.message || t("failedRemoveEnergyCost"));
+      toast.error(error.message || "Gagal menghapus tarif");
     }
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-    }).format(amount);
-  };
+  if (!isOwner) return null;
 
-  if (!isOwner) {
-    return null; // Only show to home owner
-  }
+  const hasSelection = !!homeTariff?.selectedTariffKey;
+  const tariffSet = homeTariff?.costPerKwh && homeTariff.costPerKwh > 0;
 
-  const isUsingGlobal = costSettings?.homeId === null;
+  // Group tariffs by golongan for display
+  const tariffGroups = tariffs.reduce<Record<string, PLNTariff[]>>((acc, t) => {
+    if (!acc[t.golongan]) acc[t.golongan] = [];
+    acc[t.golongan].push(t);
+    return acc;
+  }, {});
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold flex items-center gap-2">
-          <DollarSign className="h-6 w-6 text-green-500" />
-          {t("energyCostSettings")}
+          <Zap className="h-6 w-6 text-yellow-500" />
+          Golongan Tarif Listrik
         </h2>
       </div>
 
       <p className="text-sm text-muted-foreground">
-        {t("manageEnergyCostForHome")}
+        Pilih golongan daya listrik PLN yang digunakan di rumah ini untuk
+        menghitung estimasi biaya energi.
       </p>
 
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center justify-between">
             <span className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-green-500" />
-              {t("electricityCostRate")}
+              <Zap className="h-5 w-5 text-yellow-500" />
+              Golongan Listrik
             </span>
-            {isUsingGlobal ? (
-              <Badge variant="secondary" className="flex items-center gap-1">
-                <Globe className="h-3 w-3" />
-                {t("globalDefault")}
+            {hasSelection ? (
+              <Badge className="flex items-center gap-1">
+                <Zap className="h-3 w-3" />
+                {homeTariff?.tariff?.golongan}
               </Badge>
             ) : (
-              <Badge className="flex items-center gap-1">
-                <Home className="h-3 w-3" />
-                {t("homeSpecific")}
+              <Badge
+                variant="outline"
+                className="text-orange-500 border-orange-300"
+              >
+                <AlertCircle className="h-3 w-3 mr-1" />
+                Belum dipilih
               </Badge>
             )}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Current Cost Display */}
-          {!isEditing ? (
+          {isLoading ? (
+            <div className="h-24 rounded-lg bg-muted animate-pulse" />
+          ) : !isEditing ? (
             <div className="p-4 rounded-lg bg-muted/50">
-              <div className="flex items-center justify-between">
+              <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">
-                    {t("currentRate")}
-                  </p>
-                  <p className="text-3xl font-bold">
-                    {costSettings
-                      ? formatCurrency(costSettings.costPerKwh)
-                      : "-"}
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {t("perKilowattHour")}
-                  </p>
+                  {hasSelection ? (
+                    <>
+                      <p className="text-sm text-muted-foreground mb-1">
+                        Golongan yang dipilih
+                      </p>
+                      <p className="text-xl font-bold">
+                        {homeTariff?.tariff?.description}
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {homeTariff?.tariff?.golongan} ·{" "}
+                        {homeTariff?.tariff?.daya}
+                      </p>
+                      <div className="mt-3">
+                        {tariffSet ? (
+                          <div className="flex items-center gap-2">
+                            <span className="text-2xl font-bold text-green-600">
+                              Rp{homeTariff!.costPerKwh.toLocaleString("id-ID")}
+                            </span>
+                            <span className="text-sm text-muted-foreground">
+                              /kWh
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-1.5 text-orange-500">
+                            <AlertCircle className="h-4 w-4" />
+                            <span className="text-sm">
+                              Tarif belum diset oleh admin
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <AlertCircle className="h-5 w-5 text-orange-400" />
+                      <div>
+                        <p className="font-medium text-foreground">
+                          Golongan belum dipilih
+                        </p>
+                        <p className="text-sm">
+                          Pilih golongan listrik untuk menghitung estimasi biaya
+                          energi
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <Button
                   variant="outline"
@@ -173,97 +217,120 @@ export function HomeEnergyCostSection({
                   onClick={() => setIsEditing(true)}
                 >
                   <Edit className="h-4 w-4 mr-2" />
-                  {t("edit")}
+                  {hasSelection ? "Ubah" : "Pilih"}
                 </Button>
               </div>
             </div>
           ) : (
-            /* Edit Mode */
             <div className="space-y-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">
-                  {t("costPerKwh")} (IDR)
+                  Pilih Golongan Daya Listrik PLN
                 </label>
-                <Input
-                  type="number"
-                  value={costPerKwh}
-                  onChange={(e) => setCostPerKwh(e.target.value)}
-                  placeholder="1500"
-                  min="0"
-                  step="100"
-                />
+                <Select value={selectedKey} onValueChange={setSelectedKey}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Pilih golongan..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(tariffGroups).map(([golongan, items]) => (
+                      <div key={golongan}>
+                        <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+                          Golongan {golongan}
+                        </div>
+                        {items.map((t) => (
+                          <SelectItem key={t.key} value={t.key}>
+                            <div className="flex items-center justify-between gap-4 w-full">
+                              <span>{t.description}</span>
+                              {t.tarif > 0 ? (
+                                <span className="text-xs font-mono text-muted-foreground shrink-0">
+                                  Rp{t.tarif.toLocaleString("id-ID")}/kWh
+                                </span>
+                              ) : (
+                                <span className="text-xs text-orange-400 shrink-0">
+                                  Tarif belum diset
+                                </span>
+                              )}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </div>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <p className="text-xs text-muted-foreground">
-                  {t("energyCostHint")}
+                  Tarif per kWh ditentukan oleh admin berdasarkan golongan yang
+                  dipilih.
                 </p>
               </div>
 
               <div className="flex gap-2">
-                <Button onClick={handleSave} disabled={isSaving}>
+                <Button
+                  onClick={handleSave}
+                  disabled={isSaving || !selectedKey}
+                >
                   <Save className="h-4 w-4 mr-2" />
-                  {isSaving ? t("saving") : t("save")}
+                  {isSaving ? "Menyimpan..." : "Simpan"}
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => {
                     setIsEditing(false);
-                    setCostPerKwh(
-                      costSettings?.costPerKwh.toString() || "1500",
-                    );
+                    setSelectedKey(homeTariff?.selectedTariffKey ?? "");
                   }}
                   disabled={isSaving}
                 >
-                  {t("cancel")}
+                  <X className="h-4 w-4 mr-2" />
+                  Batal
                 </Button>
               </div>
             </div>
           )}
 
-          {/* Remove Home-Specific Cost */}
-          {!isUsingGlobal && !isEditing && (
+          {hasSelection && !isEditing && (
             <div className="pt-4 border-t">
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full"
+                className="w-full text-destructive hover:text-destructive"
                 onClick={() => setShowRemoveDialog(true)}
               >
                 <Trash2 className="h-4 w-4 mr-2" />
-                {t("useGlobalDefault")}
+                Hapus Pilihan Golongan
               </Button>
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Info Card */}
+      {/* Info */}
       <Card className="border-blue-200 bg-blue-50 dark:bg-blue-950/20">
         <CardContent className="pt-6">
           <div className="flex gap-3">
-            <DollarSign className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+            <Zap className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
             <div className="text-sm text-blue-900 dark:text-blue-100">
-              <p className="font-medium mb-1">{t("aboutEnergyCost")}</p>
+              <p className="font-medium mb-1">Tentang Golongan Tarif</p>
               <p className="text-blue-700 dark:text-blue-300">
-                {t("energyCostDescription")}
+                Pilih golongan sesuai daya listrik yang terpasang di rumah Anda.
+                Estimasi biaya energi akan dihitung otomatis berdasarkan tarif
+                golongan tersebut.
               </p>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Remove Confirmation Dialog */}
       <AlertDialog open={showRemoveDialog} onOpenChange={setShowRemoveDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t("useGlobalDefaultConfirm")}</AlertDialogTitle>
+            <AlertDialogTitle>Hapus Pilihan Golongan?</AlertDialogTitle>
             <AlertDialogDescription>
-              {t("useGlobalDefaultDescription")}
+              Estimasi biaya energi tidak akan dihitung sampai golongan dipilih
+              kembali.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-            <AlertDialogAction onClick={handleRemove}>
-              {t("confirm")}
-            </AlertDialogAction>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={handleRemove}>Hapus</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
