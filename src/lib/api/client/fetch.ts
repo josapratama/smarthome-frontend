@@ -46,15 +46,16 @@ export async function apiFetchBrowser<T = any>(
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({
+    const body = await response.json().catch(() => ({
       error: "UNKNOWN_ERROR",
       message: response.statusText,
     }));
 
-    throw {
-      status: response.status,
-      ...error,
-    };
+    const msg = body?.message || body?.error || response.statusText;
+    const err = new Error(msg);
+    (err as any).status = response.status;
+    (err as any).data = body;
+    throw err;
   }
 
   return response.json();

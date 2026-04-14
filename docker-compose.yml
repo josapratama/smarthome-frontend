@@ -24,4 +24,5 @@ services:
 
 networks:
   smarthome-network:
+    name: smarthome-backend_smarthome-network
     external: true # Gunakan network yang sama dengan backend

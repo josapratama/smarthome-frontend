@@ -92,6 +92,7 @@ export async function POST(req: Request) {
       secure: isProduction,
       sameSite: "lax",
       path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 days, same as access_token
     });
 
     return resp;

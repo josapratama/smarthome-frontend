@@ -79,12 +79,11 @@ export function UserSidebar({ className, onClose }: UserSidebarProps) {
 
   const handleLogout = async () => {
     try {
-      await browserApi.post("/api/v1/logout", {});
+      await fetch("/api/auth/logout", { method: "POST" });
       router.push("/login");
       router.refresh();
     } catch (error) {
       console.error("Logout failed:", error);
-      // Still redirect even if logout fails
       router.push("/login");
     }
   };

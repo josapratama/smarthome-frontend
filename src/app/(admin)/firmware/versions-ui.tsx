@@ -496,8 +496,8 @@ export default function FirmwareVersionsUI() {
       </div>
 
       {/* Search */}
-      <div ref={searchSectionRef}>
-        <Card>
+      <div ref={searchSectionRef} className="flex gap-3 items-center">
+        <Card className="flex-1">
           <CardContent className="p-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -510,6 +510,10 @@ export default function FirmwareVersionsUI() {
             </div>
           </CardContent>
         </Card>
+        <Button onClick={() => setUploadDialogOpen(true)} className="shrink-0">
+          <Upload className="h-4 w-4 mr-2" />
+          {t("uploadFirmware")}
+        </Button>
       </div>
 
       <Card className="rounded-2xl shadow-sm">
