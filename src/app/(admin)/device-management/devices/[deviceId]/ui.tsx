@@ -52,6 +52,7 @@ import {
   Settings,
   Key,
   Zap,
+  Gauge,
 } from "lucide-react";
 
 function statusBadge(status: boolean, t: any) {
@@ -77,13 +78,15 @@ function deviceTypeBadge(type: string) {
       "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
     POWER_METER:
       "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
+    ENERGY_MONITOR:
+      "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
     DOOR: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
     OTHER: "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200",
   };
 
   return (
     <Badge variant="outline" className={colors[type] || colors.OTHER}>
-      {type.replace("_", " ")}
+      {type.replace(/_/g, " ")}
     </Badge>
   );
 }
@@ -247,11 +250,19 @@ export function DeviceDetailClient({ deviceId }: { deviceId: number }) {
     );
   }
 
+  const isEnergyMonitor = device.deviceType === "ENERGY_MONITOR";
+  const sensorReadings: Array<{
+    id: number;
+    metric: string;
+    valueNum: number | null;
+    unit: string | null;
+    timestamp: string;
+  }> = (device as any).sensorReadings ?? [];
+
   return (
     <div className="space-y-6">
       {/* Breadcrumb & Header */}
       <div className="space-y-4">
-        {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <button
             onClick={() => router.push("/device-management")}
@@ -448,16 +459,18 @@ export function DeviceDetailClient({ deviceId }: { deviceId: number }) {
               <Settings className="mr-2 h-4 w-4" />
               {t("configuration")}
             </Button>
-            <Button
-              variant="outline"
-              className="justify-start h-auto py-3"
-              onClick={() =>
-                router.push(`/device-management/devices/${deviceId}/channels`)
-              }
-            >
-              <Zap className="mr-2 h-4 w-4" />
-              {t("manageChannels")}
-            </Button>
+            {!isEnergyMonitor && (
+              <Button
+                variant="outline"
+                className="justify-start h-auto py-3"
+                onClick={() =>
+                  router.push(`/device-management/devices/${deviceId}/channels`)
+                }
+              >
+                <Zap className="mr-2 h-4 w-4" />
+                {t("manageChannels")}
+              </Button>
+            )}
             <Button
               variant="outline"
               className="justify-start h-auto py-3"
@@ -490,6 +503,81 @@ export function DeviceDetailClient({ deviceId }: { deviceId: number }) {
           </div>
         </CardContent>
       </Card>
+
+      {/* Sensor Readings — only for ENERGY_MONITOR */}
+      {isEnergyMonitor && (
+        <Card className="rounded-2xl shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Gauge className="h-4 w-4 text-orange-500" />
+              Pembacaan Sensor
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {sensorReadings.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                Belum ada data sensor
+              </p>
+            ) : (
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {[
+                  {
+                    metric: "voltage",
+                    label: "Tegangan",
+                    unit: "V",
+                    decimals: 1,
+                  },
+                  {
+                    metric: "current_a",
+                    label: "Arus",
+                    unit: "A",
+                    decimals: 3,
+                  },
+                  { metric: "power", label: "Daya", unit: "W", decimals: 1 },
+                  {
+                    metric: "energy",
+                    label: "Energi",
+                    unit: "kWh",
+                    decimals: 3,
+                  },
+                  {
+                    metric: "frequency",
+                    label: "Frekuensi",
+                    unit: "Hz",
+                    decimals: 1,
+                  },
+                  {
+                    metric: "power_factor",
+                    label: "Faktor Daya",
+                    unit: "",
+                    decimals: 2,
+                  },
+                ].map(({ metric, label, unit, decimals }) => {
+                  const r = sensorReadings.find((s) => s.metric === metric);
+                  return (
+                    <div
+                      key={metric}
+                      className="rounded-xl border bg-muted/30 p-4 space-y-1"
+                    >
+                      <p className="text-xs text-muted-foreground">{label}</p>
+                      <p className="text-xl font-bold">
+                        {r?.valueNum != null
+                          ? `${r.valueNum.toFixed(decimals)} ${unit}`
+                          : "—"}
+                      </p>
+                      {r?.timestamp && (
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(r.timestamp).toLocaleTimeString("id-ID")}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Edit Dialog */}
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
@@ -526,6 +614,7 @@ export function DeviceDetailClient({ deviceId }: { deviceId: number }) {
                   <SelectItem value="FAN">{t("fan")}</SelectItem>
                   <SelectItem value="DOOR">{t("door")}</SelectItem>
                   <SelectItem value="POWER_METER">{t("powerMeter")}</SelectItem>
+                  <SelectItem value="ENERGY_MONITOR">Energy Monitor</SelectItem>
                   <SelectItem value="OTHER">{t("other")}</SelectItem>
                 </SelectContent>
               </Select>
