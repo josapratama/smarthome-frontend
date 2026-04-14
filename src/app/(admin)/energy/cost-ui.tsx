@@ -414,8 +414,10 @@ export default function EnergyCostUI() {
             Kelola Tarif per Golongan PLN
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Set harga tarif listrik (Rp/kWh) untuk setiap golongan. Nilai 0
-            berarti belum ditentukan.
+            Set harga tarif listrik (Rp/kWh) untuk setiap golongan. Nilai
+            default sudah diisi berdasarkan tarif resmi PLN 2022. Edit hanya
+            jika ada perubahan tarif dari pemerintah. Set ke 0 untuk reset ke
+            default PLN.
           </p>
         </CardHeader>
         <CardContent>
