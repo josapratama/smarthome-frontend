@@ -1915,6 +1915,16 @@ export const en = {
   copyright: "Copyright",
   allRightsReserved: "All Rights Reserved",
 
+  // Energy Sensor Card
+  energySensorReadings: "Sensor Readings",
+  noSensorReadings: "No sensor data yet",
+  pzemVoltage: "Voltage",
+  pzemCurrent: "Current",
+  pzemPower: "Power",
+  pzemEnergy: "Energy",
+  pzemFrequency: "Frequency",
+  pzemPowerFactor: "Power Factor",
+
   // Sensor Config
   sensorConfiguration: "Sensor Configuration",
   sensorConfigDesc: "Enable or disable sensors without reflashing firmware",

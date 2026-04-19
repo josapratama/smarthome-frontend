@@ -5,15 +5,6 @@ export default function DeviceDetailPage({
 }: {
   params: { deviceId: string };
 }) {
-  const deviceId = parseInt(params.deviceId, 10);
-
-  if (isNaN(deviceId)) {
-    return (
-      <div className="p-6 text-center text-red-600">
-        ID perangkat tidak valid
-      </div>
-    );
-  }
-
-  return <DeviceDetailView deviceId={deviceId} />;
+  // Pass raw string — DeviceDetailView handles invalid ID with t()
+  return <DeviceDetailView deviceId={parseInt(params.deviceId, 10)} />;
 }

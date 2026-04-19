@@ -1910,6 +1910,16 @@ export const id = {
   copyright: "Hak Cipta Dilindungi",
   allRightsReserved: "Semua Hak Dilindungi",
 
+  // Energy Sensor Card
+  energySensorReadings: "Pembacaan Sensor",
+  noSensorReadings: "Belum ada data sensor",
+  pzemVoltage: "Tegangan",
+  pzemCurrent: "Arus",
+  pzemPower: "Daya",
+  pzemEnergy: "Energi",
+  pzemFrequency: "Frekuensi",
+  pzemPowerFactor: "Faktor Daya",
+
   // Sensor Config
   sensorConfiguration: "Konfigurasi Sensor",
   sensorConfigDesc:

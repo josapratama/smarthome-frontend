@@ -93,7 +93,7 @@ export function DeviceDetailView({ deviceId }: DeviceDetailViewProps) {
     onError: (err: any) =>
       toast({
         title: t("error"),
-        description: err.message || "Failed to update device",
+        description: err.message || t("failedUpdateDevice"),
         variant: "destructive",
       }),
   });
@@ -112,7 +112,7 @@ export function DeviceDetailView({ deviceId }: DeviceDetailViewProps) {
     onError: (err: any) =>
       toast({
         title: t("error"),
-        description: err.message || "Failed to delete device",
+        description: err.message || t("failedDeleteDevice"),
         variant: "destructive",
       }),
   });
@@ -126,6 +126,16 @@ export function DeviceDetailView({ deviceId }: DeviceDetailViewProps) {
   }
 
   // ── Loading / error states ────────────────────────────────
+  if (isNaN(deviceId)) {
+    return (
+      <Card className="rounded-2xl shadow-sm">
+        <CardContent className="p-6 text-center text-red-600">
+          {t("invalidDeviceId")}
+        </CardContent>
+      </Card>
+    );
+  }
+
   if (deviceQuery.isLoading) {
     return (
       <div className="space-y-6">
