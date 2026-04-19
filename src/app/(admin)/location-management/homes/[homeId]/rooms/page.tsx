@@ -1,4 +1,4 @@
-import { RoomsClient } from "./ui";
+import { RoomsView } from "./components/rooms-view";
 
 export default async function RoomsPage({
   params,
@@ -6,5 +6,5 @@ export default async function RoomsPage({
   params: Promise<{ homeId: string }>;
 }) {
   const { homeId } = await params;
-  return <RoomsClient homeId={parseInt(homeId)} />;
+  return <RoomsView homeId={parseInt(homeId, 10)} />;
 }
