@@ -1,4 +1,4 @@
-import { api } from "../client/axios";
+import { apiFetchBrowser } from "../client/fetch";
 
 export interface NotificationPreferences {
   email: boolean;
@@ -14,32 +14,32 @@ export interface UserPreferences {
 }
 
 export const preferencesApi = {
-  get: async () => {
-    const res = await api.get<{ data: UserPreferences }>("/v1/preferences");
-    return res.data.data;
-  },
-
-  update: async (preferences: Partial<UserPreferences>) => {
-    const res = await api.patch<{ data: UserPreferences; message: string }>(
-      "/v1/preferences",
-      preferences,
+  get: async (): Promise<UserPreferences> => {
+    const res = await apiFetchBrowser<{ data: UserPreferences }>(
+      "/api/v1/preferences",
     );
     return res.data;
   },
 
-  replace: async (preferences: UserPreferences) => {
-    const res = await api.put<{ data: UserPreferences; message: string }>(
-      "/v1/preferences",
-      preferences,
+  update: async (
+    preferences: Partial<UserPreferences>,
+  ): Promise<UserPreferences> => {
+    const res = await apiFetchBrowser<{ data: UserPreferences }>(
+      "/api/v1/preferences",
+      { method: "PATCH", body: JSON.stringify(preferences) },
     );
     return res.data;
   },
 
-  reset: async () => {
-    const res = await api.post<{ message: string }>(
-      "/v1/preferences/reset",
-      {},
+  replace: async (preferences: UserPreferences): Promise<UserPreferences> => {
+    const res = await apiFetchBrowser<{ data: UserPreferences }>(
+      "/api/v1/preferences",
+      { method: "PUT", body: JSON.stringify(preferences) },
     );
     return res.data;
+  },
+
+  reset: async (): Promise<void> => {
+    await apiFetchBrowser("/api/v1/preferences/reset", { method: "POST" });
   },
 };
