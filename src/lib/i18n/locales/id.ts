@@ -1745,6 +1745,11 @@ export const id = {
   failedToLoadChannels: "Gagal memuat channel",
   channelUpdated: "Channel diperbarui",
   failedToUpdateChannel: "Gagal memperbarui channel",
+  channelCreated: "Channel berhasil dibuat",
+  channelDeleted: "Channel berhasil dihapus",
+  failedToCreateChannel: "Gagal membuat channel",
+  failedToDeleteChannel: "Gagal menghapus channel",
+  failedToToggleChannel: "Gagal mengubah status channel",
 
   // Guest Features - Additional Keys
   waitForHomeInvitation: "Tunggu undangan untuk mengakses rumah",

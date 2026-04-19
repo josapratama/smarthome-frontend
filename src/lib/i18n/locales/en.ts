@@ -1743,6 +1743,11 @@ export const en = {
   failedToLoadChannels: "Failed to load channels",
   channelUpdated: "Channel updated",
   failedToUpdateChannel: "Failed to update channel",
+  channelCreated: "Channel created successfully",
+  channelDeleted: "Channel deleted successfully",
+  failedToCreateChannel: "Failed to create channel",
+  failedToDeleteChannel: "Failed to delete channel",
+  failedToToggleChannel: "Failed to toggle channel state",
 
   // Guest Features
   guestPanel: "Guest Panel",
