@@ -26,7 +26,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { api } from "@/lib/api/client/axios";
-import { useLanguage } from "@/contexts/language-context";
+import { useTranslation } from "@/hooks/use-translation";
 
 interface UserSession {
   id: number;
@@ -43,7 +43,7 @@ interface UserSession {
 }
 
 export default function ActiveSessionsTab() {
-  const { t } = useLanguage();
+  const { t } = useTranslation();
   const [sessions, setSessions] = useState<UserSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [revokeId, setRevokeId] = useState<number | null>(null);

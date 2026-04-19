@@ -16,7 +16,7 @@ import { RefreshCw, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { api } from "@/lib/api/client/axios";
-import { useLanguage } from "@/contexts/language-context";
+import { useTranslation } from "@/hooks/use-translation";
 
 interface LoginAttempt {
   id: number;
@@ -33,7 +33,7 @@ interface LoginAttempt {
 }
 
 export default function LoginAttemptsTab() {
-  const { t } = useLanguage();
+  const { t } = useTranslation();
   const [attempts, setAttempts] = useState<LoginAttempt[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "success" | "failed">("all");

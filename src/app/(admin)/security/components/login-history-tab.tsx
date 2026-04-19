@@ -16,7 +16,7 @@ import { RefreshCw, Download, MapPin, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { api } from "@/lib/api/client/axios";
-import { useLanguage } from "@/contexts/language-context";
+import { useTranslation } from "@/hooks/use-translation";
 
 interface LoginHistory {
   id: number;
@@ -30,7 +30,7 @@ interface LoginHistory {
 }
 
 export default function LoginHistoryTab() {
-  const { t } = useLanguage();
+  const { t } = useTranslation();
   const [history, setHistory] = useState<LoginHistory[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();

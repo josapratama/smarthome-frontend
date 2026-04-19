@@ -23,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useLanguage } from "@/contexts/language-context";
+import { useTranslation } from "@/hooks/use-translation";
 
 interface Room {
   id: number;
@@ -48,7 +48,7 @@ export default function RoomPrivacyTab() {
   const [editRoom, setEditRoom] = useState<Room | null>(null);
   const [newPrivacyLevel, setNewPrivacyLevel] = useState("");
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t } = useTranslation();
   const fetchRooms = async () => {
     try {
       setLoading(true);

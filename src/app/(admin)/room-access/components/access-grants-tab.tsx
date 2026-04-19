@@ -32,7 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useLanguage } from "@/contexts/language-context";
+import { useTranslation } from "@/hooks/use-translation";
 
 interface RoomAccessGrant {
   id: number;
@@ -63,7 +63,7 @@ export default function RoomAccessGrantsTab() {
   const [loading, setLoading] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t } = useTranslation();
 
   const fetchGrants = async () => {
     try {

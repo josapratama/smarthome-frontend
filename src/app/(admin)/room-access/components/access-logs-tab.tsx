@@ -16,7 +16,7 @@ import { RefreshCw, CheckCircle2, XCircle } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { api } from "@/lib/api/client/axios";
-import { useLanguage } from "@/contexts/language-context";
+import { useTranslation } from "@/hooks/use-translation";
 
 interface RoomAccessLog {
   id: number;
@@ -45,7 +45,7 @@ export default function RoomAccessLogsTab() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "allowed" | "denied">("all");
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t } = useTranslation();
 
   const fetchLogs = async () => {
     try {
