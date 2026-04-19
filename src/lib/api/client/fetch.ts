@@ -1,14 +1,37 @@
 /**
  * Browser-side API client for client components
- * Uses fetch with credentials for cookie-based auth
+ *
+ * All /api/v1/* calls are routed through Next.js proxy (/api/proxy/*)
+ * so httpOnly cookies are forwarded server-side as Authorization header.
+ * This avoids cross-origin cookie issues when backend is on a different host.
  */
 
 import { config } from "../../config";
 
-const API_BASE = config.publicBackendUrl;
-
 interface FetchOptions extends RequestInit {
   params?: Record<string, string | number | boolean | undefined>;
+}
+
+/**
+ * Rewrite /api/v1/... → /api/proxy/... so the request goes through
+ * the Next.js proxy route which reads the httpOnly access_token cookie.
+ * Absolute URLs (http://...) are passed through unchanged.
+ */
+function resolveUrl(path: string): string {
+  if (path.startsWith("http")) return path;
+
+  // /api/v1/devices → /api/proxy/devices
+  if (path.startsWith("/api/v1/")) {
+    return path.replace("/api/v1/", "/api/proxy/");
+  }
+
+  // Already a Next.js route (e.g. /api/auth/login) — use as-is
+  if (path.startsWith("/api/")) {
+    return path;
+  }
+
+  // Fallback: direct to backend (legacy)
+  return `${config.publicBackendUrl}${path}`;
 }
 
 export async function apiFetchBrowser<T = any>(
@@ -17,8 +40,7 @@ export async function apiFetchBrowser<T = any>(
 ): Promise<T> {
   const { params, ...fetchOptions } = options;
 
-  // Build URL with query params
-  let url = path.startsWith("http") ? path : `${API_BASE}${path}`;
+  let url = resolveUrl(path);
 
   if (params) {
     const searchParams = new URLSearchParams();
@@ -33,12 +55,11 @@ export async function apiFetchBrowser<T = any>(
     }
   }
 
-  // Don't set Content-Type for FormData (browser will set it with boundary)
   const isFormData = fetchOptions.body instanceof FormData;
 
   const response = await fetch(url, {
     ...fetchOptions,
-    credentials: "include", // Include cookies
+    credentials: "include",
     headers: {
       ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...fetchOptions.headers,
