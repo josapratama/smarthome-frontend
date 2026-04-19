@@ -1752,6 +1752,12 @@ export const id = {
   failedToCreateChannel: "Gagal membuat channel",
   failedToDeleteChannel: "Gagal menghapus channel",
   failedToToggleChannel: "Gagal mengubah status channel",
+  channelEnabled: "Channel diaktifkan",
+  channelDisabled: "Channel dinonaktifkan",
+  enableChannel: "Aktifkan",
+  disableChannel: "Nonaktifkan",
+  channelDisabledBadge: "Nonaktif",
+  channelDisabledDesc: "Channel ini dinonaktifkan dan tidak tampil di pengguna",
 
   // Guest Features - Additional Keys
   waitForHomeInvitation: "Tunggu undangan untuk mengakses rumah",

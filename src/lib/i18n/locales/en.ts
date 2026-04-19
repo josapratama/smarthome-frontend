@@ -1750,6 +1750,12 @@ export const en = {
   failedToCreateChannel: "Failed to create channel",
   failedToDeleteChannel: "Failed to delete channel",
   failedToToggleChannel: "Failed to toggle channel state",
+  channelEnabled: "Channel enabled",
+  channelDisabled: "Channel disabled",
+  enableChannel: "Enable",
+  disableChannel: "Disable",
+  channelDisabledBadge: "Disabled",
+  channelDisabledDesc: "This channel is disabled and hidden from users",
 
   // Guest Features
   guestPanel: "Guest Panel",

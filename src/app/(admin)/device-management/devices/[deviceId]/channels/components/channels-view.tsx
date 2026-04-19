@@ -46,7 +46,15 @@ export function ChannelsView({ deviceId }: ChannelsViewProps) {
   // ── Create ────────────────────────────────────────────────
   const createMutation = useMutation({
     mutationFn: (data: CreateChannelDTO) =>
-      channelsApi.create(data.deviceId, data),
+      channelsApi.create(data.deviceId, {
+        channelNum: data.channelNum,
+        name: data.name,
+        type: data.type as any,
+        pinNumber: data.pinNumber ?? undefined,
+        pinMode: data.pinMode ?? undefined,
+        sensorType: data.sensorType ?? undefined,
+        unit: data.unit ?? undefined,
+      }),
     onSuccess: () => {
       setShowAddForm(false);
       invalidate();
@@ -88,6 +96,25 @@ export function ChannelsView({ deviceId }: ChannelsViewProps) {
       toast({
         title: t("error"),
         description: err.message || t("failedToDeleteChannel"),
+        variant: "destructive",
+      }),
+  });
+
+  // ── Toggle isEnabled ──────────────────────────────────────
+  const enableMutation = useMutation({
+    mutationFn: ({ id, isEnabled }: { id: number; isEnabled: boolean }) =>
+      channelsApi.update(deviceId, id, { isEnabled }),
+    onSuccess: (_, { isEnabled }) => {
+      invalidate();
+      toast({
+        title: t("success"),
+        description: isEnabled ? t("channelEnabled") : t("channelDisabled"),
+      });
+    },
+    onError: (err: any) =>
+      toast({
+        title: t("error"),
+        description: err.message || t("failedToUpdateChannel"),
         variant: "destructive",
       }),
   });
@@ -170,7 +197,9 @@ export function ChannelsView({ deviceId }: ChannelsViewProps) {
         <ChannelAddForm
           deviceId={deviceId}
           nextChannelNum={channels.length + 1}
-          onSubmit={(data) => createMutation.mutateAsync(data)}
+          onSubmit={async (data) => {
+            await createMutation.mutateAsync(data);
+          }}
           onCancel={() => setShowAddForm(false)}
           isSubmitting={createMutation.isPending}
         />
@@ -197,6 +226,9 @@ export function ChannelsView({ deviceId }: ChannelsViewProps) {
               onEditSave={(id, name) => updateMutation.mutate({ id, name })}
               onEditCancel={() => setEditingId(null)}
               onDelete={handleDelete}
+              onToggleEnabled={(id, isEnabled) =>
+                enableMutation.mutate({ id, isEnabled })
+              }
             />
           ))
         )}

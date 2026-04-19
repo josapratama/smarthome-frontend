@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Power, Pencil, Trash2 } from "lucide-react";
+import { Power, Pencil, Trash2, EyeOff, Eye } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
 import type { Channel } from "@/lib/api/services/channels";
 
@@ -19,6 +19,7 @@ interface ChannelCardProps {
   onEditSave: (channelId: number, name: string) => void;
   onEditCancel: () => void;
   onDelete: (channelId: number) => void;
+  onToggleEnabled: (channelId: number, isEnabled: boolean) => void;
 }
 
 export function ChannelCard({
@@ -30,10 +31,12 @@ export function ChannelCard({
   onEditSave,
   onEditCancel,
   onDelete,
+  onToggleEnabled,
 }: ChannelCardProps) {
   const { t } = useTranslation();
   const nameInputRef = useRef<HTMLInputElement>(null);
   const isToggling = isTogglingId === channel.id;
+  const isDisabled = !channel.isEnabled;
 
   if (isEditing) {
     return (
@@ -72,13 +75,23 @@ export function ChannelCard({
   }
 
   return (
-    <Card className="rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+    <Card
+      className={`rounded-2xl shadow-sm transition-all ${
+        isDisabled ? "opacity-60 border-dashed" : "hover:shadow-md"
+      }`}
+    >
       <CardContent className="pt-6">
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
           {/* Info */}
           <div className="flex-1">
             <div className="flex items-center gap-2 flex-wrap mb-3">
-              <h3 className="text-lg font-semibold">{channel.name}</h3>
+              <h3
+                className={`text-lg font-semibold ${
+                  isDisabled ? "text-muted-foreground line-through" : ""
+                }`}
+              >
+                {channel.name}
+              </h3>
               <Badge variant="secondary">CH{channel.channelNum}</Badge>
               <Badge variant="outline">{channel.type}</Badge>
               {channel.pinNumber != null && (
@@ -86,41 +99,88 @@ export function ChannelCard({
                   GPIO {channel.pinNumber}
                 </Badge>
               )}
-            </div>
-            <div className="flex items-center gap-4 text-sm">
-              <span
-                className={`font-medium ${
-                  channel.state
-                    ? "text-green-600 dark:text-green-400"
-                    : "text-muted-foreground"
-                }`}
-              >
-                {t("state")}: {channel.state ? t("on") : t("off")}
-              </span>
-              {channel.value != null && (
-                <span className="text-muted-foreground">
-                  {t("value")}: {channel.value}
-                  {channel.unit ?? ""}
-                </span>
+              {/* Disabled badge */}
+              {isDisabled && (
+                <Badge
+                  variant="outline"
+                  className="text-orange-600 border-orange-400 dark:text-orange-400"
+                >
+                  <EyeOff className="h-3 w-3 mr-1" />
+                  {t("channelDisabledBadge")}
+                </Badge>
               )}
             </div>
+
+            {!isDisabled && (
+              <div className="flex items-center gap-4 text-sm">
+                <span
+                  className={`font-medium ${
+                    channel.state
+                      ? "text-green-600 dark:text-green-400"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  {t("state")}: {channel.state ? t("on") : t("off")}
+                </span>
+                {channel.value != null && (
+                  <span className="text-muted-foreground">
+                    {t("value")}: {channel.value}
+                    {channel.unit ?? ""}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {isDisabled && (
+              <p className="text-xs text-muted-foreground">
+                {t("channelDisabledDesc")}
+              </p>
+            )}
           </div>
 
           {/* Actions */}
           <div className="flex gap-2 flex-wrap">
+            {/* Toggle ON/OFF — only when enabled */}
+            {!isDisabled && (
+              <Button
+                onClick={() => onToggle(channel)}
+                variant={channel.state ? "default" : "secondary"}
+                size="sm"
+                disabled={isToggling}
+              >
+                <Power className="mr-2 h-4 w-4" />
+                {isToggling
+                  ? t("loading")
+                  : channel.state
+                    ? t("turnOff")
+                    : t("turnOn")}
+              </Button>
+            )}
+
+            {/* Enable / Disable toggle */}
             <Button
-              onClick={() => onToggle(channel)}
-              variant={channel.state ? "default" : "secondary"}
+              variant="outline"
               size="sm"
-              disabled={isToggling}
+              onClick={() => onToggleEnabled(channel.id, !channel.isEnabled)}
+              className={
+                isDisabled
+                  ? "text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-950 border-green-300"
+                  : "text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950 border-orange-300"
+              }
             >
-              <Power className="mr-2 h-4 w-4" />
-              {isToggling
-                ? t("loading")
-                : channel.state
-                  ? t("turnOff")
-                  : t("turnOn")}
+              {isDisabled ? (
+                <>
+                  <Eye className="mr-2 h-4 w-4" />
+                  {t("enableChannel")}
+                </>
+              ) : (
+                <>
+                  <EyeOff className="mr-2 h-4 w-4" />
+                  {t("disableChannel")}
+                </>
+              )}
             </Button>
+
             <Button
               variant="outline"
               size="sm"
@@ -129,6 +189,7 @@ export function ChannelCard({
               <Pencil className="mr-2 h-4 w-4" />
               {t("edit")}
             </Button>
+
             <Button
               variant="outline"
               size="sm"
