@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,13 +24,11 @@ import {
   upsertDeviceConfig,
 } from "@/lib/api/services/device-config";
 
-export function DeviceConfigClient() {
+export function DeviceConfigClient({ deviceId }: { deviceId: number }) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const router = useRouter();
-  const params = useParams();
   const queryClient = useQueryClient();
-  const deviceId = Number(params.deviceId);
 
   const [configText, setConfigText] = useState("");
   const [jsonError, setJsonError] = useState<string | null>(null);
@@ -40,7 +38,12 @@ export function DeviceConfigClient() {
     queryKey: ["device-config", deviceId],
     queryFn: async () => {
       const response = await getDeviceConfig(deviceId);
-      const config = response.data.config;
+      if (!response) {
+        setConfigText("{}");
+        return null;
+      }
+      const config =
+        response.data?.config?.config ?? response.data?.config ?? {};
       setConfigText(JSON.stringify(config, null, 2));
       return response.data;
     },
@@ -92,16 +95,16 @@ export function DeviceConfigClient() {
   };
 
   const handleReset = () => {
-    if (configQuery.data) {
-      setConfigText(JSON.stringify(configQuery.data.config, null, 2));
+    if (configQuery.data?.config) {
+      setConfigText(JSON.stringify(configQuery.data.config.config, null, 2));
       setJsonError(null);
     }
   };
 
   const isValidJson = !jsonError && configText.trim().length > 0;
   const hasChanges =
-    configQuery.data &&
-    configText !== JSON.stringify(configQuery.data.config, null, 2);
+    configQuery.data?.config &&
+    configText !== JSON.stringify(configQuery.data.config.config, null, 2);
 
   return (
     <div className="space-y-6">
@@ -229,10 +232,10 @@ export function DeviceConfigClient() {
             <CardTitle className="text-base">
               {t("configurationEditor")}
             </CardTitle>
-            {configQuery.data && (
+            {configQuery.data?.config && (
               <Badge variant="outline" className="text-xs">
                 {t("lastUpdated")}:{" "}
-                {new Date(configQuery.data.updatedAt).toLocaleString()}
+                {new Date(configQuery.data.config.updatedAt).toLocaleString()}
               </Badge>
             )}
           </div>

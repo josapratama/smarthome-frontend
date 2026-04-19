@@ -1,16 +1,11 @@
 export type ChannelType =
   | "RELAY"
-  | "DIMMER"
-  | "LED"
   | "SENSOR"
-  | "SWITCH"
-  | "FAN"
-  | "MOTOR"
+  | "DIMMER"
   | "SERVO"
   | "RGB_LED"
   | "ANALOG_IN"
-  | "DIGITAL_IN"
-  | "OTHER";
+  | "DIGITAL_IN";
 
 export interface ChannelDTO {
   id: number;

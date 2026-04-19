@@ -8,9 +8,9 @@ import {
   updateChannel,
   deleteChannel,
   setChannelState,
+  type Channel,
 } from "@/lib/api/services/channels";
 import type {
-  ChannelDTO,
   CreateChannelDTO,
   UpdateChannelDTO,
   ChannelType,
@@ -32,23 +32,21 @@ import { Home as HomeIcon, Plus, Pencil, Trash2, Power } from "lucide-react";
 
 const CHANNEL_TYPES: ChannelType[] = [
   "RELAY",
-  "DIMMER",
-  "LED",
   "SENSOR",
-  "SWITCH",
-  "FAN",
-  "MOTOR",
+  "DIMMER",
   "SERVO",
-  "OTHER",
+  "RGB_LED",
+  "ANALOG_IN",
+  "DIGITAL_IN",
 ];
 
 export function ChannelsUI({ deviceId }: { deviceId: number }) {
   const { t } = useTranslation();
   const router = useRouter();
-  const [channels, setChannels] = useState<ChannelDTO[]>([]);
+  const [channels, setChannels] = useState<Channel[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [editingChannel, setEditingChannel] = useState<ChannelDTO | null>(null);
+  const [editingChannel, setEditingChannel] = useState<Channel | null>(null);
 
   const [formData, setFormData] = useState<CreateChannelDTO>({
     deviceId,
@@ -115,7 +113,7 @@ export function ChannelsUI({ deviceId }: { deviceId: number }) {
     }
   }
 
-  async function handleToggleState(channel: ChannelDTO) {
+  async function handleToggleState(channel: Channel) {
     try {
       await setChannelState(channel.id, { state: !channel.state });
       loadChannels();
