@@ -1717,7 +1717,7 @@ export const id = {
   commonFields: "Field Umum",
   mqttSettings: "Pengaturan koneksi MQTT",
   wifiSettings: "Pengaturan jaringan WiFi",
-  sensorConfiguration: "Array konfigurasi sensor",
+  sensorConfigArray: "Array konfigurasi sensor",
   actuatorConfiguration: "Array konfigurasi aktuator",
   updateIntervalSeconds: "Interval update dalam detik",
   exampleConfig: "Contoh Konfigurasi",
@@ -1911,6 +1911,7 @@ export const id = {
   // Common Extended
   copyright: "Hak Cipta Dilindungi",
   allRightsReserved: "Semua Hak Dilindungi",
+  failedLogout: "Gagal keluar dari akun",
 
   // Energy Sensor Card
   energySensorReadings: "Pembacaan Sensor",

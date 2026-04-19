@@ -1715,7 +1715,7 @@ export const en = {
   commonFields: "Common Fields",
   mqttSettings: "MQTT connection settings",
   wifiSettings: "WiFi network settings",
-  sensorConfiguration: "Sensor configuration array",
+  sensorConfigArray: "Sensor configuration array",
   actuatorConfiguration: "Array konfigurasi aktuator",
   updateIntervalSeconds: "Update interval in seconds",
   exampleConfig: "Example Configuration",
@@ -1916,6 +1916,7 @@ export const en = {
   // Common Extended
   copyright: "Copyright",
   allRightsReserved: "All Rights Reserved",
+  failedLogout: "Failed to logout",
 
   // Energy Sensor Card
   energySensorReadings: "Sensor Readings",
