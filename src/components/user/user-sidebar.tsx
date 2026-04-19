@@ -47,7 +47,9 @@ export function UserSidebar({ className, onClose }: UserSidebarProps) {
 
   const loadUserProfile = async () => {
     try {
-      const result = await browserApi.get<{ data: UserProfile }>("/api/v1/me");
+      const res = await fetch("/api/user/me", { credentials: "include" });
+      if (!res.ok) throw new Error("UNAUTHORIZED");
+      const result = await res.json();
       setUserProfile(result.data);
     } catch (error) {
       console.error("Failed to load user profile:", error);
