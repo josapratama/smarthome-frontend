@@ -50,7 +50,7 @@ export const channelsApi = {
   // Get all channels for a device
   list: async (deviceId: number): Promise<Channel[]> => {
     const { data } = await api.get<{ data: { channels: Channel[] } }>(
-      `/v1/devices/${deviceId}/channels`,
+      `/v1/channels/device/${deviceId}`,
     );
     return data.data.channels;
   },
@@ -58,7 +58,7 @@ export const channelsApi = {
   // Get single channel
   get: async (deviceId: number, channelId: number): Promise<Channel> => {
     const { data } = await api.get<{ data: { channel: Channel } }>(
-      `/v1/devices/${deviceId}/channels/${channelId}`,
+      `/v1/channels/${channelId}`,
     );
     return data.data.channel;
   },
@@ -69,8 +69,8 @@ export const channelsApi = {
     input: CreateChannelInput,
   ): Promise<Channel> => {
     const { data } = await api.post<{ data: { channel: Channel } }>(
-      `/v1/devices/${deviceId}/channels`,
-      input,
+      `/v1/channels`,
+      { ...input, deviceId },
     );
     return data.data.channel;
   },
@@ -81,8 +81,8 @@ export const channelsApi = {
     channelId: number,
     input: UpdateChannelInput,
   ): Promise<Channel> => {
-    const { data } = await api.put<{ data: { channel: Channel } }>(
-      `/v1/devices/${deviceId}/channels/${channelId}`,
+    const { data } = await api.patch<{ data: { channel: Channel } }>(
+      `/v1/channels/${channelId}`,
       input,
     );
     return data.data.channel;
@@ -90,7 +90,7 @@ export const channelsApi = {
 
   // Delete channel
   delete: async (deviceId: number, channelId: number): Promise<void> => {
-    await api.delete(`/v1/devices/${deviceId}/channels/${channelId}`);
+    await api.delete(`/v1/channels/${channelId}`);
   },
 
   // Control channel (set state/value)
@@ -101,16 +101,26 @@ export const channelsApi = {
     value?: number,
   ): Promise<Channel> => {
     const { data } = await api.post<{ data: { channel: Channel } }>(
-      `/v1/devices/${deviceId}/channels/${channelId}/control`,
+      `/v1/channels/${channelId}/state`,
       { state, value },
     );
     return data.data.channel;
   },
 };
 
-// Backward compatibility aliases
-export const getDeviceChannels = channelsApi.list;
-export const createChannel = channelsApi.create;
-export const updateChannel = channelsApi.update;
-export const deleteChannel = channelsApi.delete;
-export const setChannelState = channelsApi.control;
+// Backward compatibility aliases — UI calls these with (deviceId, ...) pattern
+export const getDeviceChannels = (deviceId: number) =>
+  channelsApi.list(deviceId);
+export const createChannel = (
+  input: import("@/lib/api/dto/channel.dto").CreateChannelDTO,
+) => channelsApi.create(input.deviceId, input as any);
+export const updateChannel = (
+  channelId: number,
+  input: import("@/lib/api/dto/channel.dto").UpdateChannelDTO,
+) => channelsApi.update(0, channelId, input as any);
+export const deleteChannel = (channelId: number) =>
+  channelsApi.delete(0, channelId);
+export const setChannelState = (
+  channelId: number,
+  data: { state?: boolean; value?: number },
+) => channelsApi.control(0, channelId, data.state, data.value);
