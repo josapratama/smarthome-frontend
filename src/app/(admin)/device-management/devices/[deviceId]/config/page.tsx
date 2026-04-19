@@ -1,4 +1,4 @@
-import { DeviceConfigClient } from "./ui";
+import { DeviceConfigView } from "./components/device-config-view";
 
 export default function DeviceConfigPage({
   params,
@@ -6,5 +6,5 @@ export default function DeviceConfigPage({
   params: { deviceId: string };
 }) {
   const deviceId = parseInt(params.deviceId, 10);
-  return <DeviceConfigClient deviceId={deviceId} />;
+  return <DeviceConfigView deviceId={deviceId} />;
 }

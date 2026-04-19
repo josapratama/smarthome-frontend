@@ -1904,4 +1904,45 @@ export const id = {
   // Common Extended
   copyright: "Hak Cipta Dilindungi",
   allRightsReserved: "Semua Hak Dilindungi",
+
+  // Sensor Config
+  sensorConfiguration: "Konfigurasi Sensor",
+  sensorConfigDesc:
+    "Aktifkan atau nonaktifkan sensor tanpa perlu upload ulang firmware",
+  sensorPzem: "PZEM004T — Energy Monitor",
+  sensorPzemDesc: "Mengukur tegangan, arus, daya, dan energi listrik (kWh)",
+  sensorMq2: "MQ-2 — Gas Sensor",
+  sensorMq2Desc: "Mendeteksi kebocoran gas LPG, asap, dan karbon monoksida",
+  sensorFlame: "Flame Sensor",
+  sensorFlameDesc: "Mendeteksi keberadaan api atau sumber panas inframerah",
+  sensorUltrasonic: "HC-SR04 — Ultrasonic",
+  sensorUltrasonicDesc:
+    "Mengukur jarak / level isi wadah (tempat sampah, tangki, dll)",
+  sensorActiveCount: "Sensor aktif",
+  sensorEnabled: "Aktif",
+  sensorDisabled: "Nonaktif",
+  binHeightLabel: "Tinggi Wadah (Ultrasonic)",
+  binHeightUnit: "cm",
+  binHeightDesc:
+    "Tinggi wadah dari sensor ke dasar (untuk menghitung persentase isi)",
+  saveAndSend: "Simpan & Kirim",
+  configSentToDevice: "Pengaturan sensor berhasil dikirim ke perangkat.",
+  configSavedDbOnly:
+    "Tersimpan di database. Perangkat akan mengambil saat reconnect.",
+  configSendFailed: "Gagal menyimpan konfigurasi",
+  sensorConfigNote:
+    "Konfigurasi disimpan ke database dan dikirim langsung ke perangkat via MQTT (UPDATE_CONFIG). Berlaku tanpa reflash firmware.",
+  sensorDeviceType: "— Konfigurasi sensor tersedia",
+  genericDeviceType: "— Konfigurasi JSON umum",
+  failedLoadDeviceConfig: "Gagal memuat data perangkat",
+  retryLoad: "Coba lagi",
+  jsonConfigTitle: "Konfigurasi Perangkat",
+  jsonConfigDesc: "Edit konfigurasi dalam format JSON",
+  jsonStatusValid: "Valid",
+  jsonStatusInvalid: "Tidak valid",
+  jsonStatusModified: "Diubah",
+  jsonStatusSaved: "Tersimpan",
+  jsonConfigSaved: "Konfigurasi disimpan",
+  jsonConfigSaveFailed: "Gagal menyimpan",
+  jsonInvalid: "JSON tidak valid",
 } as const;
