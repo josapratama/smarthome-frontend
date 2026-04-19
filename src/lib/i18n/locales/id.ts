@@ -185,6 +185,8 @@ export const id = {
   capabilitiesJsonFormat: "Format JSON untuk kemampuan perangkat (opsional)",
   registering: "Mendaftarkan...",
   macAddress: "Alamat MAC",
+  invalidMacFormat: "Format MAC address harus: AA:BB:CC:DD:EE:FF",
+  deviceNamePlaceholder: "Contoh: Sensor Api Dapur",
   selectDeviceType: "Pilih tipe perangkat",
   deviceRegistered: "Perangkat berhasil didaftarkan",
   failedRegisterDevice: "Gagal mendaftarkan perangkat",

@@ -155,6 +155,8 @@ export const en = {
   capabilitiesJsonFormat: "JSON format for device capabilities (optional)",
   registering: "Registering...",
   macAddress: "MAC Address",
+  invalidMacFormat: "MAC address format must be: AA:BB:CC:DD:EE:FF",
+  deviceNamePlaceholder: "e.g., Kitchen Flame Sensor",
   selectDeviceType: "Select device type",
   deviceRegistered: "Device registered successfully",
   failedRegisterDevice: "Failed to register device",
