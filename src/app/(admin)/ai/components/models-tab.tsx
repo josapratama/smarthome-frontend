@@ -35,7 +35,7 @@ import {
   Clock,
   Shield,
 } from "lucide-react";
-import { useLanguage } from "@/contexts/language-context";
+import { useTranslation } from "@/hooks/use-translation";
 import { useToast } from "@/hooks/use-toast";
 import {
   aiModelsApi,
@@ -46,7 +46,7 @@ import {
 } from "@/lib/api/services/ai-models";
 
 export function ModelsTab() {
-  const { t } = useLanguage();
+  const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedTab, setSelectedTab] = useState<AIModelType>("prediction");

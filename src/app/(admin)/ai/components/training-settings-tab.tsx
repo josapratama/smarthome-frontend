@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useLanguage } from "@/contexts/language-context";
+import { useTranslation } from "@/hooks/use-translation";
 import {
   getTrainingConfig,
   updateTrainingConfig,
@@ -10,7 +10,7 @@ import {
 import { toast } from "sonner";
 
 export function TrainingSettingsTab() {
-  const { t } = useLanguage();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);

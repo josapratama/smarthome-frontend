@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Settings, Power, PowerOff, Trash2 } from "lucide-react";
-import { useLanguage } from "@/contexts/language-context";
+import { useTranslation } from "@/hooks/use-translation";
 import type { AIRule } from "@/lib/api/services/ai";
-import { getRuleTypeColor, getActiveStatusColor } from "./utils";
+import { getRuleTypeColor, getActiveStatusColor } from "../utils";
 
 interface RulesTabProps {
   rules: AIRule[] | undefined;
@@ -22,7 +22,7 @@ export function RulesTab({
   onToggleRule,
   onDeleteRule,
 }: RulesTabProps) {
-  const { t } = useLanguage();
+  const { t } = useTranslation();
 
   return (
     <Card className="rounded-2xl shadow-sm border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">

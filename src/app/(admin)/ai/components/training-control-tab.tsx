@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useLanguage } from "@/contexts/language-context";
+import { useTranslation } from "@/hooks/use-translation";
 import { startTraining } from "@/lib/api/services/ai-training";
 import { toast } from "sonner";
 
 export function TrainingControlTab() {
-  const { t } = useLanguage();
+  const { t } = useTranslation();
   const [starting, setStarting] = useState(false);
   const [modelType, setModelType] = useState<"prediction" | "anomaly" | "both">(
     "both",

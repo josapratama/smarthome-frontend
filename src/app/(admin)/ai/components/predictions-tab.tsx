@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TrendingUp } from "lucide-react";
-import { useLanguage } from "@/contexts/language-context";
+import { useTranslation } from "@/hooks/use-translation";
 import type { EnergyPrediction } from "@/lib/api/services/ai";
 
 interface PredictionsTabProps {
@@ -13,7 +13,7 @@ export function PredictionsTab({
   predictions,
   isLoading,
 }: PredictionsTabProps) {
-  const { t } = useLanguage();
+  const { t } = useTranslation();
 
   return (
     <Card className="rounded-2xl shadow-sm border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">

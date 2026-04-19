@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useLanguage } from "@/contexts/language-context";
+import { useTranslation } from "@/hooks/use-translation";
 import { getTrainingStats, type TrainingStats } from "@/lib/api/services/ai-training";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 
 export function TrainingAnalyticsTab() {
-  const { t } = useLanguage();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [stats, setStats] = useState<TrainingStats | null>(null);

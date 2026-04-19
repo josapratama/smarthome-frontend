@@ -17,8 +17,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useLanguage } from "@/contexts/language-context";
-import type { CreateRuleFormData } from "./types";
+import { useTranslation } from "@/hooks/use-translation";
+import type { CreateRuleFormData } from "../types";
 
 interface CreateRuleDialogProps {
   open: boolean;
@@ -37,7 +37,7 @@ export function CreateRuleDialog({
   onSubmit,
   isSubmitting,
 }: CreateRuleDialogProps) {
-  const { t } = useLanguage();
+  const { t } = useTranslation();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

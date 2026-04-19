@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TrendingUp, Zap, Brain } from "lucide-react";
-import { useLanguage } from "@/contexts/language-context";
+import { useTranslation } from "@/hooks/use-translation";
 import type { AIStats } from "@/lib/api/services/ai";
 
 interface AIStatsCardsProps {
@@ -10,7 +10,7 @@ interface AIStatsCardsProps {
 }
 
 export function AIStatsCards({ stats, isLoading }: AIStatsCardsProps) {
-  const { t } = useLanguage();
+  const { t } = useTranslation();
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
