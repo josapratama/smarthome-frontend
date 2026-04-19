@@ -57,9 +57,6 @@ export function HomeModelsTab() {
         aiModelsApi.getModels(),
       ]);
 
-      console.log("Homes data:", homesData);
-      console.log("Models data:", modelsData);
-
       setHomes(homesData || []);
       setPredictionModels(
         (modelsData || []).filter((m: AIModel) => m.modelType === "prediction"),
