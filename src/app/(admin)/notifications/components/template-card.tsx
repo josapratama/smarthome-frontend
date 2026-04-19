@@ -10,8 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Bell, Mail, Edit, Trash2 } from "lucide-react";
-import { useLanguage } from "@/contexts/language-context";
-import type { NotificationTemplate } from "./types";
+import { useTranslation } from "@/hooks/use-translation";
+import type { NotificationTemplate } from "../types";
 
 interface TemplateCardProps {
   template: NotificationTemplate;
@@ -19,24 +19,24 @@ interface TemplateCardProps {
   onDelete: (type: string) => void;
 }
 
+function getChannelIcon(channel: string) {
+  return channel === "EMAIL" ? (
+    <Mail className="h-4 w-4" />
+  ) : (
+    <Bell className="h-4 w-4" />
+  );
+}
+
+function getTypeLabel(type: string): string {
+  return type.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+}
+
 export function TemplateCard({
   template,
   onEdit,
   onDelete,
 }: TemplateCardProps) {
-  const { t } = useLanguage();
-
-  const getChannelIcon = (channel: string) => {
-    return channel === "EMAIL" ? (
-      <Mail className="h-4 w-4" />
-    ) : (
-      <Bell className="h-4 w-4" />
-    );
-  };
-
-  const getTypeLabel = (type: string) => {
-    return type.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
-  };
+  const { t } = useTranslation();
 
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow duration-200">
@@ -63,6 +63,7 @@ export function TemplateCard({
           </Badge>
         </div>
       </CardHeader>
+
       <CardContent className="flex-1 flex flex-col pt-0">
         <div className="space-y-2 text-xs sm:text-sm flex-1 mb-4">
           {template.channel === "EMAIL" && (
@@ -102,6 +103,7 @@ export function TemplateCard({
             </>
           )}
         </div>
+
         <div className="flex gap-2">
           <Button
             variant="outline"

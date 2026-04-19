@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -21,8 +22,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { useLanguage } from "@/contexts/language-context";
-import type { NotificationTemplate } from "./types";
+import { useTranslation } from "@/hooks/use-translation";
+import type { NotificationTemplate } from "../types";
 import { apiFetchBrowser } from "@/lib/api/client/fetch";
 
 interface EditTemplateDialogProps {
@@ -38,46 +39,45 @@ export function EditTemplateDialog({
   onOpenChange,
   onSuccess,
 }: EditTemplateDialogProps) {
-  const { t } = useLanguage();
-  const [formData, setFormData] = useState({
-    channel: template?.channel || "FCM",
-    emailSubject: template?.emailSubject || "",
-    emailBody: template?.emailBody || "",
-    pushTitle: template?.pushTitle || "",
-    pushBody: template?.pushBody || "",
-    pushIcon: template?.pushIcon || "",
-    pushSound: template?.pushSound || "default",
+  const { t } = useTranslation();
+  const [form, setForm] = useState({
+    channel: template?.channel ?? "FCM",
+    emailSubject: template?.emailSubject ?? "",
+    emailBody: template?.emailBody ?? "",
+    pushTitle: template?.pushTitle ?? "",
+    pushBody: template?.pushBody ?? "",
+    pushIcon: template?.pushIcon ?? "",
+    pushSound: template?.pushSound ?? "default",
     isActive: template?.isActive ?? true,
   });
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleSubmit = async () => {
-    if (!template) return;
+  function update<K extends keyof typeof form>(
+    key: K,
+    value: (typeof form)[K],
+  ) {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  }
 
+  async function handleSubmit() {
+    if (!template) return;
     setIsSaving(true);
     try {
-      const res = await apiFetchBrowser(
+      await apiFetchBrowser(
         `/api/v1/notifications/templates/${template.type}`,
         {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(form),
         },
       );
-
-      if (res.ok) {
-        toast.success(t("templateUpdated"));
-        onSuccess();
-      } else {
-        const data = await res.json();
-        toast.error(data.error || t("failedUpdateTemplate"));
-      }
-    } catch (error) {
-      toast.error(t("failedUpdateTemplate"));
+      toast.success(t("templateUpdated"));
+      onSuccess();
+    } catch (err: any) {
+      toast.error(err.message || t("failedUpdateTemplate"));
     } finally {
       setIsSaving(false);
     }
-  };
+  }
 
   if (!template) return null;
 
@@ -88,14 +88,14 @@ export function EditTemplateDialog({
           <DialogTitle>{t("editTemplate")}</DialogTitle>
           <DialogDescription>{t("updateTemplateSettings")}</DialogDescription>
         </DialogHeader>
+
         <div className="space-y-4">
+          {/* Channel */}
           <div className="space-y-2">
             <Label>{t("channel")}</Label>
             <Select
-              value={formData.channel}
-              onValueChange={(val) =>
-                setFormData({ ...formData, channel: val })
-              }
+              value={form.channel}
+              onValueChange={(v) => update("channel", v)}
             >
               <SelectTrigger>
                 <SelectValue />
@@ -107,16 +107,14 @@ export function EditTemplateDialog({
             </Select>
           </div>
 
-          {formData.channel === "EMAIL" ? (
+          {form.channel === "EMAIL" ? (
             <>
               <div className="space-y-2">
                 <Label>{t("emailSubject")}</Label>
                 <Input
                   placeholder="e.g., {{homeName}} - Alert"
-                  value={formData.emailSubject}
-                  onChange={(e) =>
-                    setFormData({ ...formData, emailSubject: e.target.value })
-                  }
+                  value={form.emailSubject}
+                  onChange={(e) => update("emailSubject", e.target.value)}
                 />
                 <p className="text-xs text-muted-foreground">
                   {t("useDynamicValues")}
@@ -126,10 +124,8 @@ export function EditTemplateDialog({
                 <Label>{t("emailBodyHtml")}</Label>
                 <Textarea
                   placeholder={t("htmlContentWithVariables")}
-                  value={formData.emailBody}
-                  onChange={(e) =>
-                    setFormData({ ...formData, emailBody: e.target.value })
-                  }
+                  value={form.emailBody}
+                  onChange={(e) => update("emailBody", e.target.value)}
                   rows={8}
                 />
                 <p className="text-xs text-muted-foreground">
@@ -143,10 +139,8 @@ export function EditTemplateDialog({
                 <Label>{t("pushTitle")}</Label>
                 <Input
                   placeholder="e.g., 🔥 Fire Alert!"
-                  value={formData.pushTitle}
-                  onChange={(e) =>
-                    setFormData({ ...formData, pushTitle: e.target.value })
-                  }
+                  value={form.pushTitle}
+                  onChange={(e) => update("pushTitle", e.target.value)}
                 />
                 <p className="text-xs text-muted-foreground">
                   {t("useDynamicValues")}
@@ -156,10 +150,8 @@ export function EditTemplateDialog({
                 <Label>{t("pushBody")}</Label>
                 <Textarea
                   placeholder="e.g., Fire detected in {{roomName}} at {{homeName}}"
-                  value={formData.pushBody}
-                  onChange={(e) =>
-                    setFormData({ ...formData, pushBody: e.target.value })
-                  }
+                  value={form.pushBody}
+                  onChange={(e) => update("pushBody", e.target.value)}
                   rows={4}
                 />
                 <p className="text-xs text-muted-foreground">
@@ -171,19 +163,15 @@ export function EditTemplateDialog({
                   <Label>{t("iconUrlOptional")}</Label>
                   <Input
                     placeholder="https://..."
-                    value={formData.pushIcon}
-                    onChange={(e) =>
-                      setFormData({ ...formData, pushIcon: e.target.value })
-                    }
+                    value={form.pushIcon}
+                    onChange={(e) => update("pushIcon", e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label>{t("sound")}</Label>
                   <Select
-                    value={formData.pushSound}
-                    onValueChange={(val) =>
-                      setFormData({ ...formData, pushSound: val })
-                    }
+                    value={form.pushSound}
+                    onValueChange={(v) => update("pushSound", v)}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -202,34 +190,31 @@ export function EditTemplateDialog({
             </>
           )}
 
-          <div className="flex items-center space-x-2">
-            <input
-              type="checkbox"
+          {/* Active toggle */}
+          <div className="flex items-center gap-3">
+            <Switch
               id="isActive"
-              checked={formData.isActive}
-              onChange={(e) =>
-                setFormData({ ...formData, isActive: e.target.checked })
-              }
-              className="h-4 w-4 rounded border-gray-300"
+              checked={form.isActive}
+              onCheckedChange={(v) => update("isActive", v)}
             />
             <Label htmlFor="isActive" className="cursor-pointer">
               {t("templateIsActive")}
             </Label>
           </div>
-
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={isSaving}
-            >
-              {t("cancel")}
-            </Button>
-            <Button onClick={handleSubmit} disabled={isSaving}>
-              {isSaving ? t("saving") : t("saveChanges")}
-            </Button>
-          </DialogFooter>
         </div>
+
+        <DialogFooter>
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            disabled={isSaving}
+          >
+            {t("cancel")}
+          </Button>
+          <Button onClick={handleSubmit} disabled={isSaving}>
+            {isSaving ? t("saving") : t("saveChanges")}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
