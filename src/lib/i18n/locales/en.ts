@@ -1918,6 +1918,39 @@ export const en = {
   allRightsReserved: "All Rights Reserved",
   failedLogout: "Failed to logout",
 
+  // Energy Cost Admin
+  totalGolongan: "Total Golongan",
+  tariffAlreadySet: "Tariff Already Set",
+  homeAlreadyChooseGolongan: "Homes With Golongan Set",
+  manageTariffPerGolongan: "Manage Tariff per PLN Golongan",
+  manageTariffDesc:
+    "Set electricity tariff (Rp/kWh) for each golongan. Defaults are based on official PLN 2022 tariffs. Edit only if government changes the tariff. Set to 0 to reset to PLN default.",
+  golonganTariffPerHome: "Golongan Tariff per Home",
+  golonganTariffPerHomeDesc:
+    "Set the electricity golongan used by each home. Users can also set this themselves.",
+  noHomesRegistered: "No homes registered yet",
+  invalidTariffValue: "Invalid tariff value",
+  tariffUpdated: "Tariff updated",
+  homeTariffUpdated: "Home golongan tariff updated",
+  homeTariffReset: "Home tariff selection reset",
+  failedLoadTariffData: "Failed to load data",
+  tariffNotSet: "Not set",
+  golonganNotChosen: "Not chosen",
+  selectGolongan: "Select golongan...",
+  howItWorks: "How It Works",
+  howItWorksTip1: "Admin sets Rp/kWh tariff for each PLN golongan",
+  howItWorksTip2: "Users select the electricity golongan used in their home",
+  howItWorksTip3:
+    "Energy cost estimate is calculated automatically from the selected golongan tariff",
+  howItWorksTip4:
+    "If golongan is not selected or tariff is not set, estimated cost = 0",
+  golongan: "Golongan",
+  daya: "Power",
+  keterangan: "Description",
+  tarifRpKwh: "Tariff (Rp/kWh)",
+  ubah: "Edit",
+  simpan: "Save",
+
   // Energy Sensor Card
   energySensorReadings: "Sensor Readings",
   noSensorReadings: "No sensor data yet",

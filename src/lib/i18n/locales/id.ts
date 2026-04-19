@@ -1913,6 +1913,39 @@ export const id = {
   allRightsReserved: "Semua Hak Dilindungi",
   failedLogout: "Gagal keluar dari akun",
 
+  // Energy Cost Admin
+  totalGolongan: "Total Golongan",
+  tariffAlreadySet: "Tarif Sudah Diset",
+  homeAlreadyChooseGolongan: "Home Sudah Pilih Golongan",
+  manageTariffPerGolongan: "Kelola Tarif per Golongan PLN",
+  manageTariffDesc:
+    "Set harga tarif listrik (Rp/kWh) untuk setiap golongan. Nilai default sudah diisi berdasarkan tarif resmi PLN 2022. Edit hanya jika ada perubahan tarif dari pemerintah. Set ke 0 untuk reset ke default PLN.",
+  golonganTariffPerHome: "Golongan Tarif per Home",
+  golonganTariffPerHomeDesc:
+    "Atur golongan listrik yang digunakan setiap home. User juga bisa mengatur ini sendiri.",
+  noHomesRegistered: "Belum ada home terdaftar",
+  invalidTariffValue: "Nilai tarif tidak valid",
+  tariffUpdated: "Tarif diperbarui",
+  homeTariffUpdated: "Golongan tarif home diperbarui",
+  homeTariffReset: "Pilihan tarif home direset",
+  failedLoadTariffData: "Gagal memuat data",
+  tariffNotSet: "Belum ditentukan",
+  golonganNotChosen: "Belum dipilih",
+  selectGolongan: "Pilih golongan...",
+  howItWorks: "Cara Kerja",
+  howItWorksTip1: "Admin set tarif Rp/kWh untuk setiap golongan PLN",
+  howItWorksTip2: "User memilih golongan listrik yang dipakai di home mereka",
+  howItWorksTip3:
+    "Estimasi biaya energi dihitung otomatis dari tarif golongan yang dipilih",
+  howItWorksTip4:
+    "Jika golongan belum dipilih atau tarif belum diset, estimasi biaya = 0",
+  golongan: "Golongan",
+  daya: "Daya",
+  keterangan: "Keterangan",
+  tarifRpKwh: "Tarif (Rp/kWh)",
+  ubah: "Ubah",
+  simpan: "Simpan",
+
   // Energy Sensor Card
   energySensorReadings: "Pembacaan Sensor",
   noSensorReadings: "Belum ada data sensor",
