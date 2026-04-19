@@ -4,7 +4,7 @@ import type {
   OverviewDTO,
   DashboardResponse,
 } from "@/lib/api/dto/overview.dto";
-import DashboardClient from "./ui";
+import { DashboardView } from "./components/dashboard-view";
 
 async function getOverview(): Promise<OverviewDTO> {
   // Call the backend overview/dashboard endpoint
@@ -46,7 +46,7 @@ export default async function DashboardPage() {
   }
 
   return (
-    <DashboardClient
+    <DashboardView
       data={error ? undefined : (data ?? undefined)}
       error={error ?? undefined}
     />

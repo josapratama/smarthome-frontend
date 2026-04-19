@@ -1,4 +1,4 @@
-import { api } from "../client/axios";
+import { apiFetchBrowser } from "../client/fetch";
 
 export interface DeviceConfig {
   id: number;
@@ -10,44 +10,38 @@ export interface DeviceConfig {
 }
 
 export const deviceConfigApi = {
-  // Get device configuration
-  get: async (deviceId: number): Promise<DeviceConfig | null> => {
+  get: async (
+    deviceId: number,
+  ): Promise<{ data: { config: DeviceConfig } } | null> => {
     try {
-      const { data } = await api.get<{ data: { config: DeviceConfig } }>(
-        `/v1/devices/${deviceId}/config`,
+      return await apiFetchBrowser<{ data: { config: DeviceConfig } }>(
+        `/api/v1/devices/${deviceId}/config`,
       );
-      return data.data.config;
     } catch (error: any) {
-      if (error.response?.status === 404) {
-        return null;
-      }
+      if (error.status === 404) return null;
       throw error;
     }
   },
 
-  // Update device configuration
-  update: async (deviceId: number, config: any): Promise<DeviceConfig> => {
-    const { data } = await api.put<{ data: { config: DeviceConfig } }>(
-      `/v1/devices/${deviceId}/config`,
-      { config },
+  update: async (
+    deviceId: number,
+    body: { config: any },
+  ): Promise<{ data: { config: DeviceConfig } }> => {
+    return apiFetchBrowser<{ data: { config: DeviceConfig } }>(
+      `/api/v1/devices/${deviceId}/config`,
+      {
+        method: "PUT",
+        body: JSON.stringify(body),
+      },
     );
-    return data.data.config;
   },
 
-  // Delete device configuration
   delete: async (deviceId: number): Promise<void> => {
-    await api.delete(`/v1/devices/${deviceId}/config`);
-  },
-
-  // Get config schema/template for device type
-  getTemplate: async (deviceType: string): Promise<any> => {
-    const { data } = await api.get<{ data: { template: any } }>(
-      `/v1/device-config/template/${deviceType}`,
-    );
-    return data.data.template;
+    await apiFetchBrowser(`/api/v1/devices/${deviceId}/config`, {
+      method: "DELETE",
+    });
   },
 };
 
-// Backward compatibility aliases
 export const getDeviceConfig = deviceConfigApi.get;
 export const upsertDeviceConfig = deviceConfigApi.update;

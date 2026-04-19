@@ -242,7 +242,7 @@ export default function DeviceConfig({ deviceId }: DeviceConfigProps) {
               </li>
               <li>
                 <code className="bg-muted px-1 rounded">sensors</code> -{" "}
-                {t("sensorConfiguration")}
+                {t("sensorConfigArray")}
               </li>
               <li>
                 <code className="bg-muted px-1 rounded">actuators</code> -{" "}
