@@ -26,7 +26,6 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { browserApi } from "@/lib/api/client/fetch";
 
 interface SidebarProps {
   className?: string;
@@ -52,7 +51,10 @@ export function Sidebar({ className, onClose }: SidebarProps) {
 
   const loadUserProfile = async () => {
     try {
-      const result = await browserApi.get<{ data: UserProfile }>("/api/v1/me");
+      // Use Next.js proxy route — reads httpOnly cookie server-side
+      const res = await fetch("/api/user/me", { credentials: "include" });
+      if (!res.ok) throw new Error("UNAUTHORIZED");
+      const result = await res.json();
       setUserProfile(result.data);
     } catch (error) {
       console.error("Failed to load user profile:", error);

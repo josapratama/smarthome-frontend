@@ -12,7 +12,7 @@ async function handler(
   req: NextRequest,
   { params }: { params: { path: string[] } },
 ) {
-  const cookieStore = await cookies();
+  const cookieStore = cookies();
   const token = cookieStore.get("access_token")?.value;
 
   if (!token) {
@@ -22,6 +22,8 @@ async function handler(
   const path = params.path.join("/");
   const url = new URL(req.url);
   const backendUrl = `${config.backendUrl}/api/v1/${path}${url.search}`;
+
+  console.log(`[proxy] ${req.method} /api/proxy/${path} → ${backendUrl}`);
 
   try {
     const body =

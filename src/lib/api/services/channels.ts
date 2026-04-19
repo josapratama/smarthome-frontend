@@ -1,4 +1,4 @@
-import { api } from "../client/axios";
+import { apiFetchBrowser } from "../client/fetch";
 
 export type ChannelType =
   | "RELAY"
@@ -49,19 +49,17 @@ export interface UpdateChannelInput {
 export const channelsApi = {
   // Get all channels for a device
   list: async (deviceId: number): Promise<Channel[]> => {
-    const res = await fetch(`/api/proxy/channels/device/${deviceId}`, {
-      credentials: "include",
-    });
-    const data = await res.json();
+    const data = await apiFetchBrowser<{ data: { channels: Channel[] } }>(
+      `/api/v1/channels/device/${deviceId}`,
+    );
     return data?.data?.channels ?? [];
   },
 
   // Get single channel
   get: async (deviceId: number, channelId: number): Promise<Channel> => {
-    const res = await fetch(`/api/proxy/channels/${channelId}`, {
-      credentials: "include",
-    });
-    const data = await res.json();
+    const data = await apiFetchBrowser<{ data: { channel: Channel } }>(
+      `/api/v1/channels/${channelId}`,
+    );
     return data.data.channel;
   },
 
@@ -70,13 +68,13 @@ export const channelsApi = {
     deviceId: number,
     input: CreateChannelInput,
   ): Promise<Channel> => {
-    const res = await fetch(`/api/proxy/channels`, {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...input, deviceId }),
-    });
-    const data = await res.json();
+    const data = await apiFetchBrowser<{ data: { channel: Channel } }>(
+      `/api/v1/channels`,
+      {
+        method: "POST",
+        body: JSON.stringify({ ...input, deviceId }),
+      },
+    );
     return data.data.channel;
   },
 
@@ -86,21 +84,20 @@ export const channelsApi = {
     channelId: number,
     input: UpdateChannelInput,
   ): Promise<Channel> => {
-    const res = await fetch(`/api/proxy/channels/${channelId}`, {
-      method: "PATCH",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(input),
-    });
-    const data = await res.json();
+    const data = await apiFetchBrowser<{ data: { channel: Channel } }>(
+      `/api/v1/channels/${channelId}`,
+      {
+        method: "PATCH",
+        body: JSON.stringify(input),
+      },
+    );
     return data.data.channel;
   },
 
   // Delete channel
   delete: async (deviceId: number, channelId: number): Promise<void> => {
-    await fetch(`/api/proxy/channels/${channelId}`, {
+    await apiFetchBrowser(`/api/v1/channels/${channelId}`, {
       method: "DELETE",
-      credentials: "include",
     });
   },
 
@@ -111,14 +108,12 @@ export const channelsApi = {
     state?: boolean,
     value?: number,
   ): Promise<Channel> => {
-    const res = await fetch(`/api/proxy/channels/${channelId}/state`, {
+    await apiFetchBrowser(`/api/v1/channels/${channelId}/state`, {
       method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ state, value }),
     });
-    const data = await res.json();
-    return data.data.channel;
+    // Fetch updated channel after state change
+    return channelsApi.get(deviceId, channelId);
   },
 };
 
