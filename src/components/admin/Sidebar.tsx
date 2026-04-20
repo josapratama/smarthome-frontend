@@ -22,6 +22,7 @@ import {
   UserCircle,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/language-context";
+import { useAdminProfile } from "@/contexts/admin-profile-context";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -42,26 +43,7 @@ export function Sidebar({ className, onClose }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { t } = useLanguage();
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    loadUserProfile();
-  }, []);
-
-  const loadUserProfile = async () => {
-    try {
-      // Use Next.js proxy route — reads httpOnly cookie server-side
-      const res = await fetch("/api/user/me", { credentials: "include" });
-      if (!res.ok) throw new Error("UNAUTHORIZED");
-      const result = await res.json();
-      setUserProfile(result.data);
-    } catch (error) {
-      console.error("Failed to load user profile:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { profile: userProfile, isLoading } = useAdminProfile();
 
   const getInitials = (name: string) => {
     if (!name) return "A";
