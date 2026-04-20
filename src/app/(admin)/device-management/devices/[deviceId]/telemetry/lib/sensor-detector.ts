@@ -63,6 +63,44 @@ export function hasSensorData(data: TelemetryDTO | null): boolean {
   );
 }
 
+/**
+ * Detect ALL active sensor types from a single telemetry record.
+ * Used for multi-sensor devices (e.g. esp32-all-sensors with PZEM+MQ2+Flame+Ultrasonic).
+ */
+export function detectAllSensorTypes(data: TelemetryDTO | null): SensorType[] {
+  if (!data) return [];
+  const types: SensorType[] = [];
+
+  if (
+    (data.voltageV ?? 0) > 0 ||
+    (data.currentA ?? 0) > 0 ||
+    (data.powerW ?? 0) > 0 ||
+    (data.energyKwh ?? 0) > 0 ||
+    (data.frequencyHz ?? 0) > 0 ||
+    (data.powerFactor ?? 0) > 0
+  )
+    types.push("ENERGY_MONITOR");
+
+  if (data.gasPpm != null) types.push("GAS_SENSOR");
+  if (data.flame != null) types.push("FLAME_SENSOR");
+  if (data.distanceCm != null || data.binLevel != null)
+    types.push("ULTRASONIC");
+  if ((data.current ?? 0) > 0) types.push("CURRENT_SENSOR");
+  if (data.temperatureC != null || data.humidityPercent != null)
+    types.push("TEMPERATURE_HUMIDITY");
+  if (data.pressureHpa != null || data.altitudeM != null)
+    types.push("PRESSURE");
+  if (data.soilMoisturePercent != null) types.push("SOIL_MOISTURE");
+  if (data.lightLux != null) types.push("LIGHT_SENSOR");
+
+  return types.length > 0 ? types : ["UNKNOWN"];
+}
+
+/** Get all table columns for multi-sensor display */
+export function getAllTableColumns(types: SensorType[]): TableColumn[] {
+  return types.flatMap(getTableColumns);
+}
+
 /** Table column definitions per sensor type for the history table */
 export interface TableColumn {
   key: keyof TelemetryDTO;

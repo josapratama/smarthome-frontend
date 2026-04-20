@@ -23,8 +23,10 @@ import {
 
 import {
   detectSensorType,
+  detectAllSensorTypes,
   hasSensorData,
   getTableColumns,
+  getAllTableColumns,
 } from "../lib/sensor-detector";
 import { SensorReadings } from "./sensor-readings";
 import { HistoryTable } from "./history-table";
@@ -77,8 +79,9 @@ export function TelemetryView({ deviceId }: TelemetryViewProps) {
   const history = historyQuery.data ?? [];
 
   const sensorType = detectSensorType(latest);
+  const sensorTypes = detectAllSensorTypes(latest);
   const hasData = hasSensorData(latest);
-  const columns = getTableColumns(sensorType);
+  const columns = getAllTableColumns(sensorTypes);
 
   const lastUpdate = latest?.timestamp ? new Date(latest.timestamp) : null;
   const secondsSince = lastUpdate
@@ -247,7 +250,7 @@ export function TelemetryView({ deviceId }: TelemetryViewProps) {
 
       {/* Sensor readings */}
       {hasData && latest && (
-        <SensorReadings data={latest} sensorType={sensorType} />
+        <SensorReadings data={latest} sensorTypes={sensorTypes} />
       )}
 
       {/* Raw data (debug) */}

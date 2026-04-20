@@ -19,13 +19,19 @@ import {
 
 interface SensorReadingsProps {
   data: TelemetryDTO;
-  sensorType: SensorType;
+  /** All active sensor types — supports multi-sensor devices */
+  sensorTypes: SensorType[];
 }
 
-export function SensorReadings({ data, sensorType }: SensorReadingsProps) {
+function SingleSensorCard({
+  data,
+  type,
+}: {
+  data: TelemetryDTO;
+  type: SensorType;
+}) {
   const { t } = useTranslation();
-
-  switch (sensorType) {
+  switch (type) {
     case "ENERGY_MONITOR":
       return <PzemCards data={data} />;
     case "GAS_SENSOR":
@@ -54,4 +60,26 @@ export function SensorReadings({ data, sensorType }: SensorReadingsProps) {
         </Card>
       );
   }
+}
+
+export function SensorReadings({ data, sensorTypes }: SensorReadingsProps) {
+  const activeTypes = sensorTypes.filter((t) => t !== "UNKNOWN");
+
+  if (activeTypes.length === 0) {
+    return null;
+  }
+
+  // Single sensor — render as before
+  if (activeTypes.length === 1) {
+    return <SingleSensorCard data={data} type={activeTypes[0]} />;
+  }
+
+  // Multi-sensor — render all cards stacked
+  return (
+    <div className="space-y-4">
+      {activeTypes.map((type) => (
+        <SingleSensorCard key={type} data={data} type={type} />
+      ))}
+    </div>
+  );
 }
