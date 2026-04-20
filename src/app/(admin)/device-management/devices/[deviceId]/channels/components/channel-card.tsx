@@ -140,46 +140,58 @@ export function ChannelCard({
 
           {/* Actions */}
           <div className="flex gap-2 flex-wrap">
-            {/* Toggle ON/OFF — only when enabled */}
-            {!isDisabled && (
+            {/* Toggle ON/OFF — hanya untuk channel yang bisa dikontrol, bukan SENSOR */}
+            {!isDisabled &&
+              ["RELAY", "DIMMER", "RGB_LED", "SERVO"].includes(
+                channel.type,
+              ) && (
+                <Button
+                  onClick={() => onToggle(channel)}
+                  variant={channel.state ? "default" : "secondary"}
+                  size="sm"
+                  disabled={isToggling}
+                >
+                  <Power className="mr-2 h-4 w-4" />
+                  {isToggling
+                    ? t("loading")
+                    : channel.state
+                      ? t("turnOff")
+                      : t("turnOn")}
+                </Button>
+              )}
+
+            {/* Enable / Disable toggle — hanya untuk RELAY/DIMMER/RGB_LED, bukan SENSOR */}
+            {[
+              "RELAY",
+              "DIMMER",
+              "RGB_LED",
+              "SERVO",
+              "ANALOG_IN",
+              "DIGITAL_IN",
+            ].includes(channel.type) && (
               <Button
-                onClick={() => onToggle(channel)}
-                variant={channel.state ? "default" : "secondary"}
+                variant="outline"
                 size="sm"
-                disabled={isToggling}
+                onClick={() => onToggleEnabled(channel.id, !channel.isEnabled)}
+                className={
+                  isDisabled
+                    ? "text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-950 border-green-300"
+                    : "text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950 border-orange-300"
+                }
               >
-                <Power className="mr-2 h-4 w-4" />
-                {isToggling
-                  ? t("loading")
-                  : channel.state
-                    ? t("turnOff")
-                    : t("turnOn")}
+                {isDisabled ? (
+                  <>
+                    <Eye className="mr-2 h-4 w-4" />
+                    {t("enableChannel")}
+                  </>
+                ) : (
+                  <>
+                    <EyeOff className="mr-2 h-4 w-4" />
+                    {t("disableChannel")}
+                  </>
+                )}
               </Button>
             )}
-
-            {/* Enable / Disable toggle */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onToggleEnabled(channel.id, !channel.isEnabled)}
-              className={
-                isDisabled
-                  ? "text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-950 border-green-300"
-                  : "text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950 border-orange-300"
-              }
-            >
-              {isDisabled ? (
-                <>
-                  <Eye className="mr-2 h-4 w-4" />
-                  {t("enableChannel")}
-                </>
-              ) : (
-                <>
-                  <EyeOff className="mr-2 h-4 w-4" />
-                  {t("disableChannel")}
-                </>
-              )}
-            </Button>
 
             <Button
               variant="outline"
