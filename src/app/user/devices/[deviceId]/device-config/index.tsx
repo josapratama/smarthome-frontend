@@ -14,7 +14,10 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
-import { deviceConfigApi } from "@/lib/api/services/device-config";
+import {
+  deviceConfigApi,
+  type DeviceConfig,
+} from "@/lib/api/services/device-config";
 import { toast } from "sonner";
 
 interface DeviceConfigProps {
@@ -23,7 +26,7 @@ interface DeviceConfigProps {
 
 export default function DeviceConfig({ deviceId }: DeviceConfigProps) {
   const { t } = useTranslation();
-  const [config, setConfig] = useState<any>(null);
+  const [config, setConfig] = useState<DeviceConfig | null>(null);
   const [configText, setConfigText] = useState("");
   const [originalConfig, setOriginalConfig] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -45,8 +48,8 @@ export default function DeviceConfig({ deviceId }: DeviceConfigProps) {
     try {
       const data = await deviceConfigApi.get(deviceId);
       if (data) {
-        const formatted = JSON.stringify(data.config, null, 2);
-        setConfig(data);
+        const formatted = JSON.stringify(data.data.config, null, 2);
+        setConfig(data.data.config);
         setConfigText(formatted);
         setOriginalConfig(formatted);
       } else {
@@ -97,7 +100,7 @@ export default function DeviceConfig({ deviceId }: DeviceConfigProps) {
     setIsSaving(true);
     try {
       const parsedConfig = JSON.parse(configText);
-      await deviceConfigApi.update(deviceId, parsedConfig);
+      await deviceConfigApi.update(deviceId, { config: parsedConfig });
       toast.success(t("configSaved"));
       setOriginalConfig(configText);
       loadConfig();
