@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { MessageCircle } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
-import { ChatContent } from "@/app/user/chat/chat-content";
+import { ChatContent } from "@/components/admin/chat/chat-content";
 
 interface ChatCtaCardProps {
   sessionId: string;

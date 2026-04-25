@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, MailPlus, Users, Search } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
-import { InviteDialog } from "@/app/user/invites/invite-dialog";
-import { InviteList } from "@/app/user/invites/invite-list";
+import { InviteDialog } from "@/app/user/invites/components/invite-dialog";
+import { InviteList } from "@/app/user/invites/components/invite-list";
 import { apiFetchBrowser } from "@/lib/api/client/fetch";
 
 interface Home {

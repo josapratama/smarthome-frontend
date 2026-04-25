@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Sidebar } from "./sidebar";
 import { Topbar } from "./topbar";
 import { MobileNav } from "./mobile-nav";
-import { ChatWidget } from "@/app/user/chat/chat-widget";
+import { ChatWidget } from "@/components/admin/chat/chat-widget";
 import { ThemeProvider } from "@/contexts/theme-context";
 import { LanguageProvider } from "@/contexts/language-context";
 import { AdminProfileProvider } from "@/contexts/admin-profile-context";
