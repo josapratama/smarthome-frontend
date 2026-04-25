@@ -12,7 +12,7 @@ import {
   RefreshCw,
   Trash2,
 } from "lucide-react";
-import { useLanguage } from "@/contexts/language-context";
+import { useTranslation } from "@/hooks/use-translation";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -39,7 +39,7 @@ interface PendingInvite {
 }
 
 export function InviteList() {
-  const { t } = useLanguage();
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const { data: invites, isLoading } = useQuery({
