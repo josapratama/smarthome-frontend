@@ -11,6 +11,7 @@ export interface RoomDTO {
   deletedAt?: string | null;
   ownerId?: number | null;
   privacyLevel?: "PUBLIC" | "PRIVATE" | "SHARED" | "RESTRICTED";
+  description?: string | null;
 }
 
 export interface RoomCreateRequest {
