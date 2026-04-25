@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslation } from "@/hooks/use-translation";
-import { Room } from "@/lib/api/services/rooms";
+import type { RoomDTO } from "@/lib/api/dto/rooms.dto";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DoorOpen, Trash2, Shield } from "lucide-react";
@@ -21,7 +21,7 @@ import {
 import { RoomAccessDialog } from "./room-access-dialog";
 
 interface RoomCardProps {
-  room: Room;
+  room: RoomDTO;
   deviceCount: number;
   onDelete: () => void;
 }
@@ -35,7 +35,7 @@ export function RoomCard({ room, deviceCount, onDelete }: RoomCardProps) {
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      await roomsApi.delete(room.id);
+      await roomsApi.deleteRoom(room.id);
       toast.success(t("roomDeletedSuccess") || "Room deleted successfully");
       setDeleteDialogOpen(false);
       onDelete();
@@ -75,11 +75,6 @@ export function RoomCard({ room, deviceCount, onDelete }: RoomCardProps) {
           </div>
         </CardHeader>
         <CardContent>
-          {room.description && (
-            <p className="text-sm text-muted-foreground mb-3">
-              {room.description}
-            </p>
-          )}
           <div className="text-sm text-muted-foreground">
             {deviceCount}{" "}
             {deviceCount === 1

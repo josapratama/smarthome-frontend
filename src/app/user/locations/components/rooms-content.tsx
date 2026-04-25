@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Card,
@@ -20,68 +19,38 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search, Home, DoorOpen, ChevronRight } from "lucide-react";
-import { toast } from "sonner";
 import { useTranslation } from "@/hooks/use-translation";
-import { roomsApi, Room } from "@/lib/api/services/rooms";
-import { homesApi, Home as HomeType } from "@/lib/api/services/homes";
+import { useRooms } from "../hooks/use-rooms";
+import type { RoomDTO } from "@/lib/api/dto/rooms.dto";
+
+type Room = RoomDTO;
+
+function getPrivacyIcon(level?: string) {
+  switch (level) {
+    case "PRIVATE":
+      return "🔒";
+    case "SHARED":
+      return "👥";
+    case "RESTRICTED":
+      return "⚠️";
+    default:
+      return "🌐";
+  }
+}
 
 export default function RoomsContent() {
   const router = useRouter();
   const { t } = useTranslation();
-
-  const [rooms, setRooms] = useState<(Room & { homeName?: string })[]>([]);
-  const [homes, setHomes] = useState<HomeType[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedHomeId, setSelectedHomeId] = useState<string>("all");
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
-    setIsLoading(true);
-    try {
-      const homesData = await homesApi.list();
-      setHomes(homesData);
-
-      const allRooms: (Room & { homeName?: string })[] = [];
-      for (const home of homesData) {
-        const homeRooms = await roomsApi.listByHome(home.id);
-        allRooms.push(
-          ...homeRooms.map((room) => ({ ...room, homeName: home.name })),
-        );
-      }
-      setRooms(allRooms);
-    } catch (error) {
-      console.error("Failed to load rooms:", error);
-      toast.error(t("failedToLoadRooms"));
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const filteredRooms = rooms.filter((room) => {
-    const matchesSearch = room.name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    const matchesHome =
-      selectedHomeId === "all" || room.homeId === parseInt(selectedHomeId);
-    return matchesSearch && matchesHome;
-  });
-
-  const getPrivacyIcon = (level?: string) => {
-    switch (level) {
-      case "PRIVATE":
-        return "🔒";
-      case "SHARED":
-        return "👥";
-      case "RESTRICTED":
-        return "⚠️";
-      default:
-        return "🌐";
-    }
-  };
+  const {
+    rooms,
+    homes,
+    isLoading,
+    searchQuery,
+    setSearchQuery,
+    selectedHomeId,
+    setSelectedHomeId,
+    filteredRooms,
+  } = useRooms();
 
   const getPrivacyLabel = (level?: string) => {
     switch (level) {
@@ -107,42 +76,27 @@ export default function RoomsContent() {
 
   return (
     <div className="space-y-6 max-w-6xl">
-      {/* Statistics */}
+      {/* Stats */}
       <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              {t("totalRooms")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{rooms.length}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              {t("totalHomes")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{homes.length}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              {t("privateRooms")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {rooms.filter((r) => r.privacyLevel === "PRIVATE").length}
-            </div>
-          </CardContent>
-        </Card>
+        {[
+          { label: t("totalRooms"), value: rooms.length },
+          { label: t("totalHomes"), value: homes.length },
+          {
+            label: t("privateRooms"),
+            value: rooms.filter((r) => r.privacyLevel === "PRIVATE").length,
+          },
+        ].map((stat) => (
+          <Card key={stat.label}>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {stat.label}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stat.value}</div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       {/* Filters */}
@@ -161,7 +115,6 @@ export default function RoomsContent() {
                 className="pl-9"
               />
             </div>
-
             <Select value={selectedHomeId} onValueChange={setSelectedHomeId}>
               <SelectTrigger>
                 <SelectValue />
@@ -179,7 +132,7 @@ export default function RoomsContent() {
         </CardContent>
       </Card>
 
-      {/* Rooms List */}
+      {/* Rooms */}
       {filteredRooms.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">

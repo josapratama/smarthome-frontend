@@ -61,7 +61,7 @@ export function CreateRoomDialog({
   const onSubmit = async (data: RoomFormData) => {
     setIsLoading(true);
     try {
-      await roomsApi.create(homeId, data);
+      await roomsApi.createRoom(homeId, data.name);
       toast.success(t("roomCreated"));
       form.reset();
       onOpenChange(false);

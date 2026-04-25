@@ -8,8 +8,12 @@ import dynamic from "next/dynamic";
 import { PageHeader } from "@/components/ui/page-header";
 
 // Lazy load the heavy components
-const HomesContent = dynamic(() => import("./homes-content"), { ssr: false });
-const RoomsContent = dynamic(() => import("./rooms-content"), { ssr: false });
+const HomesContent = dynamic(() => import("./components/homes-content"), {
+  ssr: false,
+});
+const RoomsContent = dynamic(() => import("./components/rooms-content"), {
+  ssr: false,
+});
 
 export default function LocationsPage() {
   const { t } = useTranslation();

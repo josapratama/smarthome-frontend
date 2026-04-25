@@ -1,15 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useTranslation } from "@/hooks/use-translation";
-import { homesApi, Home } from "@/lib/api/services/homes";
 import { CreateHomeDialog } from "./create-home-dialog";
 import { HomeCard } from "./home-card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/ui/page-header";
 import { Home as HomeIcon, Plus } from "lucide-react";
-import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,78 +17,26 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useHomes } from "../hooks/use-homes";
 
 export default function HomesContent() {
   const { t } = useTranslation();
-  const [homes, setHomes] = useState<Home[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedHome, setSelectedHome] = useState<Home | null>(null);
-  const [userId, setUserId] = useState<number | null>(null);
-
-  useEffect(() => {
-    // Get user ID from session/auth
-    fetch("/api/auth/me")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.data?.id) {
-          setUserId(data.data.id);
-        }
-      })
-      .catch(console.error);
-
-    loadHomes();
-  }, []);
-
-  // Listen to topbar events
-  useEffect(() => {
-    const handleAdd = () => {
-      if (userId) {
-        setCreateDialogOpen(true);
-      }
-    };
-
-    window.addEventListener("topbar-add", handleAdd);
-
-    return () => {
-      window.removeEventListener("topbar-add", handleAdd);
-    };
-  }, [userId]);
-
-  const loadHomes = async () => {
-    setIsLoading(true);
-    try {
-      const data = await homesApi.list();
-      setHomes(data);
-    } catch (error: any) {
-      toast.error(
-        error.message || t("failedToLoadHomes") || "Failed to load homes",
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!selectedHome) return;
-
-    try {
-      await homesApi.delete(selectedHome.id);
-      toast.success(t("homeDeletedSuccess") || "Home deleted successfully");
-      setDeleteDialogOpen(false);
-      setSelectedHome(null);
-      loadHomes();
-    } catch (error: any) {
-      toast.error(
-        error.message || t("failedToDeleteHome") || "Failed to delete home",
-      );
-    }
-  };
+  const {
+    homes,
+    isLoading,
+    userId,
+    createDialogOpen,
+    setCreateDialogOpen,
+    deleteDialogOpen,
+    setDeleteDialogOpen,
+    selectedHome,
+    openDeleteDialog,
+    handleDelete,
+    loadHomes,
+  } = useHomes();
 
   return (
     <div className="space-y-6">
-      {/* Header with Stats */}
       <PageHeader
         stats={
           homes.length > 0
@@ -113,7 +58,7 @@ export default function HomesContent() {
             <Skeleton key={i} className="h-[180px] rounded-lg" />
           ))}
         </div>
-      ) : (homes?.length ?? 0) === 0 ? (
+      ) : homes.length === 0 ? (
         <div className="bg-card rounded-lg shadow-md p-8 text-center border border-border">
           <div className="text-6xl mb-4">🏡</div>
           <h2 className="text-xl font-semibold mb-2">
@@ -130,15 +75,8 @@ export default function HomesContent() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {homes?.map((home) => (
-            <HomeCard
-              key={home.id}
-              home={home}
-              onDelete={(home) => {
-                setSelectedHome(home);
-                setDeleteDialogOpen(true);
-              }}
-            />
+          {homes.map((home) => (
+            <HomeCard key={home.id} home={home} onDelete={openDeleteDialog} />
           ))}
         </div>
       )}
@@ -160,7 +98,7 @@ export default function HomesContent() {
             </AlertDialogTitle>
             <AlertDialogDescription>
               {t("deleteHomeConfirmation") || "Are you sure you want to delete"}{" "}
-              "{selectedHome?.name}"?{" "}
+              &ldquo;{selectedHome?.name}&rdquo;?{" "}
               {t("deleteHomeWarning") ||
                 "This action cannot be undone and will remove all associated devices and rooms."}
             </AlertDialogDescription>
