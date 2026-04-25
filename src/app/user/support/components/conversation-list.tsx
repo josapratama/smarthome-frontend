@@ -2,7 +2,10 @@
 
 import { useTranslation } from "@/hooks/use-translation";
 import { ConversationItem } from "./conversation-item";
-import { DirectConversation, HomeConversation } from "@/lib/api/services/messaging";
+import {
+  DirectConversation,
+  HomeConversation,
+} from "@/lib/api/services/messaging";
 
 interface ConversationListProps {
   conversations: (DirectConversation | HomeConversation)[];
