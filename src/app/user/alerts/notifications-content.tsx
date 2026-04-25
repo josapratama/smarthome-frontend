@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,126 +7,59 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Bell, CheckCheck, Trash2 } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
-import { toast } from "sonner";
-import {
-  listHomeAlarms,
-  acknowledgeAlarm,
-  resolveAlarm,
-} from "@/lib/api/services/alarms";
-import { homesApi } from "@/lib/api/services/homes";
-import type { AlarmDTO } from "@/lib/api/dto/alarm.dto";
 import { PageHeader } from "@/components/ui/page-header";
 import { formatDistanceToNow } from "date-fns";
+import { useNotifications } from "./hooks/use-notifications";
+import type { AlarmDTO } from "@/lib/api/dto/alarm.dto";
 
-export default function NotificationsPage() {
+function getNotificationIcon(severity: string) {
+  switch (severity) {
+    case "CRITICAL":
+    case "HIGH":
+      return "🔴";
+    case "MEDIUM":
+      return "🟡";
+    default:
+      return "🔵";
+  }
+}
+
+function getNotificationColor(severity: string) {
+  switch (severity) {
+    case "CRITICAL":
+    case "HIGH":
+      return "border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30";
+    case "MEDIUM":
+      return "border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-950/30";
+    default:
+      return "border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30";
+  }
+}
+
+function getTextColor(severity: string) {
+  switch (severity) {
+    case "CRITICAL":
+    case "HIGH":
+      return "text-red-700 dark:text-red-300";
+    case "MEDIUM":
+      return "text-yellow-700 dark:text-yellow-300";
+    default:
+      return "text-blue-700 dark:text-blue-300";
+  }
+}
+
+interface NotificationItemProps {
+  alarm: AlarmDTO;
+  onMarkAsRead: (alarm: AlarmDTO) => void;
+  onDelete: (alarm: AlarmDTO) => void;
+}
+
+function NotificationItem({
+  alarm,
+  onMarkAsRead,
+  onDelete,
+}: NotificationItemProps) {
   const { t } = useTranslation();
-  const [alarms, setAlarms] = useState<AlarmDTO[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [filter, setFilter] = useState<"all" | "unread">("all");
-
-  useEffect(() => {
-    loadNotifications();
-  }, []);
-
-  // Listen to topbar events
-  useEffect(() => {
-    const handleFilter = () => {
-      const filterSection = document.querySelector("[data-filter-section]");
-      if (filterSection) {
-        filterSection.scrollIntoView({ behavior: "smooth", block: "center" });
-        // Add highlight effect
-        filterSection.classList.add("ring-2", "ring-primary", "ring-offset-2");
-        setTimeout(() => {
-          filterSection.classList.remove(
-            "ring-2",
-            "ring-primary",
-            "ring-offset-2",
-          );
-        }, 2000);
-      }
-    };
-
-    window.addEventListener("topbar-filter", handleFilter);
-
-    return () => {
-      window.removeEventListener("topbar-filter", handleFilter);
-    };
-  }, []);
-
-  const loadNotifications = async () => {
-    setIsLoading(true);
-    try {
-      // Get all homes first
-      const homes = await homesApi.list();
-
-      if (homes.length === 0) {
-        setAlarms([]);
-        return;
-      }
-
-      // Get alarms from all homes
-      const alarmsPromises = homes.map((home) =>
-        listHomeAlarms(home.id, { limit: 50 })
-          .then((response) => response.data)
-          .catch(() => []),
-      );
-
-      const alarmsArrays = await Promise.all(alarmsPromises);
-      const allAlarms = alarmsArrays.flat();
-
-      // Sort by triggeredAt descending
-      allAlarms.sort(
-        (a, b) =>
-          new Date(b.triggeredAt).getTime() - new Date(a.triggeredAt).getTime(),
-      );
-
-      setAlarms(allAlarms);
-    } catch (error: any) {
-      toast.error(
-        error.message ||
-          t("failedLoadNotifications") ||
-          "Failed to load notifications",
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const getNotificationIcon = (severity: string) => {
-    switch (severity) {
-      case "CRITICAL":
-      case "HIGH":
-        return "🔴";
-      case "MEDIUM":
-        return "🟡";
-      default:
-        return "🔵";
-    }
-  };
-
-  const getNotificationColor = (severity: string) => {
-    switch (severity) {
-      case "CRITICAL":
-      case "HIGH":
-        return "border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30";
-      case "MEDIUM":
-        return "border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-950/30";
-      default:
-        return "border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30";
-    }
-  };
-
-  const getTextColor = (severity: string) => {
-    switch (severity) {
-      case "CRITICAL":
-      case "HIGH":
-        return "text-red-700 dark:text-red-300";
-      case "MEDIUM":
-        return "text-yellow-700 dark:text-yellow-300";
-      default:
-        return "text-blue-700 dark:text-blue-300";
-    }
-  };
 
   const getSeverityBadge = (severity: string) => {
     switch (severity) {
@@ -146,57 +78,88 @@ export default function NotificationsPage() {
     }
   };
 
-  const markAsRead = async (alarm: AlarmDTO) => {
-    try {
-      await acknowledgeAlarm(alarm.homeId, alarm.id);
-      toast.success(t("markedAsRead") || "Marked as read");
-      loadNotifications();
-    } catch (error: any) {
-      toast.error(
-        error.message || t("failedToMarkAsRead") || "Failed to mark as read",
-      );
-    }
-  };
+  return (
+    <Card
+      className={`border-l-4 transition-all hover:shadow-md ${
+        alarm.status === "OPEN" ? getNotificationColor(alarm.severity) : ""
+      }`}
+    >
+      <CardContent className="p-4">
+        <div className="flex gap-4">
+          <div className="text-3xl flex-shrink-0">
+            {getNotificationIcon(alarm.severity)}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between gap-2 mb-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className={`font-semibold ${getTextColor(alarm.severity)}`}>
+                  {alarm.type}
+                </h3>
+                {getSeverityBadge(alarm.severity)}
+                {alarm.status === "OPEN" && (
+                  <Badge variant="default" className="h-5">
+                    {t("new") || "New"}
+                  </Badge>
+                )}
+              </div>
+              <div className="flex gap-1">
+                {alarm.status === "OPEN" && (
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-8 w-8"
+                    onClick={() => onMarkAsRead(alarm)}
+                  >
+                    <CheckCheck className="h-4 w-4" />
+                  </Button>
+                )}
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8 text-destructive"
+                  onClick={() => onDelete(alarm)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <p className="text-sm text-foreground mb-2">{alarm.message}</p>
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1">
+                📱 {t("device") || "Device"} #{alarm.deviceId}
+              </span>
+              <span className="flex items-center gap-1">
+                🏠 {t("home") || "Home"} #{alarm.homeId}
+              </span>
+              <span>
+                {formatDistanceToNow(new Date(alarm.triggeredAt), {
+                  addSuffix: true,
+                })}
+              </span>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
-  const markAllAsRead = async () => {
-    try {
-      const unreadAlarms = alarms.filter((a) => a.status === "OPEN");
-      await Promise.all(
-        unreadAlarms.map((alarm) => acknowledgeAlarm(alarm.homeId, alarm.id)),
-      );
-      toast.success(t("allMarkedAsRead") || "All marked as read");
-      loadNotifications();
-    } catch (error: any) {
-      toast.error(
-        error.message ||
-          t("failedToMarkAllAsRead") ||
-          "Failed to mark all as read",
-      );
-    }
-  };
-
-  const deleteNotification = async (alarm: AlarmDTO) => {
-    try {
-      await resolveAlarm(alarm.homeId, alarm.id);
-      toast.success(t("notificationDeleted") || "Notification deleted");
-      loadNotifications();
-    } catch (error: any) {
-      toast.error(
-        error.message ||
-          t("failedToDeleteNotification") ||
-          "Failed to delete notification",
-      );
-    }
-  };
-
-  const filteredAlarms =
-    filter === "unread" ? alarms.filter((a) => a.status === "OPEN") : alarms;
-
-  const unreadCount = alarms.filter((a) => a.status === "OPEN").length;
+export default function NotificationsContent() {
+  const { t } = useTranslation();
+  const {
+    alarms,
+    filteredAlarms,
+    isLoading,
+    filter,
+    setFilter,
+    unreadCount,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+  } = useNotifications();
 
   return (
     <div className="space-y-6">
-      {/* Header with Stats */}
       <PageHeader
         stats={[
           {
@@ -222,10 +185,9 @@ export default function NotificationsPage() {
         }
       />
 
-      {/* Tabs */}
       <Tabs
         value={filter}
-        onValueChange={(v) => setFilter(v as any)}
+        onValueChange={(v) => setFilter(v as "all" | "unread")}
         data-filter-section
         className="transition-all duration-300"
       >
@@ -264,75 +226,12 @@ export default function NotificationsPage() {
           ) : (
             <div className="space-y-3">
               {filteredAlarms.map((alarm) => (
-                <Card
+                <NotificationItem
                   key={alarm.id}
-                  className={`border-l-4 transition-all hover:shadow-md ${
-                    alarm.status === "OPEN"
-                      ? getNotificationColor(alarm.severity)
-                      : ""
-                  }`}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex gap-4">
-                      <div className="text-3xl flex-shrink-0">
-                        {getNotificationIcon(alarm.severity)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2 mb-2">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <h3
-                              className={`font-semibold ${getTextColor(alarm.severity)}`}
-                            >
-                              {alarm.type}
-                            </h3>
-                            {getSeverityBadge(alarm.severity)}
-                            {alarm.status === "OPEN" && (
-                              <Badge variant="default" className="h-5">
-                                {t("new") || "New"}
-                              </Badge>
-                            )}
-                          </div>
-                          <div className="flex gap-1">
-                            {alarm.status === "OPEN" && (
-                              <Button
-                                size="icon"
-                                variant="ghost"
-                                className="h-8 w-8"
-                                onClick={() => markAsRead(alarm)}
-                              >
-                                <CheckCheck className="h-4 w-4" />
-                              </Button>
-                            )}
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              className="h-8 w-8 text-destructive"
-                              onClick={() => deleteNotification(alarm)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                        <p className="text-sm text-foreground mb-2">
-                          {alarm.message}
-                        </p>
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            📱 {t("device") || "Device"} #{alarm.deviceId}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            🏠 {t("home") || "Home"} #{alarm.homeId}
-                          </span>
-                          <span>
-                            {formatDistanceToNow(new Date(alarm.triggeredAt), {
-                              addSuffix: true,
-                            })}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                  alarm={alarm}
+                  onMarkAsRead={markAsRead}
+                  onDelete={deleteNotification}
+                />
               ))}
             </div>
           )}
