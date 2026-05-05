@@ -771,6 +771,33 @@ export const plm = {
   selectActiveModelDescription:
     "Pilih model AI yang akan digunake untuk prediksi. Cuma satu model per algoritma yang biso aktif.",
 
+  // AI Model Performance & Compare
+  modelList: "Daftar Model",
+  performance: "Performa",
+  modelPerformance: "Performa Model",
+  modelPerformanceDescription: "Lacak riwayat akurasi dan bandingke model AI",
+  modelComparison: "Perbandingan Model",
+  noComparisonData: "Idak ado data perbandingan",
+  noComparisonDataDescription:
+    "Data performa akan muncul setelah model buat prediksi",
+  performanceHistory: "Riwayat Performa",
+  noPerformanceData: "Idak ado data performa",
+  noPerformanceDataDescription:
+    "Catatan akurasi akan muncul setelah model jalanke prediksi",
+  allModels: "Semuo Model",
+  predictionDate: "Tanggal Prediksi",
+  recordedAt: "Dicatat Pado",
+  minAccuracy: "Min",
+  maxAccuracy: "Maks",
+  totalPredictions: "Total Prediksi",
+  best: "Terbaik",
+  trend: "Tren",
+  last14Days: "14 Hari Terakhir",
+  last90Days: "90 Hari Terakhir",
+  model: "Model",
+  aiRuleExecuted: "Aturan AI dieksekusi",
+  aiRuleTriggered: "Aturan AI dipicu",
+
   // Monitoring
   monitoringPage: "Monitoring",
   realTimeMonitoring:
@@ -1457,6 +1484,8 @@ export const plm = {
   dataExported: "Data berhasil diekspor",
   failedToExportData: "Gagal ekspor data",
   failedToLoadTelemetry: "Gagal muat data telemetri",
+  noDataAvailable: "Idak ado data",
+  dataTable: "Tabel Data",
 
   // Device Config
   jsonConfig: "Konfigurasi JSON",
@@ -1693,6 +1722,10 @@ export const plm = {
   otaJobCancelled: "Job OTA dibatalke",
   failedToCancelJob: "Gagal batalke job",
   failedToLoadOTAData: "Gagal muat data OTA",
+  downloading: "Ngunduh",
+  applied: "Diterapke",
+  update: "Update",
+  error: "Error",
 
   // Privacy Page
   profileVisibility: "Visibilitas Profil",

@@ -4,9 +4,8 @@
  */
 
 import { cookies } from "next/headers";
-import { config } from "@/lib/config";
 
-const isProduction = process.env.NODE_ENV === "production";
+const isSecure = process.env.COOKIE_SECURE === "true";
 
 export async function setAuthCookies(
   accessToken: string,
@@ -14,23 +13,21 @@ export async function setAuthCookies(
 ) {
   const cookieStore = await cookies();
 
-  // Set access token (shorter expiry)
   cookieStore.set("access_token", accessToken, {
     httpOnly: true,
-    secure: config.isProduction,
+    secure: isSecure,
     sameSite: "lax",
     path: "/",
-    maxAge: 60 * 60 * 24 * 7, // 7 days
+    maxAge: 60 * 60 * 24 * 7,
   });
 
-  // Set refresh token if provided (longer expiry)
   if (refreshToken) {
     cookieStore.set("refresh_token", refreshToken, {
       httpOnly: true,
-      secure: config.isProduction,
+      secure: isSecure,
       sameSite: "lax",
       path: "/",
-      maxAge: 60 * 60 * 24 * 30, // 30 days
+      maxAge: 60 * 60 * 24 * 30,
     });
   }
 }

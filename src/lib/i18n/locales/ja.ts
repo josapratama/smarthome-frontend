@@ -1366,9 +1366,13 @@ export const ja = {
   last24Hours: "過去24時間",
   last7Days: "過去7日間",
   last30Days: "過去30日間",
+  last14Days: "過去14日間",
+  last90Days: "過去90日間",
   dataExported: "データが正常にエクスポートされました",
   failedToExportData: "データのエクスポートに失敗しました",
   failedToLoadTelemetry: "テレメトリデータの読み込みに失敗しました",
+  noDataAvailable: "データなし",
+  dataTable: "データテーブル",
 
   // Device Config
   jsonConfig: "JSON設定",
@@ -1405,6 +1409,9 @@ export const ja = {
   otaJobCancelled: "OTAジョブがキャンセルされました",
   failedToCancelJob: "ジョブのキャンセルに失敗しました",
   failedToLoadOTAData: "OTAデータの読み込みに失敗しました",
+  downloading: "ダウンロード中",
+  applied: "適用済み",
+  update: "更新",
 
   // Device Overview
   deleteDeviceWarning: "この操作は元に戻せません。",
@@ -1489,6 +1496,31 @@ export const ja = {
   accuracy: "精度",
   selectActiveModelDescription:
     "このデバイスに使用するアクティブなモデルを選択",
+
+  // AI Model Performance & Compare
+  modelList: "モデル一覧",
+  performance: "パフォーマンス",
+  modelPerformance: "モデルパフォーマンス",
+  modelPerformanceDescription: "精度履歴を追跡してAIモデルを比較する",
+  modelComparison: "モデル比較",
+  noComparisonData: "比較データなし",
+  noComparisonDataDescription:
+    "モデルが予測を行った後にパフォーマンスデータが表示されます",
+  performanceHistory: "パフォーマンス履歴",
+  noPerformanceData: "パフォーマンスデータなし",
+  noPerformanceDataDescription:
+    "モデルが予測を実行した後に精度記録が表示されます",
+  allModels: "すべてのモデル",
+  predictionDate: "予測日",
+  recordedAt: "記録日時",
+  minAccuracy: "最小",
+  maxAccuracy: "最大",
+  totalPredictions: "総予測数",
+  best: "最良",
+  trend: "トレンド",
+  model: "モデル",
+  aiRuleExecuted: "AIルールが実行されました",
+  aiRuleTriggered: "AIルールがトリガーされました",
 
   // Access Levels
   accessOwner: "オーナー",

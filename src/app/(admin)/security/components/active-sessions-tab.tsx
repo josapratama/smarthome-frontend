@@ -25,7 +25,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { api } from "@/lib/api/client/axios";
+import { apiFetchBrowser } from "@/lib/api/client/fetch";
 import { useTranslation } from "@/hooks/use-translation";
 
 interface UserSession {
@@ -52,15 +52,16 @@ export default function ActiveSessionsTab() {
   const fetchSessions = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/v1/auth/sessions");
-      setSessions(response.data.data || []);
+      const response = await apiFetchBrowser<{ data: UserSession[] }>(
+        "/api/v1/auth/sessions",
+      );
+      setSessions(response.data || []);
     } catch (error: any) {
       // Silently handle 404 errors (endpoint not implemented yet)
-      if (error.response?.status !== 404) {
+      if (error.status !== 404) {
         toast({
           title: t("error"),
-          description:
-            error.response?.data?.error || t("failedToFetchSessions"),
+          description: (error as any).message || t("failedToFetchSessions"),
           variant: "destructive",
         });
       }
@@ -76,7 +77,9 @@ export default function ActiveSessionsTab() {
 
   const revokeSession = async (sessionId: number) => {
     try {
-      await api.delete(`/v1/auth/sessions/${sessionId}`);
+      await apiFetchBrowser(`/api/v1/auth/sessions/${sessionId}`, {
+        method: "DELETE",
+      });
       toast({
         title: t("success"),
         description: t("sessionRevokedSuccess"),
@@ -85,7 +88,7 @@ export default function ActiveSessionsTab() {
     } catch (error: any) {
       toast({
         title: t("error"),
-        description: error.response?.data?.error || t("failedToRevokeSession"),
+        description: (error as any).message || t("failedToRevokeSession"),
         variant: "destructive",
       });
     } finally {

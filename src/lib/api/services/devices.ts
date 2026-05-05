@@ -1,10 +1,14 @@
-import { api, apiClient } from "../client/axios";
+import { apiFetchBrowser } from "../client/fetch";
 
 export interface Device {
   id: number;
   homeId: number;
   roomId?: number;
   deviceKey: string;
+  // Backend menggunakan deviceName dan deviceType
+  deviceName: string;
+  deviceType: string;
+  // Alias untuk kompatibilitas komponen yang pakai name/type
   name: string;
   type: string;
   status: "ONLINE" | "OFFLINE" | "ERROR";
@@ -25,34 +29,52 @@ export interface DeviceWithDetails extends Device {
   };
 }
 
+// Normalize device response — map deviceName→name, deviceType→type
+function normalizeDevice(d: any): DeviceWithDetails {
+  return {
+    ...d,
+    name: d.name ?? d.deviceName ?? "",
+    type: d.type ?? d.deviceType ?? "",
+    deviceName: d.deviceName ?? d.name ?? "",
+    deviceType: d.deviceType ?? d.type ?? "",
+    status:
+      d.status === true
+        ? "ONLINE"
+        : d.status === false
+          ? "OFFLINE"
+          : (d.status ?? "OFFLINE"),
+  };
+}
+
 export const devicesApi = {
   list: async (homeId?: number) => {
-    const params = homeId ? `?homeId=${homeId}` : "";
-    const res = await api.get<{ data: DeviceWithDetails[] }>(
-      `/v1/devices${params}`,
-    );
-    return res.data.data;
+    const url = homeId ? `/api/v1/devices?homeId=${homeId}` : "/api/v1/devices";
+    const res = await apiFetchBrowser<{ data: any[] }>(url);
+    return (res.data ?? []).map(normalizeDevice);
   },
 
   getById: async (deviceId: number) => {
-    const res = await api.get<{ data: DeviceWithDetails }>(
-      `/v1/devices/${deviceId}`,
+    const res = await apiFetchBrowser<{ data: any }>(
+      `/api/v1/devices/${deviceId}`,
     );
-    return res.data.data;
+    return normalizeDevice(res.data);
   },
 
   update: async (
     deviceId: number,
     input: { name?: string; roomId?: number | null },
   ) => {
-    const res = await api.patch<{ data: Device }>(
-      `/v1/devices/${deviceId}`,
-      input,
+    const res = await apiFetchBrowser<{ data: any }>(
+      `/api/v1/devices/${deviceId}`,
+      {
+        method: "PATCH",
+        body: JSON.stringify({ deviceName: input.name, roomId: input.roomId }),
+      },
     );
-    return res.data.data;
+    return normalizeDevice(res.data);
   },
 
   delete: async (deviceId: number) => {
-    await api.delete(`/v1/devices/${deviceId}`);
+    await apiFetchBrowser(`/api/v1/devices/${deviceId}`, { method: "DELETE" });
   },
 };

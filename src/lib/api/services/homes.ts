@@ -1,4 +1,4 @@
-import { api } from "../client/axios";
+import { apiFetchBrowser } from "../client/fetch";
 
 export interface Home {
   id: number;
@@ -34,33 +34,53 @@ export interface UpdateHomeInput {
 
 export const homesApi = {
   list: async () => {
-    const res = await api.get<{ data: Home[] }>("/v1/homes");
-    return res.data.data;
+    const res = await apiFetchBrowser<{ data: Home[] }>("/api/v1/homes");
+    return res.data;
   },
 
   getById: async (homeId: number) => {
-    const res = await api.get<{ data: Home }>(`/v1/homes/${homeId}`);
-    return res.data.data;
+    const res = await apiFetchBrowser<{ data: Home }>(
+      `/api/v1/homes/${homeId}`,
+    );
+    return res.data;
   },
 
   create: async (input: CreateHomeInput) => {
-    const res = await api.post<{ data: Home }>("/v1/homes", input);
-    return res.data.data;
+    const res = await apiFetchBrowser<{ data: Home }>("/api/v1/homes", {
+      method: "POST",
+      body: JSON.stringify(input),
+    });
+    return res.data;
   },
 
   update: async (homeId: number, input: UpdateHomeInput) => {
-    const res = await api.patch<{ data: Home }>(`/v1/homes/${homeId}`, input);
-    return res.data.data;
+    const res = await apiFetchBrowser<{ data: Home }>(
+      `/api/v1/homes/${homeId}`,
+      {
+        method: "PATCH",
+        body: JSON.stringify(input),
+      },
+    );
+    return res.data;
   },
 
   delete: async (homeId: number) => {
-    await api.delete(`/v1/homes/${homeId}`);
+    await apiFetchBrowser(`/api/v1/homes/${homeId}`, { method: "DELETE" });
+  },
+
+  getPendingInvites: async () => {
+    const res = await apiFetchBrowser<{ data: any[] }>(
+      "/api/v1/user/pending-invites",
+    );
+    return res.data;
   },
 };
 
 // Backward compatibility exports
 export const getHomes = homesApi.list;
 export const getHomeMembers = async (homeId: number) => {
-  const res = await api.get<{ data: any[] }>(`/v1/homes/${homeId}/members`);
-  return res.data.data;
+  const res = await apiFetchBrowser<{ data: any[] }>(
+    `/api/v1/homes/${homeId}/members`,
+  );
+  return res.data;
 };

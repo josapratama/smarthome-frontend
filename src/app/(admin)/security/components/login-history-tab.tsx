@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { RefreshCw, Download, MapPin, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
-import { api } from "@/lib/api/client/axios";
+import { apiFetchBrowser } from "@/lib/api/client/fetch";
 import { useTranslation } from "@/hooks/use-translation";
 
 interface LoginHistory {
@@ -38,15 +38,16 @@ export default function LoginHistoryTab() {
   const fetchHistory = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/v1/auth/login-history");
-      setHistory(response.data.data || []);
+      const response = await apiFetchBrowser<{ data: LoginHistory[] }>(
+        "/api/v1/auth/login-history",
+      );
+      setHistory(response.data || []);
     } catch (error: any) {
       // Silently handle 404 errors (endpoint not implemented yet)
-      if (error.response?.status !== 404) {
+      if ((error as any).status !== 404) {
         toast({
           title: t("error"),
-          description:
-            error.response?.data?.error || t("failedToFetchLoginHistory"),
+          description: (error as any).message || t("failedToFetchLoginHistory"),
           variant: "destructive",
         });
       }

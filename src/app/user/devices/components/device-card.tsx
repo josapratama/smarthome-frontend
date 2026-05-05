@@ -22,7 +22,8 @@ interface DeviceCardProps {
   device: DeviceWithDetails;
 }
 
-function getDeviceIcon(type: string) {
+function getDeviceIcon(type: string | undefined) {
+  if (!type) return <Smartphone className="h-6 w-6 text-primary" />;
   const t = type.toLowerCase();
   if (t.includes("light") || t.includes("lampu"))
     return <Lightbulb className="h-6 w-6 text-yellow-500" />;

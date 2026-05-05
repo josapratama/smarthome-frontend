@@ -44,10 +44,10 @@ export function useDevices() {
       const q = searchQuery.toLowerCase();
       filtered = filtered.filter(
         (d) =>
-          d.name.toLowerCase().includes(q) ||
-          d.type.toLowerCase().includes(q) ||
-          d.home?.name.toLowerCase().includes(q) ||
-          d.room?.name.toLowerCase().includes(q),
+          (d.name?.toLowerCase() ?? "").includes(q) ||
+          (d.type?.toLowerCase() ?? "").includes(q) ||
+          (d.home?.name?.toLowerCase() ?? "").includes(q) ||
+          (d.room?.name?.toLowerCase() ?? "").includes(q),
       );
     }
 

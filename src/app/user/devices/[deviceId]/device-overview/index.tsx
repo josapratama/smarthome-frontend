@@ -58,19 +58,6 @@ export default function DeviceOverview({ deviceId }: DeviceOverviewProps) {
 
       <SensorReadingsCard readings={latestReadings} />
 
-      {(device as any).capabilities && (
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("capabilities")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <pre className="text-xs bg-muted p-4 rounded overflow-x-auto">
-              {JSON.stringify((device as any).capabilities, null, 2)}
-            </pre>
-          </CardContent>
-        </Card>
-      )}
-
       <DeleteDeviceDialog
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}

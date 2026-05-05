@@ -1,17 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Activity,
-  Wifi,
-  WifiOff,
   MapPin,
   Home,
   Calendar,
-  Cpu,
   Edit,
   Trash2,
   Power,
@@ -39,90 +35,67 @@ export function DeviceInfoCard({
 
   return (
     <Card>
-      <CardHeader>
-        <div className="flex items-start justify-between">
-          <div className="space-y-1">
-            <CardTitle className="text-2xl">{device.name}</CardTitle>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Cpu className="h-4 w-4" />
-              <span>{device.type}</span>
-            </div>
-          </div>
-          {isOnline ? (
-            <Badge className="bg-green-600 gap-1">
-              <Wifi className="h-3 w-3" />
-              {t("online")}
-            </Badge>
-          ) : (
-            <Badge variant="secondary" className="gap-1">
-              <WifiOff className="h-3 w-3" />
-              {t("offline")}
-            </Badge>
+      <CardContent className="pt-4 space-y-3">
+        {/* Info rows — compact on mobile */}
+        <div className="grid gap-x-6 gap-y-1.5 sm:grid-cols-2">
+          <InfoRow icon={<Home className="h-3.5 w-3.5" />} label={t("home")}>
+            {device.home?.name ??
+              (device.homeId ? `Home #${device.homeId}` : "—")}
+          </InfoRow>
+          <InfoRow icon={<MapPin className="h-3.5 w-3.5" />} label={t("room")}>
+            {device.room?.name ??
+              (device.roomId ? `Room #${device.roomId}` : "—")}
+          </InfoRow>
+          <InfoRow
+            icon={<Calendar className="h-3.5 w-3.5" />}
+            label={t("paired")}
+          >
+            {(device as any).pairedAt
+              ? new Date((device as any).pairedAt).toLocaleDateString()
+              : device.createdAt
+                ? new Date(device.createdAt).toLocaleDateString()
+                : "—"}
+          </InfoRow>
+          <InfoRow
+            icon={<Activity className="h-3.5 w-3.5" />}
+            label={t("lastSeen")}
+          >
+            {device.lastSeenAt
+              ? new Date(device.lastSeenAt).toLocaleString()
+              : "N/A"}
+          </InfoRow>
+          {(device as any).mqttClientId && (
+            <InfoRow label="MQTT ID">
+              <code className="text-xs bg-muted px-1.5 py-0.5 rounded">
+                {(device as any).mqttClientId}
+              </code>
+            </InfoRow>
+          )}
+          {device.deviceKey && (
+            <InfoRow label={t("deviceKey")}>
+              <code className="text-xs bg-muted px-1.5 py-0.5 rounded">
+                {device.deviceKey.substring(0, 8)}...
+              </code>
+            </InfoRow>
           )}
         </div>
-      </CardHeader>
 
-      <CardContent className="space-y-4">
-        {/* Info grid */}
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-2">
-            <InfoRow icon={<Home className="h-4 w-4" />} label={t("home")}>
-              {device.home?.name ?? "N/A"}
-            </InfoRow>
-            <InfoRow icon={<MapPin className="h-4 w-4" />} label={t("room")}>
-              {device.room?.name ?? "N/A"}
-            </InfoRow>
-            <InfoRow
-              icon={<Calendar className="h-4 w-4" />}
-              label={t("paired")}
-            >
-              {(device as any).pairedAt
-                ? new Date((device as any).pairedAt).toLocaleDateString()
-                : "N/A"}
-            </InfoRow>
-          </div>
-          <div className="space-y-2">
-            <InfoRow
-              icon={<Activity className="h-4 w-4" />}
-              label={t("lastSeen")}
-            >
-              {device.lastSeenAt
-                ? new Date(device.lastSeenAt).toLocaleString()
-                : "N/A"}
-            </InfoRow>
-            {(device as any).mqttClientId && (
-              <InfoRow label={t("mqttId")}>
-                <code className="text-xs bg-muted px-2 py-1 rounded">
-                  {(device as any).mqttClientId}
-                </code>
-              </InfoRow>
-            )}
-            {device.deviceKey && (
-              <InfoRow label={t("deviceKey")}>
-                <code className="text-xs bg-muted px-2 py-1 rounded">
-                  {device.deviceKey.substring(0, 8)}...
-                </code>
-              </InfoRow>
-            )}
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex flex-wrap gap-2 pt-4 border-t">
+        {/* Actions — compact row */}
+        <div className="flex flex-wrap gap-2 pt-2 border-t">
           <Button
             variant="outline"
             size="sm"
             onClick={onTogglePower}
-            className="gap-2"
+            className="gap-1.5 h-8 text-xs"
           >
             {isOnline ? (
               <>
-                <PowerOff className="h-4 w-4" />
+                <PowerOff className="h-3.5 w-3.5" />
                 {t("turnOff")}
               </>
             ) : (
               <>
-                <Power className="h-4 w-4" />
+                <Power className="h-3.5 w-3.5" />
                 {t("turnOn")}
               </>
             )}
@@ -130,19 +103,19 @@ export function DeviceInfoCard({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => router.push(`/user/devices/${deviceId}/edit`)}
-            className="gap-2"
+            onClick={() => router.push(`/user/devices/${deviceId}?tab=config`)}
+            className="gap-1.5 h-8 text-xs"
           >
-            <Edit className="h-4 w-4" />
+            <Edit className="h-3.5 w-3.5" />
             {t("edit")}
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={onDeleteClick}
-            className="gap-2 text-red-600 hover:text-red-600"
+            className="gap-1.5 h-8 text-xs text-red-600 hover:text-red-600"
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-3.5 w-3.5" />
             {t("delete")}
           </Button>
         </div>
@@ -163,10 +136,10 @@ function InfoRow({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center gap-2 text-sm">
+    <div className="flex items-center gap-1.5 text-xs sm:text-sm">
       {icon && <span className="text-muted-foreground shrink-0">{icon}</span>}
       <span className="text-muted-foreground shrink-0">{label}:</span>
-      <span className="font-medium">{children}</span>
+      <span className="font-medium truncate">{children}</span>
     </div>
   );
 }

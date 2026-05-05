@@ -8,8 +8,8 @@ import {
   type DirectConversation,
   type HomeConversation,
 } from "@/lib/api/services/messaging";
-import { ConversationList } from "@/app/user/support/conversation-list";
-import { ChatWindow } from "@/app/user/support/chat-window";
+import { ConversationList } from "@/app/user/support/components/conversation-list";
+import { ChatWindow } from "@/app/user/support/components/chat-window";
 import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";

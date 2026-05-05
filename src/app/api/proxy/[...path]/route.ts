@@ -4,9 +4,12 @@ import { config } from "@/lib/config";
 
 /**
  * Generic proxy for all /api/proxy/* → backend /api/v1/*
- * Forwards httpOnly access_token as Authorization header
+ * Forwards httpOnly access_token as Authorization header.
  *
- * Usage: /api/proxy/channels/device/208 → backend /api/v1/channels/device/208
+ * Handles three body types:
+ *  - multipart/form-data  → ArrayBuffer (preserves binary + boundary)
+ *  - other POST/PUT/PATCH → text (JSON, etc.)
+ *  - GET/HEAD             → no body
  */
 async function handler(
   req: NextRequest,
@@ -26,22 +29,50 @@ async function handler(
   console.log(`[proxy] ${req.method} /api/proxy/${path} → ${backendUrl}`);
 
   try {
-    const body =
-      req.method !== "GET" && req.method !== "HEAD"
-        ? await req.text()
-        : undefined;
+    const contentType = req.headers.get("content-type") ?? "";
+    const isMultipart = contentType.includes("multipart/form-data");
+    const hasBody = req.method !== "GET" && req.method !== "HEAD";
+
+    // Read body — preserve binary for multipart, text for everything else
+    const body = hasBody
+      ? isMultipart
+        ? await req.arrayBuffer()
+        : await req.text()
+      : undefined;
+
+    // Build forward headers
+    const forwardHeaders: Record<string, string> = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    if (hasBody) {
+      if (isMultipart) {
+        // Must forward the original Content-Type including the boundary parameter
+        forwardHeaders["Content-Type"] = contentType;
+      } else {
+        // Default to application/json for non-multipart requests
+        forwardHeaders["Content-Type"] = contentType || "application/json";
+      }
+    }
 
     const res = await fetch(backendUrl, {
       method: req.method,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
+      headers: forwardHeaders,
       body,
     });
 
-    const data = await res.json().catch(() => null);
-    return NextResponse.json(data, { status: res.status });
+    // Try JSON first; fall back to text for non-JSON responses (e.g. binary downloads)
+    const resContentType = res.headers.get("content-type") ?? "";
+    if (resContentType.includes("application/json")) {
+      const data = await res.json().catch(() => null);
+      return NextResponse.json(data, { status: res.status });
+    } else {
+      const text = await res.text().catch(() => "");
+      return new NextResponse(text, {
+        status: res.status,
+        headers: { "Content-Type": resContentType || "text/plain" },
+      });
+    }
   } catch (error) {
     console.error(`[proxy] ${req.method} ${backendUrl} error:`, error);
     return NextResponse.json({ error: "PROXY_ERROR" }, { status: 502 });

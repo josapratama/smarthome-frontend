@@ -8,6 +8,7 @@ import { ChatWidget } from "@/components/admin/chat/chat-widget";
 import { ThemeProvider } from "@/contexts/theme-context";
 import { LanguageProvider } from "@/contexts/language-context";
 import { AdminProfileProvider } from "@/contexts/admin-profile-context";
+import { TokenInitializer } from "@/components/auth/token-initializer";
 
 export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -16,6 +17,7 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
     <ThemeProvider>
       <LanguageProvider>
         <AdminProfileProvider>
+          <TokenInitializer />
           <div className="h-screen bg-background overflow-hidden">
             <div className="flex h-full">
               {/* Desktop Sidebar */}

@@ -56,16 +56,19 @@ export function TelemetryChart({
     if (selectedMetric === "all") {
       const grouped: Record<string, Record<string, unknown>> = {};
       readings.forEach((r) => {
+        if (!r?.timestamp) return;
         const time = formatTime(r.timestamp);
         if (!grouped[time]) grouped[time] = { time };
-        grouped[time][r.metric] = readingValue(r);
+        if (r.metric) grouped[time][r.metric] = readingValue(r);
       });
       return Object.values(grouped);
     }
-    return readings.map((r) => ({
-      time: formatTime(r.timestamp),
-      value: readingValue(r),
-    }));
+    return readings
+      .filter((r) => r?.timestamp)
+      .map((r) => ({
+        time: formatTime(r.timestamp),
+        value: readingValue(r),
+      }));
   }, [readings, selectedMetric]);
 
   return (
@@ -106,7 +109,7 @@ export function TelemetryChart({
                       stroke={CHART_COLORS[i % CHART_COLORS.length]}
                       strokeWidth={2}
                       dot={false}
-                      name={metric.replace(/_/g, " ")}
+                      name={(metric ?? "").replace(/_/g, " ")}
                     />
                   ))}
                 </LineChart>
@@ -134,7 +137,7 @@ export function TelemetryChart({
                     stroke="#3b82f6"
                     fillOpacity={1}
                     fill="url(#colorValue)"
-                    name={selectedMetric.replace(/_/g, " ")}
+                    name={(selectedMetric ?? "").replace(/_/g, " ")}
                   />
                 </AreaChart>
               )}

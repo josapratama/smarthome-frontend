@@ -120,7 +120,7 @@ export default function DeviceCommands({ deviceId }: DeviceCommandsProps) {
     return (
       <Badge variant={variants[status] || "outline"} className="gap-1">
         {getStatusIcon(status)}
-        {t(status.toLowerCase())}
+        {t((status ?? "").toLowerCase())}
       </Badge>
     );
   };

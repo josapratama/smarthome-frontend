@@ -6,6 +6,7 @@ import { useTranslation } from "@/hooks/use-translation";
 import { toast } from "sonner";
 import { devicesApi, type DeviceWithDetails } from "@/lib/api/services/devices";
 import { telemetryApi, type SensorReading } from "@/lib/api/services/telemetry";
+import { apiFetchBrowser } from "@/lib/api/client/fetch";
 
 export function useDeviceOverview(deviceId: number) {
   const { t } = useTranslation();
@@ -22,7 +23,35 @@ export function useDeviceOverview(deviceId: number) {
         devicesApi.getById(deviceId),
         telemetryApi.getLatest(deviceId).catch(() => [] as SensorReading[]),
       ]);
-      setDevice(deviceData);
+
+      // Enrich device with home and room names if not already present
+      let enriched = { ...deviceData };
+      if (!enriched.home && enriched.homeId) {
+        try {
+          const homeRes = await apiFetchBrowser<{
+            data: { id: number; name: string };
+          }>(`/api/v1/homes/${enriched.homeId}`);
+          if (homeRes.data) {
+            enriched.home = { id: homeRes.data.id, name: homeRes.data.name };
+          }
+        } catch {
+          // silently fail — home name is optional
+        }
+      }
+      if (!enriched.room && enriched.roomId) {
+        try {
+          const roomRes = await apiFetchBrowser<{
+            data: { id: number; name: string };
+          }>(`/api/v1/rooms/${enriched.roomId}`);
+          if (roomRes.data) {
+            enriched.room = { id: roomRes.data.id, name: roomRes.data.name };
+          }
+        } catch {
+          // silently fail — room name is optional
+        }
+      }
+
+      setDevice(enriched);
       setLatestReadings(readings);
     } catch (error: any) {
       toast.error(error.message || t("failedToLoadDevice"));

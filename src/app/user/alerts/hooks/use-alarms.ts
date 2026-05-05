@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useTranslation } from "@/hooks/use-translation";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { homesApi } from "@/lib/api/services/homes";
 import {
@@ -17,6 +18,7 @@ import type {
 
 export function useAlarms() {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const [alarms, setAlarms] = useState<AlarmDTO[]>([]);
   const [filteredAlarms, setFilteredAlarms] = useState<AlarmDTO[]>([]);
   const [homes, setHomes] = useState<any[]>([]);
@@ -88,6 +90,7 @@ export function useAlarms() {
       await acknowledgeAlarm(alarm.homeId, alarm.id);
       toast.success(t("alarmAcknowledged"));
       loadData();
+      queryClient.invalidateQueries({ queryKey: ["unread-alarm-count"] });
     } catch (error: any) {
       toast.error(error.message || t("failedToAcknowledgeAlarm"));
     }
@@ -98,6 +101,7 @@ export function useAlarms() {
       await resolveAlarm(alarm.homeId, alarm.id);
       toast.success(t("alarmResolved"));
       loadData();
+      queryClient.invalidateQueries({ queryKey: ["unread-alarm-count"] });
     } catch (error: any) {
       toast.error(error.message || t("failedToResolveAlarm"));
     }

@@ -1,4 +1,4 @@
-import { api } from "../client/axios";
+import { apiFetchBrowser } from "../client/fetch";
 
 // ===== TYPES =====
 
@@ -48,55 +48,63 @@ export interface TrainingStats {
  * Get current training configuration
  */
 export async function getTrainingConfig(): Promise<TrainingConfig> {
-  const response = await api.get("/v1/ai/training/config");
-  return response.data.data;
+  const response = await apiFetchBrowser<{ data: TrainingConfig }>(
+    "/api/v1/ai/training/config",
+  );
+  return response.data;
 }
 
-/**
- * Update training configuration
- */
 export async function updateTrainingConfig(
   config: TrainingConfig,
 ): Promise<TrainingConfig> {
-  const response = await api.put("/v1/ai/training/config", config);
-  return response.data.data;
+  const response = await apiFetchBrowser<{ data: TrainingConfig }>(
+    "/api/v1/ai/training/config",
+    {
+      method: "PUT",
+      body: JSON.stringify(config),
+    },
+  );
+  return response.data;
 }
 
-/**
- * Start manual training
- */
 export async function startTraining(params: {
   modelType: "prediction" | "anomaly" | "both";
   deviceId?: number;
 }): Promise<{ jobId: number; status: string }> {
-  const response = await api.post("/v1/ai/training/start", params);
-  return response.data.data;
+  const response = await apiFetchBrowser<{
+    data: { jobId: number; status: string };
+  }>("/api/v1/ai/training/start", {
+    method: "POST",
+    body: JSON.stringify(params),
+  });
+  return response.data;
 }
 
-/**
- * Get training job history
- */
 export async function getTrainingJobs(params?: {
   limit?: number;
   offset?: number;
   status?: "pending" | "running" | "completed" | "failed";
 }): Promise<{ jobs: TrainingJob[]; total: number }> {
-  const response = await api.get("/v1/ai/training/jobs", { params });
-  return response.data.data;
+  const p = new URLSearchParams();
+  if (params?.limit) p.append("limit", String(params.limit));
+  if (params?.offset) p.append("offset", String(params.offset));
+  if (params?.status) p.append("status", params.status);
+  const response = await apiFetchBrowser<{
+    data: { jobs: TrainingJob[]; total: number };
+  }>(`/api/v1/ai/training/jobs?${p.toString()}`);
+  return response.data;
 }
 
-/**
- * Get specific training job details
- */
 export async function getTrainingJob(jobId: number): Promise<TrainingJob> {
-  const response = await api.get(`/v1/ai/training/jobs/${jobId}`);
-  return response.data.data;
+  const response = await apiFetchBrowser<{ data: TrainingJob }>(
+    `/api/v1/ai/training/jobs/${jobId}`,
+  );
+  return response.data;
 }
 
-/**
- * Get training statistics
- */
 export async function getTrainingStats(): Promise<TrainingStats> {
-  const response = await api.get("/v1/ai/training/stats");
-  return response.data.data;
+  const response = await apiFetchBrowser<{ data: TrainingStats }>(
+    "/api/v1/ai/training/stats",
+  );
+  return response.data;
 }

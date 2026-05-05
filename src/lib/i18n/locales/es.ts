@@ -1512,9 +1512,13 @@ export const es = {
   last24Hours: "Últimas 24 Horas",
   last7Days: "Últimos 7 Días",
   last30Days: "Últimos 30 Días",
+  last14Days: "Últimos 14 Días",
+  last90Days: "Últimos 90 Días",
   dataExported: "Datos exportados exitosamente",
   failedToExportData: "Error al exportar datos",
   failedToLoadTelemetry: "Error al cargar datos de telemetría",
+  noDataAvailable: "Sin datos disponibles",
+  dataTable: "Tabla de Datos",
   jsonConfig: "Configuración JSON",
   unsavedChanges: "Cambios sin guardar",
   unsavedChangesWarning: "Tiene cambios sin guardar",
@@ -1547,6 +1551,9 @@ export const es = {
   otaJobCancelled: "Trabajo OTA cancelado",
   failedToCancelJob: "Error al cancelar trabajo",
   failedToLoadOTAData: "Error al cargar datos OTA",
+  downloading: "Descargando",
+  applied: "Aplicado",
+  update: "Actualizar",
   deleteDeviceWarning: "Esta acción no se puede deshacer.",
   failedToLoadChannels: "Error al cargar canales",
   channelUpdated: "Canal actualizado",
@@ -1849,6 +1856,32 @@ export const es = {
   accuracy: "Precisión",
   selectActiveModelDescription:
     "Seleccione qué modelo de IA usar para predicciones. Solo un modelo por algoritmo puede estar activo.",
+
+  // AI Model Performance & Compare
+  modelList: "Lista de Modelos",
+  performance: "Rendimiento",
+  modelPerformance: "Rendimiento del Modelo",
+  modelPerformanceDescription:
+    "Rastrea el historial de precisión y compara modelos de IA",
+  modelComparison: "Comparación de Modelos",
+  noComparisonData: "Sin datos de comparación",
+  noComparisonDataDescription:
+    "Los datos de rendimiento aparecerán después de que los modelos hagan predicciones",
+  performanceHistory: "Historial de Rendimiento",
+  noPerformanceData: "Sin datos de rendimiento",
+  noPerformanceDataDescription:
+    "Los registros de precisión aparecerán después de que los modelos ejecuten predicciones",
+  allModels: "Todos los Modelos",
+  predictionDate: "Fecha de Predicción",
+  recordedAt: "Registrado En",
+  minAccuracy: "Mín",
+  maxAccuracy: "Máx",
+  totalPredictions: "Total de Predicciones",
+  best: "Mejor",
+  trend: "Tendencia",
+  model: "Modelo",
+  aiRuleExecuted: "Regla de IA ejecutada",
+  aiRuleTriggered: "Regla de IA activada",
 
   // Landing Page Extended - Additional Keys
   tagline: "Controla Tu Casa Inteligente Desde Cualquier Lugar",

@@ -1,4 +1,4 @@
-import { api } from "../client/axios";
+import { apiFetchBrowser } from "../client/fetch";
 
 export type OtaJobStatus =
   | "PENDING"
@@ -30,59 +30,73 @@ export interface OtaJob {
   downloadingAt?: string;
   appliedAt?: string;
   failedAt?: string;
+  commandId?: number | null;
   createdAt: string;
   updatedAt: string;
   release?: FirmwareRelease;
 }
 
 export const otaApi = {
-  // Get available firmware releases
+  // GET /api/v1/firmware/releases
   listReleases: async (platform?: string): Promise<FirmwareRelease[]> => {
-    const params = platform ? `?platform=${platform}` : "";
-    const { data } = await api.get<{ data: { releases: FirmwareRelease[] } }>(
-      `/v1/firmware${params}`,
-    );
-    return data.data.releases;
+    const url = platform
+      ? `/api/v1/firmware/releases?platform=${platform}`
+      : "/api/v1/firmware/releases";
+    const res = await apiFetchBrowser<{ data: FirmwareRelease[] }>(url);
+    return Array.isArray(res.data) ? res.data : [];
   },
 
-  // Get OTA jobs for a device
+  // GET /api/v1/ota/devices/{deviceId}/jobs
   listJobs: async (deviceId: number): Promise<OtaJob[]> => {
-    const { data } = await api.get<{ data: { jobs: OtaJob[] } }>(
-      `/v1/devices/${deviceId}/ota`,
+    const res = await apiFetchBrowser<{ data: OtaJob[] }>(
+      `/api/v1/ota/devices/${deviceId}/jobs`,
     );
-    return data.data.jobs;
+    return Array.isArray(res.data) ? res.data : [];
   },
 
-  // Get single OTA job
+  // GET /api/v1/ota/jobs/{otaJobId}
   getJob: async (deviceId: number, jobId: number): Promise<OtaJob> => {
-    const { data } = await api.get<{ data: { job: OtaJob } }>(
-      `/v1/devices/${deviceId}/ota/${jobId}`,
+    const res = await apiFetchBrowser<{ data: OtaJob }>(
+      `/api/v1/ota/jobs/${jobId}`,
     );
-    return data.data.job;
+    return res.data;
   },
 
-  // Trigger OTA update
+  // POST /api/v1/ota/devices/{deviceId}
   triggerUpdate: async (
     deviceId: number,
     releaseId: number,
-  ): Promise<OtaJob> => {
-    const { data } = await api.post<{ data: { job: OtaJob } }>(
-      `/v1/devices/${deviceId}/ota`,
-      { releaseId },
-    );
-    return data.data.job;
+  ): Promise<{
+    otaJobId: number;
+    commandId: number | null;
+    status: OtaJobStatus;
+  }> => {
+    const res = await apiFetchBrowser<{
+      data: {
+        otaJobId: number;
+        commandId: number | null;
+        status: OtaJobStatus;
+      };
+    }>(`/api/v1/ota/devices/${deviceId}`, {
+      method: "POST",
+      body: JSON.stringify({ releaseId }),
+    });
+    return res.data;
   },
 
-  // Cancel OTA job
+  // DELETE /api/v1/ota/jobs/{otaJobId}  (cancel) — not yet implemented in backend
   cancelJob: async (deviceId: number, jobId: number): Promise<void> => {
-    await api.delete(`/v1/devices/${deviceId}/ota/${jobId}`);
+    await apiFetchBrowser(`/api/v1/ota/jobs/${jobId}`, {
+      method: "DELETE",
+    });
   },
 
-  // Retry failed OTA job
+  // POST /api/v1/ota/jobs/{otaJobId}/retry — not yet implemented in backend
   retryJob: async (deviceId: number, jobId: number): Promise<OtaJob> => {
-    const { data } = await api.post<{ data: { job: OtaJob } }>(
-      `/v1/devices/${deviceId}/ota/${jobId}/retry`,
+    const res = await apiFetchBrowser<{ data: OtaJob }>(
+      `/api/v1/ota/jobs/${jobId}/retry`,
+      { method: "POST" },
     );
-    return data.data.job;
+    return res.data;
   },
 };

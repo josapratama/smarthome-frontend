@@ -826,6 +826,33 @@ export const jv = {
   selectActiveModelDescription:
     "Pilih model AI sing bakal digunakake kanggo prediksi. Mung siji model per algoritma sing bisa aktif.",
 
+  // AI Model Performance & Compare
+  modelList: "Daftar Model",
+  performance: "Performa",
+  modelPerformance: "Performa Model",
+  modelPerformanceDescription: "Lacak riwayat akurasi lan bandingake model AI",
+  modelComparison: "Perbandingan Model",
+  noComparisonData: "Ora ana data perbandingan",
+  noComparisonDataDescription:
+    "Data performa bakal muncul sawise model nggawe prediksi",
+  performanceHistory: "Riwayat Performa",
+  noPerformanceData: "Ora ana data performa",
+  noPerformanceDataDescription:
+    "Catetan akurasi bakal muncul sawise model njalanake prediksi",
+  allModels: "Kabeh Model",
+  predictionDate: "Tanggal Prediksi",
+  recordedAt: "Dicathet Ing",
+  minAccuracy: "Min",
+  maxAccuracy: "Maks",
+  totalPredictions: "Total Prediksi",
+  best: "Paling Apik",
+  trend: "Tren",
+  last14Days: "14 Dina Terakhir",
+  last90Days: "90 Dina Terakhir",
+  model: "Model",
+  aiRuleExecuted: "Aturan AI dieksekusi",
+  aiRuleTriggered: "Aturan AI dipicu",
+
   // Monitoring
   monitoringPage: "Monitoring",
   realTimeMonitoring:
@@ -1512,6 +1539,8 @@ export const jv = {
   dataExported: "Data wis diekspor",
   failedToExportData: "Gagal ngekspor data",
   failedToLoadTelemetry: "Gagal muat data telemetri",
+  noDataAvailable: "Ora ana data",
+  dataTable: "Tabel Data",
 
   // Device Config
   jsonConfig: "Konfigurasi JSON",
@@ -1693,6 +1722,10 @@ export const jv = {
   otaJobCancelled: "Job OTA dibatalake",
   failedToCancelJob: "Gagal mbatalake job",
   failedToLoadOTAData: "Gagal muat data OTA",
+  downloading: "Ngundhuh",
+  applied: "Diterapake",
+  update: "Update",
+  error: "Error",
 
   // Privacy Page
   profileVisibility: "Visibilitas Profil",

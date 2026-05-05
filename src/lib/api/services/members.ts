@@ -1,4 +1,4 @@
-import { api } from "../client/axios";
+import { apiFetchBrowser } from "../client/fetch";
 
 export interface HomeMember {
   id: number;
@@ -8,11 +8,7 @@ export interface HomeMember {
   status: "INVITED" | "ACTIVE";
   invitedAt: string;
   joinedAt?: string;
-  user?: {
-    id: number;
-    email: string;
-    name?: string;
-  };
+  user?: { id: number; email: string; name?: string };
 }
 
 export interface InviteMemberInput {
@@ -26,18 +22,21 @@ export interface UpdateMemberRoleInput {
 
 export const membersApi = {
   listByHome: async (homeId: number) => {
-    const res = await api.get<{ data: HomeMember[] }>(
-      `/v1/homes/${homeId}/members`,
+    const res = await apiFetchBrowser<{ data: HomeMember[] }>(
+      `/api/v1/homes/${homeId}/members`,
     );
-    return res.data.data;
+    return res.data;
   },
 
   invite: async (homeId: number, input: InviteMemberInput) => {
-    const res = await api.post<{ data: HomeMember }>(
-      `/v1/homes/${homeId}/members`,
-      input,
+    const res = await apiFetchBrowser<{ data: HomeMember }>(
+      `/api/v1/homes/${homeId}/members`,
+      {
+        method: "POST",
+        body: JSON.stringify(input),
+      },
     );
-    return res.data.data;
+    return res.data;
   },
 
   updateRole: async (
@@ -45,21 +44,24 @@ export const membersApi = {
     userId: number,
     input: UpdateMemberRoleInput,
   ) => {
-    const res = await api.patch<{ data: HomeMember }>(
-      `/v1/homes/${homeId}/members/${userId}`,
-      input,
+    const res = await apiFetchBrowser<{ data: HomeMember }>(
+      `/api/v1/homes/${homeId}/members/${userId}`,
+      { method: "PATCH", body: JSON.stringify(input) },
     );
-    return res.data.data;
+    return res.data;
   },
 
   remove: async (homeId: number, userId: number) => {
-    await api.delete(`/v1/homes/${homeId}/members/${userId}`);
+    await apiFetchBrowser(`/api/v1/homes/${homeId}/members/${userId}`, {
+      method: "DELETE",
+    });
   },
 
   resendInvite: async (homeId: number, userId: number) => {
-    const res = await api.post<{ data: HomeMember }>(
-      `/v1/homes/${homeId}/members/${userId}/resend-invite`,
+    const res = await apiFetchBrowser<{ data: HomeMember }>(
+      `/api/v1/homes/${homeId}/members/${userId}/resend-invite`,
+      { method: "POST" },
     );
-    return res.data.data;
+    return res.data;
   },
 };

@@ -3,9 +3,9 @@ import axios, {
   AxiosInstance,
   InternalAxiosRequestConfig,
 } from "axios";
-import { config } from "../../config";
+import { config as appConfig } from "../../config";
 
-const API_URL = config.publicBackendUrl;
+const API_URL = appConfig.publicBackendUrl;
 
 class ApiClient {
   private client: AxiosInstance;
@@ -48,19 +48,35 @@ class ApiClient {
           originalRequest._retry = true;
 
           try {
-            const { data } = await axios.post(
-              `${API_URL}/api/auth/refresh`,
-              {},
-              { withCredentials: true },
-            );
+            // Refresh via Next.js route (tidak langsung ke backend)
+            // Next.js route membaca httpOnly cookie dan meneruskan ke backend
+            const refreshRes = await fetch("/api/auth/refresh", {
+              method: "POST",
+              credentials: "include",
+            });
 
-            this.setAccessToken(data.accessToken);
-
-            if (originalRequest.headers) {
-              originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+            if (!refreshRes.ok) {
+              throw new Error("Refresh failed");
             }
 
-            return this.client(originalRequest);
+            // Token baru sudah disimpan di cookie oleh Next.js route
+            // Ambil token terbaru dari /api/auth/token
+            const tokenRes = await fetch("/api/auth/token", {
+              credentials: "include",
+            });
+
+            if (tokenRes.ok) {
+              const { accessToken } = await tokenRes.json();
+              if (accessToken) {
+                this.setAccessToken(accessToken);
+                if (originalRequest.headers) {
+                  originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+                }
+                return this.client(originalRequest);
+              }
+            }
+
+            throw new Error("Could not get new token");
           } catch (refreshError) {
             // Refresh failed, redirect to login
             this.clearAccessToken();

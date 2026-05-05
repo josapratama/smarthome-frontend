@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertTriangle, Bell } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
+import { useQueryClient } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import { PageHeader } from "@/components/ui/page-header";
 
@@ -16,6 +17,12 @@ const NotificationsContent = dynamic(() => import("./notifications-content"), {
 export default function AlertsPage() {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("alarms");
+  const queryClient = useQueryClient();
+
+  // Invalidate badge saat halaman dibuka agar count terupdate
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ["unread-alarm-count"] });
+  }, [queryClient]);
 
   return (
     <div className="space-y-4">

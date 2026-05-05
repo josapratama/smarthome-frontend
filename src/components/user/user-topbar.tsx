@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Bell, Menu, RefreshCw, Search, Filter, Plus } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getUnreadAlarmCount } from "@/lib/api/services/alarms";
+import { useQuery } from "@tanstack/react-query";
 
 interface UserTopbarProps {
   onMenuClick?: () => void;
@@ -16,27 +16,20 @@ export function UserTopbar({ onMenuClick }: UserTopbarProps) {
   const { t } = useTranslation();
   const router = useRouter();
   const pathname = usePathname();
-  const [unreadCount, setUnreadCount] = useState(0);
 
-  useEffect(() => {
-    loadUnreadCount();
-
-    // Refresh count every 30 seconds
-    const interval = setInterval(loadUnreadCount, 30000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const loadUnreadCount = async () => {
-    try {
-      const count = await getUnreadAlarmCount();
-      setUnreadCount(count);
-    } catch (error) {
-      console.error("Failed to load unread count:", error);
-    }
-  };
+  // Gunakan React Query agar ada caching — tidak akan spawn multiple interval
+  // staleTime 0: langsung refetch setelah invalidate
+  // refetchInterval 60s: polling setiap 1 menit
+  const { data: unreadCount = 0 } = useQuery({
+    queryKey: ["unread-alarm-count"],
+    queryFn: getUnreadAlarmCount,
+    staleTime: 0, // langsung refetch setelah invalidate
+    refetchInterval: 60_000, // polling setiap 1 menit
+    refetchOnWindowFocus: false,
+  });
 
   const handleNotificationClick = () => {
-    router.push("/user/notifications");
+    router.push("/user/alerts");
   };
 
   // Get page title, action buttons based on current route
@@ -50,6 +43,11 @@ export function UserTopbar({ onMenuClick }: UserTopbarProps) {
       return {
         title: t("devices"),
         actions: ["search", "filter", "notification"],
+      };
+    if (pathname.includes("/homes"))
+      return {
+        title: t("homes"),
+        actions: ["notification"],
       };
     if (pathname.includes("/locations"))
       return {

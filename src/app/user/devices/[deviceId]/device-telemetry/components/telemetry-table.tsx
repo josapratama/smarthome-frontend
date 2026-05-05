@@ -34,7 +34,7 @@ export function TelemetryTable({ readings }: TelemetryTableProps) {
                   {new Date(reading.timestamp).toLocaleString()}
                 </td>
                 <td className="p-2 capitalize">
-                  {reading.metric.replace(/_/g, " ")}
+                  {(reading.metric ?? "").replace(/_/g, " ")}
                 </td>
                 <td className="p-2 text-right font-mono">
                   {reading.valueBool !== undefined

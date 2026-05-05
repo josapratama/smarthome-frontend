@@ -744,6 +744,35 @@ export const en = {
   selectActiveModelDescription:
     "Select which AI model to use for predictions. Only one model per algorithm can be active.",
 
+  // AI Model Performance & Compare
+  modelList: "Model List",
+  performance: "Performance",
+  modelPerformance: "Model Performance",
+  modelPerformanceDescription: "Track accuracy history and compare AI models",
+  modelComparison: "Model Comparison",
+  noComparisonData: "No comparison data",
+  noComparisonDataDescription:
+    "Performance data will appear after models have made predictions",
+  performanceHistory: "Performance History",
+  noPerformanceData: "No performance data",
+  noPerformanceDataDescription:
+    "Accuracy records will appear after models run predictions",
+  allModels: "All Models",
+  predictionDate: "Prediction Date",
+  recordedAt: "Recorded At",
+  minAccuracy: "Min",
+  maxAccuracy: "Max",
+  totalPredictions: "Total Predictions",
+  best: "Best",
+  trend: "Trend",
+  last14Days: "Last 14 Days",
+  last90Days: "Last 90 Days",
+  model: "Model",
+
+  // AI Rules Execution
+  aiRuleExecuted: "AI rule executed",
+  aiRuleTriggered: "AI rule triggered",
+
   // Monitoring
   monitoringPage: "Monitoring",
   realTimeMonitoring: "Monitor device status and system health in real-time.",
@@ -1701,6 +1730,8 @@ export const en = {
   dataExported: "Data exported successfully",
   failedToExportData: "Failed to export data",
   failedToLoadTelemetry: "Failed to load telemetry data",
+  noDataAvailable: "No data available",
+  dataTable: "Data Table",
 
   // Device Config
   jsonConfig: "JSON Configuration",
@@ -1737,6 +1768,10 @@ export const en = {
   otaJobCancelled: "OTA job cancelled",
   failedToCancelJob: "Failed to cancel job",
   failedToLoadOTAData: "Failed to load OTA data",
+  // OTA status labels (used by OtaJobStatusBadge via t(status.toLowerCase()))
+  downloading: "Downloading",
+  applied: "Applied",
+  update: "Update",
 
   // Device Overview
   deleteDeviceWarning: "This action cannot be undone.",

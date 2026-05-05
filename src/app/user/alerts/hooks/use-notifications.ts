@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "@/hooks/use-translation";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   listHomeAlarms,
@@ -13,6 +14,7 @@ import type { AlarmDTO } from "@/lib/api/dto/alarm.dto";
 
 export function useNotifications() {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const [alarms, setAlarms] = useState<AlarmDTO[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "unread">("all");
@@ -53,11 +55,17 @@ export function useNotifications() {
     }
   }, [t]);
 
+  // Invalidate badge count di topbar
+  const invalidateBadge = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ["unread-alarm-count"] });
+  }, [queryClient]);
+
   const markAsRead = async (alarm: AlarmDTO) => {
     try {
       await acknowledgeAlarm(alarm.homeId, alarm.id);
       toast.success(t("markedAsRead") || "Marked as read");
       loadNotifications();
+      invalidateBadge();
     } catch (error: any) {
       toast.error(
         error.message || t("failedToMarkAsRead") || "Failed to mark as read",
@@ -73,6 +81,7 @@ export function useNotifications() {
       );
       toast.success(t("allMarkedAsRead") || "All marked as read");
       loadNotifications();
+      invalidateBadge();
     } catch (error: any) {
       toast.error(
         error.message ||
@@ -87,6 +96,7 @@ export function useNotifications() {
       await resolveAlarm(alarm.homeId, alarm.id);
       toast.success(t("notificationDeleted") || "Notification deleted");
       loadNotifications();
+      invalidateBadge();
     } catch (error: any) {
       toast.error(
         error.message ||

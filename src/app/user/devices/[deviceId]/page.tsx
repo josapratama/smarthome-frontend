@@ -1,102 +1,163 @@
 "use client";
 
-import { useState } from "react";
-import { useParams } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Activity,
-  Settings,
   Sliders,
-  Terminal,
   Download,
   TrendingUp,
+  ArrowLeft,
+  Wifi,
+  WifiOff,
 } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
-import { PageHeader } from "@/components/ui/page-header";
+import { devicesApi, type DeviceWithDetails } from "@/lib/api/services/devices";
 import dynamic from "next/dynamic";
 
 // Lazy load heavy components
 const DeviceOverview = dynamic(() => import("./device-overview"), {
   ssr: false,
+  loading: () => <Skeleton className="h-48 rounded-lg" />,
 });
 const DeviceChannels = dynamic(() => import("./device-channels"), {
   ssr: false,
+  loading: () => <Skeleton className="h-48 rounded-lg" />,
 });
-const DeviceCommands = dynamic(() => import("./device-commands"), {
-  ssr: false,
-});
-const DeviceConfig = dynamic(() => import("./device-config"), { ssr: false });
 const DeviceTelemetry = dynamic(() => import("./device-telemetry"), {
   ssr: false,
+  loading: () => <Skeleton className="h-48 rounded-lg" />,
 });
-const DeviceOTA = dynamic(() => import("./device-ota"), { ssr: false });
+const DeviceOTA = dynamic(() => import("./device-ota"), {
+  ssr: false,
+  loading: () => <Skeleton className="h-48 rounded-lg" />,
+});
 
-export default function DeviceDetailPage() {
+// Komponen terpisah untuk membaca searchParams (wajib dibungkus Suspense)
+function DeviceDetailContent({ deviceId }: { deviceId: number }) {
   const { t } = useTranslation();
-  const params = useParams();
-  const deviceId = parseInt(params.deviceId as string);
-  const [activeTab, setActiveTab] = useState("overview");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState(
+    searchParams.get("tab") || "overview",
+  );
+  const [device, setDevice] = useState<DeviceWithDetails | null>(null);
+  const [isLoadingDevice, setIsLoadingDevice] = useState(true);
+
+  useEffect(() => {
+    if (!deviceId || isNaN(deviceId)) return;
+    setIsLoadingDevice(true);
+    devicesApi
+      .getById(deviceId)
+      .then((d) => setDevice(d))
+      .catch(() => setDevice(null))
+      .finally(() => setIsLoadingDevice(false));
+  }, [deviceId]);
 
   return (
     <div className="space-y-4">
-      <PageHeader />
+      {/* Device Header */}
+      <div className="flex items-center gap-3">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => router.push("/user/devices")}
+          className="shrink-0"
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        {isLoadingDevice ? (
+          <Skeleton className="h-8 w-48" />
+        ) : device ? (
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="min-w-0">
+              <h1 className="text-xl font-bold truncate">{device.name}</h1>
+              <p className="text-sm text-muted-foreground">{device.type}</p>
+            </div>
+            {device.status === "ONLINE" ? (
+              <Badge className="bg-green-600 gap-1 shrink-0">
+                <Wifi className="h-3 w-3" />
+                {t("online")}
+              </Badge>
+            ) : (
+              <Badge variant="secondary" className="gap-1 shrink-0">
+                <WifiOff className="h-3 w-3" />
+                {t("offline")}
+              </Badge>
+            )}
+          </div>
+        ) : (
+          <h1 className="text-xl font-bold text-muted-foreground">
+            {t("deviceNotFound")}
+          </h1>
+        )}
+      </div>
 
+      {/* Shadcn Tabs */}
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
         className="space-y-4"
       >
-        <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 h-auto">
-          <TabsTrigger value="overview" className="gap-2 py-2">
-            <Activity className="h-4 w-4" />
-            <span className="hidden sm:inline">{t("overview")}</span>
+        <TabsList className="w-full h-auto flex overflow-x-auto scrollbar-none">
+          <TabsTrigger
+            value="overview"
+            className="flex-1 min-w-[60px] gap-1.5 py-2 text-xs sm:text-sm"
+          >
+            <Activity className="h-3.5 w-3.5 shrink-0" />
+            <span className="hidden xs:inline">{t("overview")}</span>
           </TabsTrigger>
-          <TabsTrigger value="channels" className="gap-2 py-2">
-            <Sliders className="h-4 w-4" />
-            <span className="hidden sm:inline">{t("channels")}</span>
+          <TabsTrigger
+            value="channels"
+            className="flex-1 min-w-[60px] gap-1.5 py-2 text-xs sm:text-sm"
+          >
+            <Sliders className="h-3.5 w-3.5 shrink-0" />
+            <span className="hidden xs:inline">{t("channels")}</span>
           </TabsTrigger>
-          <TabsTrigger value="commands" className="gap-2 py-2">
-            <Terminal className="h-4 w-4" />
-            <span className="hidden sm:inline">{t("commands")}</span>
+          <TabsTrigger
+            value="telemetry"
+            className="flex-1 min-w-[60px] gap-1.5 py-2 text-xs sm:text-sm"
+          >
+            <TrendingUp className="h-3.5 w-3.5 shrink-0" />
+            <span className="hidden xs:inline">{t("telemetry")}</span>
           </TabsTrigger>
-          <TabsTrigger value="telemetry" className="gap-2 py-2">
-            <TrendingUp className="h-4 w-4" />
-            <span className="hidden sm:inline">{t("telemetry")}</span>
-          </TabsTrigger>
-          <TabsTrigger value="config" className="gap-2 py-2">
-            <Settings className="h-4 w-4" />
-            <span className="hidden sm:inline">{t("config")}</span>
-          </TabsTrigger>
-          <TabsTrigger value="ota" className="gap-2 py-2">
-            <Download className="h-4 w-4" />
-            <span className="hidden sm:inline">{t("firmware")}</span>
+          <TabsTrigger
+            value="ota"
+            className="flex-1 min-w-[60px] gap-1.5 py-2 text-xs sm:text-sm"
+          >
+            <Download className="h-3.5 w-3.5 shrink-0" />
+            <span className="hidden xs:inline">{t("firmware")}</span>
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-4">
-          {activeTab === "overview" && <DeviceOverview deviceId={deviceId} />}
+        <TabsContent value="overview">
+          <DeviceOverview deviceId={deviceId} />
         </TabsContent>
-
-        <TabsContent value="channels" className="space-y-4">
-          {activeTab === "channels" && <DeviceChannels deviceId={deviceId} />}
+        <TabsContent value="channels">
+          <DeviceChannels deviceId={deviceId} />
         </TabsContent>
-
-        <TabsContent value="commands" className="space-y-4">
-          {activeTab === "commands" && <DeviceCommands deviceId={deviceId} />}
+        <TabsContent value="telemetry">
+          <DeviceTelemetry deviceId={deviceId} />
         </TabsContent>
-
-        <TabsContent value="telemetry" className="space-y-4">
-          {activeTab === "telemetry" && <DeviceTelemetry deviceId={deviceId} />}
-        </TabsContent>
-
-        <TabsContent value="config" className="space-y-4">
-          {activeTab === "config" && <DeviceConfig deviceId={deviceId} />}
-        </TabsContent>
-
-        <TabsContent value="ota" className="space-y-4">
-          {activeTab === "ota" && <DeviceOTA deviceId={deviceId} />}
+        <TabsContent value="ota">
+          <DeviceOTA deviceId={deviceId} />
         </TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+export default function DeviceDetailPage() {
+  const params = useParams();
+  const deviceId = parseInt(params.deviceId as string);
+
+  return (
+    <Suspense fallback={<Skeleton className="h-96 rounded-lg" />}>
+      <DeviceDetailContent deviceId={deviceId} />
+    </Suspense>
   );
 }

@@ -18,7 +18,7 @@ import { Home, DoorOpen, Smartphone, Search } from "lucide-react";
 
 import { RoomCard } from "./room-card";
 import { AddRoomDialog } from "./add-room-dialog";
-import { RoomAccessDialog } from "@/app/user/locations/room-access-dialog";
+import { RoomAccessDialog } from "@/app/user/locations/components/room-access-dialog";
 
 export function RoomsView() {
   const { t } = useTranslation();

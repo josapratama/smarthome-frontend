@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, Edit, Shield, Lock, Users, Eye } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { api } from "@/lib/api/client/axios";
+import { apiFetchBrowser } from "@/lib/api/client/fetch";
 import {
   Dialog,
   DialogContent,
@@ -52,14 +52,14 @@ export default function RoomPrivacyTab() {
   const fetchRooms = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/v1/rooms");
-      setRooms(response.data.data || []);
+      const response = await apiFetchBrowser<{ data: Room[] }>("/api/v1/rooms");
+      setRooms(response.data || []);
     } catch (error: any) {
       // Silently handle 404 errors (endpoint not implemented yet)
-      if (error.response?.status !== 404) {
+      if ((error as any).status !== 404) {
         toast({
           title: t("error"),
-          description: error.response?.data?.error || t("failedFetchRooms"),
+          description: (error as any).message || t("failedFetchRooms"),
           variant: "destructive",
         });
       }
@@ -77,8 +77,9 @@ export default function RoomPrivacyTab() {
     if (!editRoom) return;
 
     try {
-      await api.patch(`/v1/rooms/${editRoom.id}`, {
-        privacyLevel: newPrivacyLevel,
+      await apiFetchBrowser(`/api/v1/rooms/${editRoom.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ privacyLevel: newPrivacyLevel }),
       });
       toast({
         title: t("success"),
@@ -89,8 +90,7 @@ export default function RoomPrivacyTab() {
     } catch (error: any) {
       toast({
         title: t("error"),
-        description:
-          error.response?.data?.error || t("failedUpdatePrivacyLevel"),
+        description: (error as any).message || t("failedUpdatePrivacyLevel"),
         variant: "destructive",
       });
     }

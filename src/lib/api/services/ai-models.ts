@@ -1,4 +1,4 @@
-import { api } from "../client/axios";
+import { apiFetchBrowser } from "../client/fetch";
 
 // ===== TYPES =====
 
@@ -75,57 +75,68 @@ export interface UpdateAIModelInput {
 // ===== API FUNCTIONS =====
 
 export const aiModelsApi = {
-  // Get all AI models
   getModels: async (params?: {
     isActive?: boolean;
     algorithm?: string;
     modelType?: AIModelType;
     limit?: number;
   }) => {
-    const response = await api.get<{ models: AIModel[] }>("/v1/ai-models", {
-      params,
-    });
-    return response.data.models;
+    const p = new URLSearchParams();
+    if (params?.isActive !== undefined)
+      p.append("isActive", String(params.isActive));
+    if (params?.algorithm) p.append("algorithm", params.algorithm);
+    if (params?.modelType) p.append("modelType", params.modelType);
+    if (params?.limit) p.append("limit", String(params.limit));
+    const res = await apiFetchBrowser<{ models: AIModel[] }>(
+      `/api/v1/ai-models?${p.toString()}`,
+    );
+    return res.models;
   },
 
-  // Get model by name
   getModel: async (name: string) => {
-    const response = await api.get<{ model: AIModel }>(`/v1/ai-models/${name}`);
-    return response.data.model;
+    const res = await apiFetchBrowser<{ model: AIModel }>(
+      `/api/v1/ai-models/${name}`,
+    );
+    return res.model;
   },
 
-  // Create new model (admin only)
   createModel: async (input: CreateAIModelInput) => {
-    const response = await api.post<{ model: AIModel }>("/v1/ai-models", input);
-    return response.data.model;
+    const res = await apiFetchBrowser<{ model: AIModel }>("/api/v1/ai-models", {
+      method: "POST",
+      body: JSON.stringify(input),
+    });
+    return res.model;
   },
 
-  // Update model (admin only)
   updateModel: async (name: string, input: UpdateAIModelInput) => {
-    const response = await api.patch<{ model: AIModel }>(
-      `/v1/ai-models/${name}`,
-      input,
+    const res = await apiFetchBrowser<{ model: AIModel }>(
+      `/api/v1/ai-models/${name}`,
+      {
+        method: "PATCH",
+        body: JSON.stringify(input),
+      },
     );
-    return response.data.model;
+    return res.model;
   },
 
-  // Activate model (admin only)
   activateModel: async (name: string) => {
-    const response = await api.post<{ model: AIModel; action?: string }>(
-      `/v1/ai-models/${name}/activate`,
+    const res = await apiFetchBrowser<{ model: AIModel; action?: string }>(
+      `/api/v1/ai-models/${name}/activate`,
+      {
+        method: "POST",
+      },
     );
-    return response.data;
+    return res;
   },
 
-  // Delete model (admin only)
   deleteModel: async (name: string) => {
-    const response = await api.delete<{ success: boolean }>(
-      `/v1/ai-models/${name}`,
+    const res = await apiFetchBrowser<{ success: boolean }>(
+      `/api/v1/ai-models/${name}`,
+      { method: "DELETE" },
     );
-    return response.data.success;
+    return res.success;
   },
 
-  // Get model performance
   getPerformance: async (params?: {
     modelName?: string;
     deviceId?: number;
@@ -133,31 +144,37 @@ export const aiModelsApi = {
     to?: string;
     limit?: number;
   }) => {
-    const response = await api.get<{
-      performances: AIModelPerformance[];
-    }>("/v1/ai-models/performance", { params });
-    return response.data.performances;
+    const p = new URLSearchParams();
+    if (params?.modelName) p.append("modelName", params.modelName);
+    if (params?.deviceId) p.append("deviceId", String(params.deviceId));
+    if (params?.from) p.append("from", params.from);
+    if (params?.to) p.append("to", params.to);
+    if (params?.limit) p.append("limit", String(params.limit));
+    const res = await apiFetchBrowser<{ performances: AIModelPerformance[] }>(
+      `/api/v1/ai-models/performance?${p.toString()}`,
+    );
+    return res.performances;
   },
 
-  // Compare models
   compareModels: async (params?: {
     algorithms?: string;
     deviceId?: number;
     days?: number;
   }) => {
-    const response = await api.get<{ comparison: ModelComparison[] }>(
-      "/v1/ai-models/compare",
-      { params },
+    const p = new URLSearchParams();
+    if (params?.algorithms) p.append("algorithms", params.algorithms);
+    if (params?.deviceId) p.append("deviceId", String(params.deviceId));
+    if (params?.days) p.append("days", String(params.days));
+    const res = await apiFetchBrowser<{ comparison: ModelComparison[] }>(
+      `/api/v1/ai-models/compare?${p.toString()}`,
     );
-    return response.data.comparison;
+    return res.comparison;
   },
 
-  // Get best model for device
   getBestModel: async (deviceId: number, days = 30) => {
-    const response = await api.get<BestModelResult>(
-      `/v1/devices/${deviceId}/best-model`,
-      { params: { days } },
+    const res = await apiFetchBrowser<BestModelResult>(
+      `/api/v1/devices/${deviceId}/best-model?days=${days}`,
     );
-    return response.data;
+    return res;
   },
 };

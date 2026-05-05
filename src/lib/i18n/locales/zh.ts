@@ -1348,6 +1348,8 @@ export const zh = {
   dataExported: "数据导出成功",
   failedToExportData: "导出数据失败",
   failedToLoadTelemetry: "加载遥测数据失败",
+  noDataAvailable: "暂无数据",
+  dataTable: "数据表",
 
   // Device Config
   jsonConfig: "JSON配置",
@@ -1382,6 +1384,9 @@ export const zh = {
   otaJobCancelled: "OTA作业已取消",
   failedToCancelJob: "取消作业失败",
   failedToLoadOTAData: "加载OTA数据失败",
+  downloading: "下载中",
+  applied: "已应用",
+  update: "更新",
 
   // Device Overview
   deleteDeviceWarning: "此操作无法撤消。",
@@ -1462,6 +1467,31 @@ export const zh = {
   deactivate: "停用",
   accuracy: "准确度",
   selectActiveModelDescription: "选择用于此设备的活动模型",
+
+  // AI Model Performance & Compare
+  modelList: "模型列表",
+  performance: "性能",
+  modelPerformance: "模型性能",
+  modelPerformanceDescription: "跟踪准确率历史并比较AI模型",
+  modelComparison: "模型比较",
+  noComparisonData: "无比较数据",
+  noComparisonDataDescription: "模型进行预测后将显示性能数据",
+  performanceHistory: "性能历史",
+  noPerformanceData: "无性能数据",
+  noPerformanceDataDescription: "模型运行预测后将显示准确率记录",
+  allModels: "所有模型",
+  predictionDate: "预测日期",
+  recordedAt: "记录时间",
+  minAccuracy: "最小",
+  maxAccuracy: "最大",
+  totalPredictions: "总预测数",
+  best: "最佳",
+  trend: "趋势",
+  last14Days: "最近14天",
+  last90Days: "最近90天",
+  model: "模型",
+  aiRuleExecuted: "AI规则已执行",
+  aiRuleTriggered: "AI规则已触发",
 
   // Additional Security Keys
   noActiveSessionsFound: "未找到活动会话",

@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { RefreshCw, Plus, Trash2, Edit } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
-import { api } from "@/lib/api/client/axios";
+import { apiFetchBrowser } from "@/lib/api/client/fetch";
 import {
   Dialog,
   DialogContent,
@@ -68,15 +68,16 @@ export default function RoomAccessGrantsTab() {
   const fetchGrants = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/v1/room-access/grants");
-      setGrants(response.data.data || []);
+      const response = await apiFetchBrowser<{ data: RoomAccessGrant[] }>(
+        "/api/v1/room-access/grants",
+      );
+      setGrants(response.data || []);
     } catch (error: any) {
       // Silently handle 404 errors (endpoint not implemented yet)
-      if (error.response?.status !== 404) {
+      if ((error as any).status !== 404) {
         toast({
           title: t("error"),
-          description:
-            error.response?.data?.error || t("failedFetchAccessGrants"),
+          description: (error as any).message || t("failedFetchAccessGrants"),
           variant: "destructive",
         });
       }
@@ -92,7 +93,9 @@ export default function RoomAccessGrantsTab() {
 
   const revokeGrant = async (grantId: number) => {
     try {
-      await api.delete(`/v1/room-access/grants/${grantId}`);
+      await apiFetchBrowser(`/api/v1/room-access/grants/${grantId}`, {
+        method: "DELETE",
+      });
       toast({
         title: t("success"),
         description: t("accessGrantRevokedSuccess"),
@@ -101,7 +104,7 @@ export default function RoomAccessGrantsTab() {
     } catch (error: any) {
       toast({
         title: t("error"),
-        description: error.response?.data?.error || t("failedRevokeGrant"),
+        description: (error as any).message || t("failedRevokeGrant"),
         variant: "destructive",
       });
     }

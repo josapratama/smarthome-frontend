@@ -1,4 +1,4 @@
-import { api } from "../client/axios";
+import { apiFetchBrowser } from "../client/fetch";
 import type {
   EnergyUsageDaily,
   EnergyPrediction,
@@ -8,28 +8,32 @@ import type {
 
 export const energyApi = {
   async getEnergyUsage(filters: EnergyFilters): Promise<EnergyUsageDaily[]> {
-    const { data } = await api.get<EnergyUsageDaily[]>("/v1/energy/usage", {
-      params: filters,
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([k, v]) => {
+      if (v !== undefined && v !== null) params.append(k, String(v));
     });
-    return data;
+    const res = await apiFetchBrowser<EnergyUsageDaily[]>(
+      `/api/v1/energy/usage?${params.toString()}`,
+    );
+    return res;
   },
 
   async getEnergyPredictions(
     deviceId: number,
     days = 7,
   ): Promise<EnergyPrediction[]> {
-    const { data } = await api.get<EnergyPrediction[]>(
-      `/v1/energy/predictions/${deviceId}`,
-      { params: { days } },
+    const res = await apiFetchBrowser<EnergyPrediction[]>(
+      `/api/v1/energy/predictions/${deviceId}?days=${days}`,
     );
-    return data;
+    return res;
   },
 
   async getEnergyStats(homeId?: number): Promise<EnergyStats> {
-    const { data } = await api.get<EnergyStats>("/v1/energy/stats", {
-      params: { homeId },
-    });
-    return data;
+    const url = homeId
+      ? `/api/v1/energy/stats?homeId=${homeId}`
+      : "/api/v1/energy/stats";
+    const res = await apiFetchBrowser<EnergyStats>(url);
+    return res;
   },
 
   async getDailyUsage(
@@ -37,9 +41,9 @@ export const energyApi = {
     startDate: string,
     endDate: string,
   ): Promise<EnergyUsageDaily[]> {
-    const { data } = await api.get<EnergyUsageDaily[]>("/v1/energy/daily", {
-      params: { homeId, startDate, endDate },
-    });
-    return data;
+    const res = await apiFetchBrowser<EnergyUsageDaily[]>(
+      `/api/v1/energy/daily?homeId=${homeId}&startDate=${startDate}&endDate=${endDate}`,
+    );
+    return res;
   },
 };

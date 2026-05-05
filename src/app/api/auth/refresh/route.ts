@@ -53,20 +53,19 @@ export async function POST() {
   if (data.sessionId) {
     resp.cookies.set("admin_session_id", String(data.sessionId), {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.COOKIE_SECURE === "true",
       sameSite: "lax",
       path: "/",
     });
   }
 
-  // Update user role cookie
   if (data.user?.role) {
     resp.cookies.set("user_role", data.user.role, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.COOKIE_SECURE === "true",
       sameSite: "lax",
       path: "/",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7,
     });
   }
 

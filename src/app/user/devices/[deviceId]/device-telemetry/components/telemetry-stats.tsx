@@ -19,7 +19,7 @@ export function TelemetryStatsGrid({ stats }: TelemetryStatsProps) {
         <Card key={index}>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground capitalize">
-              {stat.metric.replace(/_/g, " ")}
+              {(stat.metric ?? "").replace(/_/g, " ")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">

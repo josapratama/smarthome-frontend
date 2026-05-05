@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { RefreshCw, CheckCircle2, XCircle } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
-import { api } from "@/lib/api/client/axios";
+import { apiFetchBrowser } from "@/lib/api/client/fetch";
 import { useTranslation } from "@/hooks/use-translation";
 
 interface RoomAccessLog {
@@ -50,15 +50,16 @@ export default function RoomAccessLogsTab() {
   const fetchLogs = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/v1/room-access/logs");
-      setLogs(response.data.data || []);
+      const response = await apiFetchBrowser<{ data: RoomAccessLog[] }>(
+        "/api/v1/room-access/logs",
+      );
+      setLogs(response.data || []);
     } catch (error: any) {
       // Silently handle 404 errors (endpoint not implemented yet)
-      if (error.response?.status !== 404) {
+      if ((error as any).status !== 404) {
         toast({
           title: t("error"),
-          description:
-            error.response?.data?.error || t("failedFetchAccessLogs"),
+          description: (error as any).message || t("failedFetchAccessLogs"),
           variant: "destructive",
         });
       }

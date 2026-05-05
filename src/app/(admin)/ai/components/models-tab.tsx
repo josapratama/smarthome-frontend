@@ -34,6 +34,7 @@ import {
   CheckCircle,
   Clock,
   Shield,
+  BarChart3,
 } from "lucide-react";
 import { useTranslation } from "@/hooks/use-translation";
 import { useToast } from "@/hooks/use-toast";
@@ -44,11 +45,16 @@ import {
   type AIModelAlgorithm,
   type AIModelType,
 } from "@/lib/api/services/ai-models";
+import { ModelPerformanceTab } from "./model-performance-tab";
+
+type ModelsMainTab = "list" | "performance";
 
 export function ModelsTab() {
   const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  const [mainTab, setMainTab] = useState<ModelsMainTab>("list");
   const [selectedTab, setSelectedTab] = useState<AIModelType>("prediction");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [formData, setFormData] = useState<CreateAIModelInput>({
@@ -60,13 +66,13 @@ export function ModelsTab() {
     description: "",
   });
 
-  // Fetch AI models based on selected tab
+  // ── Queries ──────────────────────────────────────────────────────────────────
   const { data: models, isLoading: modelsLoading } = useQuery<AIModel[]>({
     queryKey: ["ai-models", selectedTab],
     queryFn: () => aiModelsApi.getModels({ modelType: selectedTab }),
   });
 
-  // Create model mutation
+  // ── Mutations ─────────────────────────────────────────────────────────────────
   const createModelMutation = useMutation({
     mutationFn: aiModelsApi.createModel,
     onSuccess: () => {
@@ -78,53 +84,43 @@ export function ModelsTab() {
       setIsCreateDialogOpen(false);
       resetForm();
     },
-    onError: () => {
+    onError: () =>
       toast({
         title: t("error"),
         description: t("failedToCreateModel"),
         variant: "destructive",
-      });
-    },
+      }),
   });
 
-  // Activate model mutation
   const activateModelMutation = useMutation({
     mutationFn: aiModelsApi.activateModel,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["ai-models"] });
-      if (data.action === "deactivated") {
-        toast({
-          title: t("success"),
-          description: t("modelDeactivated"),
-        });
-      } else {
-        toast({
-          title: t("success"),
-          description: t("modelActivated"),
-        });
-      }
+      toast({
+        title: t("success"),
+        description:
+          data.action === "deactivated"
+            ? t("modelDeactivated")
+            : t("modelActivated"),
+      });
     },
   });
 
-  // Delete model mutation
   const deleteModelMutation = useMutation({
     mutationFn: aiModelsApi.deleteModel,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ai-models"] });
-      toast({
-        title: t("success"),
-        description: t("modelDeleted"),
-      });
+      toast({ title: t("success"), description: t("modelDeleted") });
     },
-    onError: () => {
+    onError: () =>
       toast({
         title: t("error"),
         description: t("cannotDeleteActiveModel"),
         variant: "destructive",
-      });
-    },
+      }),
   });
 
+  // ── Helpers ───────────────────────────────────────────────────────────────────
   const resetForm = () => {
     setFormData({
       name: "",
@@ -135,10 +131,6 @@ export function ModelsTab() {
       parameters: {},
       description: "",
     });
-  };
-
-  const handleCreateModel = () => {
-    createModelMutation.mutate(formData);
   };
 
   const handleOpenCreateDialog = () => {
@@ -163,6 +155,7 @@ export function ModelsTab() {
     return labels[algorithm] || algorithm;
   };
 
+  // ── Model list renderer ───────────────────────────────────────────────────────
   const renderModelsList = () => {
     if (modelsLoading) {
       return (
@@ -209,10 +202,7 @@ export function ModelsTab() {
                     {model.isActive ? (
                       <Badge
                         className="border-0"
-                        style={{
-                          backgroundColor: "#16a34a",
-                          color: "white",
-                        }}
+                        style={{ backgroundColor: "#16a34a", color: "white" }}
                       >
                         <CheckCircle className="h-3 w-3 mr-1" />
                         {t("active")} • {t("inUse")}
@@ -229,7 +219,7 @@ export function ModelsTab() {
                     {model.description || t("noDescription")}
                   </p>
 
-                  <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+                  <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
                     <span>
                       {t("algorithm")}: {getAlgorithmLabel(model.algorithm)}
                     </span>
@@ -243,7 +233,7 @@ export function ModelsTab() {
                   </div>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 ml-4 shrink-0">
                   {model.isActive ? (
                     <Button
                       size="sm"
@@ -286,50 +276,79 @@ export function ModelsTab() {
     );
   };
 
+  // ── Render ────────────────────────────────────────────────────────────────────
   return (
     <>
-      <Card className="rounded-2xl shadow-sm border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle className="text-xl font-semibold text-gray-900 dark:text-white">
-              {t("aiModels")}
-            </CardTitle>
-            <p className="text-sm text-muted-foreground mt-1">
-              {t("selectActiveModelDescription")}
-            </p>
-          </div>
-          <Button onClick={handleOpenCreateDialog} size="sm">
-            <Plus className="h-4 w-4 mr-2" />
-            {t("createModel")}
-          </Button>
-        </CardHeader>
-        <CardContent>
-          <Tabs
-            value={selectedTab}
-            onValueChange={(v) => setSelectedTab(v as AIModelType)}
-          >
-            <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger
-                value="prediction"
-                className="flex items-center gap-2"
+      <Tabs
+        value={mainTab}
+        onValueChange={(v) => setMainTab(v as ModelsMainTab)}
+        className="w-full"
+      >
+        <TabsList className="grid w-full grid-cols-2 mb-4">
+          <TabsTrigger value="list" className="flex items-center gap-2">
+            <Shield className="h-4 w-4" />
+            {t("modelList")}
+          </TabsTrigger>
+          <TabsTrigger value="performance" className="flex items-center gap-2">
+            <BarChart3 className="h-4 w-4" />
+            {t("performance")}
+          </TabsTrigger>
+        </TabsList>
+
+        {/* ── Model List ── */}
+        <TabsContent value="list">
+          <Card className="rounded-2xl shadow-sm border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-xl font-semibold text-gray-900 dark:text-white">
+                  {t("aiModels")}
+                </CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {t("selectActiveModelDescription")}
+                </p>
+              </div>
+              <Button onClick={handleOpenCreateDialog} size="sm">
+                <Plus className="h-4 w-4 mr-2" />
+                {t("createModel")}
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <Tabs
+                value={selectedTab}
+                onValueChange={(v) => setSelectedTab(v as AIModelType)}
               >
-                <TrendingUp className="h-4 w-4" />
-                {t("predictionModels")}
-              </TabsTrigger>
-              <TabsTrigger value="anomaly" className="flex items-center gap-2">
-                <Shield className="h-4 w-4" />
-                {t("anomalyModels")}
-              </TabsTrigger>
-            </TabsList>
+                <TabsList className="grid w-full grid-cols-2 mb-6">
+                  <TabsTrigger
+                    value="prediction"
+                    className="flex items-center gap-2"
+                  >
+                    <TrendingUp className="h-4 w-4" />
+                    {t("predictionModels")}
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="anomaly"
+                    className="flex items-center gap-2"
+                  >
+                    <Shield className="h-4 w-4" />
+                    {t("anomalyModels")}
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value="prediction">
+                  {renderModelsList()}
+                </TabsContent>
+                <TabsContent value="anomaly">{renderModelsList()}</TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-            <TabsContent value="prediction">{renderModelsList()}</TabsContent>
+        {/* ── Performance & Compare ── */}
+        <TabsContent value="performance">
+          <ModelPerformanceTab />
+        </TabsContent>
+      </Tabs>
 
-            <TabsContent value="anomaly">{renderModelsList()}</TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
-
-      {/* Create Model Dialog */}
+      {/* ── Create Model Dialog ── */}
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
@@ -460,7 +479,7 @@ export function ModelsTab() {
               {t("cancel")}
             </Button>
             <Button
-              onClick={handleCreateModel}
+              onClick={() => createModelMutation.mutate(formData)}
               disabled={
                 createModelMutation.isPending ||
                 !formData.name ||

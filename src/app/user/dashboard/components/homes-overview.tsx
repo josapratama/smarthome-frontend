@@ -49,7 +49,7 @@ export function HomesOverview({
           ).length;
 
           return (
-            <Link key={home.id} href={`/user/locations/${home.id}`}>
+            <Link key={home.id} href={`/user/homes/${home.id}`}>
               <Card className="hover:shadow-lg transition-all hover:scale-[1.02] cursor-pointer border-2">
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2 text-base md:text-lg">

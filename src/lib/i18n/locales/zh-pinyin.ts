@@ -1383,6 +1383,8 @@ export const zhPinyin = {
   dataExported: "Shùjù dǎochū chénggōng",
   failedToExportData: "Dǎochū shùjù shībài",
   failedToLoadTelemetry: "Jiāzài yáocè shùjù shībài",
+  noDataAvailable: "Méiyǒu shùjù",
+  dataTable: "Shùjù biǎo",
 
   // Device Config
   jsonConfig: "JSON pèizhì",
@@ -1419,6 +1421,9 @@ export const zhPinyin = {
   otaJobCancelled: "OTA zuòyè yǐ qǔxiāo",
   failedToCancelJob: "Qǔxiāo zuòyè shībài",
   failedToLoadOTAData: "Jiāzài OTA shùjù shībài",
+  downloading: "Xiàzài zhōng",
+  applied: "Yǐ yìngyòng",
+  update: "Gēngxīn",
 
   // Device Overview
   deleteDeviceWarning: "Cǐ cāozuò wúfǎ chèxiāo.",
@@ -1504,6 +1509,34 @@ export const zhPinyin = {
   deactivate: "Tíngzhǐ",
   accuracy: "Zhǔnquè dù",
   selectActiveModelDescription: "Xuǎnzé yòng yú cǐ shèbèi de huódòng móxíng",
+
+  // AI Model Performance & Compare
+  modelList: "Móxíng lièbiǎo",
+  performance: "Xìngnéng",
+  modelPerformance: "Móxíng xìngnéng",
+  modelPerformanceDescription:
+    "Zhuīzōng zhǔnquè lǜ lìshǐ bìng bǐjiào AI móxíng",
+  modelComparison: "Móxíng bǐjiào",
+  noComparisonData: "Wú bǐjiào shùjù",
+  noComparisonDataDescription:
+    "Móxíng jìnxíng yùcè hòu jiāng xiǎnshì xìngnéng shùjù",
+  performanceHistory: "Xìngnéng lìshǐ",
+  noPerformanceData: "Wú xìngnéng shùjù",
+  noPerformanceDataDescription:
+    "Móxíng yùnxíng yùcè hòu jiāng xiǎnshì zhǔnquè lǜ jìlù",
+  allModels: "Suǒyǒu móxíng",
+  predictionDate: "Yùcè rìqī",
+  recordedAt: "Jìlù shíjiān",
+  minAccuracy: "Zuìxiǎo",
+  maxAccuracy: "Zuìdà",
+  totalPredictions: "Zǒng yùcè shù",
+  best: "Zuìjiā",
+  trend: "Qūshì",
+  last14Days: "Zuìjìn 14 tiān",
+  last90Days: "Zuìjìn 90 tiān",
+  model: "Móxíng",
+  aiRuleExecuted: "AI guīzé yǐ zhíxíng",
+  aiRuleTriggered: "AI guīzé yǐ chùfā",
 
   // Additional Security Keys - Missing Keys
   noActiveSessionsFound: "Wèi zhǎodào huódòng huìhuà",

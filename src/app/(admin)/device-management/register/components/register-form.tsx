@@ -132,7 +132,6 @@ export function RegisterForm({
                 <SelectItem value="FAN">{t("fan")}</SelectItem>
                 <SelectItem value="DOOR">{t("door")}</SelectItem>
                 <SelectItem value="POWER_METER">{t("powerMeter")}</SelectItem>
-                <SelectItem value="ENERGY_MONITOR">Energy Monitor</SelectItem>
                 <SelectItem value="OTHER">{t("other")}</SelectItem>
               </SelectContent>
             </Select>

@@ -43,20 +43,23 @@ export async function resolveAlarm(homeId: number, alarmId: number) {
 
 export async function getUnreadAlarmCount(): Promise<number> {
   try {
-    // Get all homes for the user
     const homesResponse = await apiFetchBrowser<{ data: any[] }>(
       "/api/v1/homes",
     );
     const homes = homesResponse.data || [];
 
-    // Get unread alarms (OPEN status) from all homes
-    let totalUnread = 0;
-    for (const home of homes) {
-      const alarmsResponse = await listHomeAlarms(home.id, { status: "OPEN" });
-      totalUnread += alarmsResponse.data?.length || 0;
-    }
+    if (homes.length === 0) return 0;
 
-    return totalUnread;
+    // Fetch semua alarm OPEN dari semua home secara paralel
+    const alarmsResults = await Promise.all(
+      homes.map((home) =>
+        listHomeAlarms(home.id, { status: "OPEN" })
+          .then((r) => r.data?.length || 0)
+          .catch(() => 0),
+      ),
+    );
+
+    return alarmsResults.reduce((sum, count) => sum + count, 0);
   } catch (error) {
     console.error("Failed to get unread alarm count:", error);
     return 0;

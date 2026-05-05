@@ -6,6 +6,8 @@ import { UserTopbar } from "./user-topbar";
 import { UserMobileNav } from "./user-mobile-nav";
 import { ThemeProvider } from "@/contexts/theme-context";
 import { LanguageProvider } from "@/contexts/language-context";
+import { TokenInitializer } from "@/components/auth/token-initializer";
+import { RealtimeNotificationProvider } from "./realtime-notification-provider";
 
 export function UserLayoutClient({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -13,6 +15,8 @@ export function UserLayoutClient({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>
       <LanguageProvider>
+        <TokenInitializer />
+        <RealtimeNotificationProvider />
         <div className="flex h-screen overflow-hidden bg-background">
           {/* Desktop Sidebar */}
           <UserSidebar className="hidden lg:flex" />

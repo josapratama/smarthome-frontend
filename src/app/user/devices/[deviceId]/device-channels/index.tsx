@@ -29,7 +29,8 @@ export default function DeviceChannels({ deviceId }: DeviceChannelsProps) {
     setIsLoading(true);
     try {
       const data = await channelsApi.list(deviceId);
-      setChannels(data);
+      // Only show enabled channels to users
+      setChannels(data.filter((ch) => ch.isEnabled !== false));
     } catch (error: any) {
       toast.error(error.message || t("failedToLoadChannels"));
     } finally {
@@ -198,15 +199,12 @@ export default function DeviceChannels({ deviceId }: DeviceChannelsProps) {
                 </div>
               )}
 
-              {/* Status */}
-              <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
-                <span>{channel.isEnabled ? t("enabled") : t("disabled")}</span>
-                {channel.lastUpdated && (
-                  <span>
-                    {new Date(channel.lastUpdated).toLocaleTimeString()}
-                  </span>
-                )}
-              </div>
+              {/* Status — only show last updated time */}
+              {channel.lastUpdated && (
+                <div className="text-xs text-muted-foreground pt-2 border-t text-right">
+                  {new Date(channel.lastUpdated).toLocaleTimeString()}
+                </div>
+              )}
             </CardContent>
           </Card>
         ))}

@@ -448,6 +448,33 @@ export const ko = {
   selectActiveModelDescription:
     "예측에 사용할 AI 모델을 선택하세요. 알고리즘당 하나의 모델만 활성화할 수 있습니다.",
 
+  // AI Model Performance & Compare
+  modelList: "모델 목록",
+  performance: "성능",
+  modelPerformance: "모델 성능",
+  modelPerformanceDescription: "정확도 기록을 추적하고 AI 모델을 비교합니다",
+  modelComparison: "모델 비교",
+  noComparisonData: "비교 데이터 없음",
+  noComparisonDataDescription:
+    "모델이 예측을 수행한 후 성능 데이터가 표시됩니다",
+  performanceHistory: "성능 기록",
+  noPerformanceData: "성능 데이터 없음",
+  noPerformanceDataDescription:
+    "모델이 예측을 실행한 후 정확도 기록이 표시됩니다",
+  allModels: "모든 모델",
+  predictionDate: "예측 날짜",
+  recordedAt: "기록 시간",
+  minAccuracy: "최소",
+  maxAccuracy: "최대",
+  totalPredictions: "총 예측 수",
+  best: "최고",
+  trend: "추세",
+  last14Days: "최근 14일",
+  last90Days: "최근 90일",
+  model: "모델",
+  aiRuleExecuted: "AI 규칙 실행됨",
+  aiRuleTriggered: "AI 규칙 트리거됨",
+
   // Monitoring
   monitoringPage: "모니터링",
   realTimeMonitoring: "실시간으로 장치 상태 및 시스템 상태를 모니터링합니다.",
@@ -1384,6 +1411,8 @@ export const ko = {
   dataExported: "데이터가 성공적으로 내보내졌습니다",
   failedToExportData: "데이터 내보내기 실패",
   failedToLoadTelemetry: "원격 측정 데이터 로드 실패",
+  noDataAvailable: "데이터 없음",
+  dataTable: "데이터 테이블",
 
   // Device Config
   jsonConfig: "JSON 구성",
@@ -1420,6 +1449,9 @@ export const ko = {
   otaJobCancelled: "OTA 작업이 취소되었습니다",
   failedToCancelJob: "작업 취소 실패",
   failedToLoadOTAData: "OTA 데이터 로드 실패",
+  downloading: "다운로드 중",
+  applied: "적용됨",
+  update: "업데이트",
 
   // Device Overview
   deleteDeviceWarning: "이 작업은 취소할 수 없습니다.",

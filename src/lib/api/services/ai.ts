@@ -1,4 +1,4 @@
-import { api } from "../client/axios";
+import { apiFetchBrowser } from "../client/fetch";
 
 export interface AIStats {
   totalModels: number;
@@ -70,77 +70,80 @@ export interface CreateAIRuleInput {
   priority?: number;
 }
 
-// Get AI statistics
 export async function getAIStats(): Promise<AIStats> {
-  const response = await api.get<{ data: AIStats }>("/v1/ai/stats");
-  return response.data.data;
+  const res = await apiFetchBrowser<{ data: AIStats }>("/api/v1/ai/stats");
+  return res.data;
 }
 
-// Get energy predictions
 export async function getEnergyPredictions(params?: {
   homeId?: number;
   limit?: number;
 }): Promise<EnergyPrediction[]> {
-  const response = await api.get<{ data: EnergyPrediction[] }>(
-    "/v1/ai/predictions/energy",
-    { params },
+  const p = new URLSearchParams();
+  if (params?.homeId) p.append("homeId", String(params.homeId));
+  if (params?.limit) p.append("limit", String(params.limit));
+  const res = await apiFetchBrowser<{ data: EnergyPrediction[] }>(
+    `/api/v1/ai/predictions/energy?${p.toString()}`,
   );
-  return response.data.data;
+  return res.data;
 }
 
-// Get anomalies
 export async function getAnomalies(params?: {
-  status?: "OPEN" | "INVESTIGATING" | "RESOLVED" | "ALL";
+  status?: string;
   limit?: number;
 }): Promise<Anomaly[]> {
-  const response = await api.get<{ data: Anomaly[] }>("/v1/ai/anomalies", {
-    params,
-  });
-  return response.data.data;
+  const p = new URLSearchParams();
+  if (params?.status) p.append("status", params.status);
+  if (params?.limit) p.append("limit", String(params.limit));
+  const res = await apiFetchBrowser<{ data: Anomaly[] }>(
+    `/api/v1/ai/anomalies?${p.toString()}`,
+  );
+  return res.data;
 }
 
-// Update anomaly status
 export async function updateAnomalyStatus(
   anomalyId: number,
   status: "INVESTIGATING" | "RESOLVED",
 ): Promise<Anomaly> {
-  const response = await api.patch<{ data: Anomaly }>(
-    `/v1/ai/anomalies/${anomalyId}`,
-    { status },
+  const res = await apiFetchBrowser<{ data: Anomaly }>(
+    `/api/v1/ai/anomalies/${anomalyId}`,
+    { method: "PATCH", body: JSON.stringify({ status }) },
   );
-  return response.data.data;
+  return res.data;
 }
 
-// Get AI rules
 export async function getAIRules(params?: {
-  type?: "automation" | "alert" | "optimization" | "all";
-  isActive?: "true" | "false" | "all";
+  type?: string;
+  isActive?: string;
 }): Promise<AIRule[]> {
-  const response = await api.get<{ data: AIRule[] }>("/v1/ai/rules", {
-    params,
-  });
-  return response.data.data;
+  const p = new URLSearchParams();
+  if (params?.type) p.append("type", params.type);
+  if (params?.isActive) p.append("isActive", params.isActive);
+  const res = await apiFetchBrowser<{ data: AIRule[] }>(
+    `/api/v1/ai/rules?${p.toString()}`,
+  );
+  return res.data;
 }
 
-// Create AI rule
 export async function createAIRule(input: CreateAIRuleInput): Promise<AIRule> {
-  const response = await api.post<{ data: AIRule }>("/v1/ai/rules", input);
-  return response.data.data;
+  const res = await apiFetchBrowser<{ data: AIRule }>("/api/v1/ai/rules", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+  return res.data;
 }
 
-// Update AI rule
 export async function updateAIRule(
   ruleId: number,
   input: Partial<CreateAIRuleInput> & { isActive?: boolean },
 ): Promise<AIRule> {
-  const response = await api.patch<{ data: AIRule }>(
-    `/v1/ai/rules/${ruleId}`,
-    input,
+  const res = await apiFetchBrowser<{ data: AIRule }>(
+    `/api/v1/ai/rules/${ruleId}`,
+    { method: "PATCH", body: JSON.stringify(input) },
   );
-  return response.data.data;
+  return res.data;
 }
 
-// Delete AI rule
 export async function deleteAIRule(ruleId: number): Promise<void> {
-  await api.delete(`/v1/ai/rules/${ruleId}`);
+  await apiFetchBrowser(`/api/v1/ai/rules/${ruleId}`, { method: "DELETE" });
 }

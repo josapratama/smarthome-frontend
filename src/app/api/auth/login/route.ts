@@ -56,12 +56,14 @@ export async function POST(req: Request) {
       { status: 200 },
     );
 
-    const isProduction = process.env.NODE_ENV === "production";
+    // Use secure cookies only when served over HTTPS
+    // HTTP (local network / Raspberry Pi without SSL) must use secure: false
+    const isSecure = process.env.COOKIE_SECURE === "true";
 
     // Set access token
     resp.cookies.set("access_token", data.accessToken, {
       httpOnly: true,
-      secure: isProduction,
+      secure: isSecure,
       sameSite: "lax",
       path: "/",
       maxAge: 60 * 60 * 24 * 7, // 7 days
@@ -71,7 +73,7 @@ export async function POST(req: Request) {
     if (data.refreshToken) {
       resp.cookies.set("refresh_token", data.refreshToken, {
         httpOnly: true,
-        secure: isProduction,
+        secure: isSecure,
         sameSite: "lax",
         path: "/",
         maxAge: 60 * 60 * 24 * 30, // 30 days
@@ -81,7 +83,7 @@ export async function POST(req: Request) {
     // Set session ID
     resp.cookies.set("admin_session_id", String(data.sessionId), {
       httpOnly: true,
-      secure: isProduction,
+      secure: isSecure,
       sameSite: "lax",
       path: "/",
     });
@@ -89,7 +91,7 @@ export async function POST(req: Request) {
     // Store user role in cookie for middleware
     resp.cookies.set("user_role", data.user.role, {
       httpOnly: true,
-      secure: isProduction,
+      secure: isSecure,
       sameSite: "lax",
       path: "/",
       maxAge: 60 * 60 * 24 * 7, // 7 days, same as access_token

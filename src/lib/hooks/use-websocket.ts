@@ -14,8 +14,13 @@ export function useWebSocket() {
   useEffect(() => {
     const socket = io(process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:3000", {
       transports: ["websocket"],
-      autoConnect: true,
+      autoConnect: false, // Don't auto-connect — backend has no Socket.IO
     });
+
+    // Only connect if WS URL is explicitly configured
+    if (process.env.NEXT_PUBLIC_WS_URL) {
+      socket.connect();
+    }
 
     socketRef.current = socket;
 

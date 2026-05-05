@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { RefreshCw, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
-import { api } from "@/lib/api/client/axios";
+import { apiFetchBrowser } from "@/lib/api/client/fetch";
 import { useTranslation } from "@/hooks/use-translation";
 
 interface LoginAttempt {
@@ -42,15 +42,17 @@ export default function LoginAttemptsTab() {
   const fetchAttempts = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/v1/auth/login-attempts");
-      setAttempts(response.data.data || []);
+      const response = await apiFetchBrowser<{ data: LoginAttempt[] }>(
+        "/api/v1/auth/login-attempts",
+      );
+      setAttempts(response.data || []);
     } catch (error: any) {
       // Silently handle 404 errors (endpoint not implemented yet)
-      if (error.response?.status !== 404) {
+      if ((error as any).status !== 404) {
         toast({
           title: t("error"),
           description:
-            error.response?.data?.error || t("failedToFetchLoginAttempts"),
+            (error as any).message || t("failedToFetchLoginAttempts"),
           variant: "destructive",
         });
       }

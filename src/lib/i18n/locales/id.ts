@@ -534,11 +534,13 @@ export const id = {
   buildDate: "Tanggal Build",
   appInfoNote: "Sistem Kontrol Smart Home v1.0.0",
   privacySecurity: "Privasi & Keamanan",
+  privacySettings: "Pengaturan Privasi",
   downloadData: "Unduh Data",
   dangerZone: "Zona Berbahaya",
   deleteAccount: "Hapus Akun",
   managePrivacyAndSecurity: "Kelola pengaturan privasi dan keamanan Anda",
   controlDataAndPrivacy: "Kontrol data, privasi, dan keamanan akun Anda",
+  dataManagement: "Manajemen Data",
 
   // Privacy Page
   profileVisibility: "Visibilitas Profil",
@@ -850,6 +852,35 @@ export const id = {
   accuracy: "Akurasi",
   selectActiveModelDescription:
     "Pilih model AI yang akan digunakan untuk prediksi. Hanya satu model per algoritma yang bisa aktif.",
+
+  // AI Model Performance & Compare
+  modelList: "Daftar Model",
+  performance: "Performa",
+  modelPerformance: "Performa Model",
+  modelPerformanceDescription: "Lacak riwayat akurasi dan bandingkan model AI",
+  modelComparison: "Perbandingan Model",
+  noComparisonData: "Tidak ada data perbandingan",
+  noComparisonDataDescription:
+    "Data performa akan muncul setelah model membuat prediksi",
+  performanceHistory: "Riwayat Performa",
+  noPerformanceData: "Tidak ada data performa",
+  noPerformanceDataDescription:
+    "Catatan akurasi akan muncul setelah model menjalankan prediksi",
+  allModels: "Semua Model",
+  predictionDate: "Tanggal Prediksi",
+  recordedAt: "Dicatat Pada",
+  minAccuracy: "Min",
+  maxAccuracy: "Maks",
+  totalPredictions: "Total Prediksi",
+  best: "Terbaik",
+  trend: "Tren",
+  last14Days: "14 Hari Terakhir",
+  last90Days: "90 Hari Terakhir",
+  model: "Model",
+
+  // AI Rules Execution
+  aiRuleExecuted: "Aturan AI dieksekusi",
+  aiRuleTriggered: "Aturan AI dipicu",
 
   // Monitoring
   monitoringPage: "Monitoring",
@@ -1491,6 +1522,8 @@ export const id = {
   cancel: "Batal",
   homeNotFound: "Rumah Tidak Ditemukan",
   homeNotFoundDesc: "Rumah yang Anda cari tidak ada",
+  homeDetails: "Detail Rumah",
+  backToLocations: "Kembali ke Lokasi",
   failedToLoadHomeDetails: "Gagal memuat detail rumah",
   createRoomsDesc:
     "Buat ruangan untuk mengatur perangkat Anda dengan lebih baik",
@@ -1703,6 +1736,8 @@ export const id = {
   dataExported: "Data berhasil diekspor",
   failedToExportData: "Gagal mengekspor data",
   failedToLoadTelemetry: "Gagal memuat data telemetri",
+  noDataAvailable: "Tidak ada data tersedia",
+  dataTable: "Tabel Data",
 
   // Device Config
   jsonConfig: "Konfigurasi JSON",
@@ -1739,6 +1774,10 @@ export const id = {
   otaJobCancelled: "Job OTA dibatalkan",
   failedToCancelJob: "Gagal membatalkan job",
   failedToLoadOTAData: "Gagal memuat data OTA",
+  // OTA status labels
+  downloading: "Mengunduh",
+  applied: "Diterapkan",
+  update: "Perbarui",
 
   // Device Overview
   deleteDeviceWarning: "Tindakan ini tidak dapat dibatalkan.",

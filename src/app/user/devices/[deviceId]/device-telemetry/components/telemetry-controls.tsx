@@ -50,7 +50,7 @@ export function TelemetryControls({
                 <SelectItem value="all">{t("allMetrics")}</SelectItem>
                 {metrics.map((metric) => (
                   <SelectItem key={metric} value={metric}>
-                    {metric.replace(/_/g, " ")}
+                    {(metric ?? "").replace(/_/g, " ")}
                   </SelectItem>
                 ))}
               </SelectContent>
