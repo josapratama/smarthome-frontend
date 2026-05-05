@@ -1,0 +1,75 @@
+"use client";
+
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Home, Globe, Moon, Sun } from "lucide-react";
+import { usePublicSettings } from "@/contexts/public-settings-context";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+export function Header() {
+  const { t, language, setLanguage, theme, setTheme } = usePublicSettings();
+
+  return (
+    <header className="border-b bg-card sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
+              <Home className="h-6 w-6 text-white" />
+            </div>
+            <span className="text-xl font-bold">{t("smartHome")}</span>
+          </Link>
+
+          <div className="flex items-center gap-2">
+            {/* Language Selector */}
+            <Select value={language} onValueChange={setLanguage}>
+              <SelectTrigger className="w-[140px] h-9">
+                <Globe className="h-4 w-4 mr-2" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="id">🇮🇩 Indonesia</SelectItem>
+                <SelectItem value="en">🇬🇧 English</SelectItem>
+                <SelectItem value="jv">🇮🇩 Jawa</SelectItem>
+                <SelectItem value="su">🇮🇩 Sunda</SelectItem>
+                <SelectItem value="plm">🇮🇩 Palembang</SelectItem>
+                <SelectItem value="es">🇪🇸 Español</SelectItem>
+                <SelectItem value="ja">🇯🇵 日本語</SelectItem>
+                <SelectItem value="zh">🇨🇳 中文</SelectItem>
+                <SelectItem value="zhPinyin">🇨🇳 Pīnyīn</SelectItem>
+                <SelectItem value="ko">🇰🇷 한국어</SelectItem>
+                <SelectItem value="ar">🇸🇦 العربية</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {/* Theme Toggle */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            >
+              {theme === "dark" ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
+            </Button>
+
+            <Link href="/login">
+              <Button variant="ghost">{t("login")}</Button>
+            </Link>
+            <Link href="/register">
+              <Button>{t("getStarted")}</Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}

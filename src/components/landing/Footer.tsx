@@ -1,0 +1,20 @@
+"use client";
+
+import { usePublicSettings } from "@/contexts/public-settings-context";
+
+export function Footer() {
+  const { t } = usePublicSettings();
+
+  return (
+    <footer className="border-t bg-card">
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center text-sm text-muted-foreground">
+          <p>
+            &copy; {new Date().getFullYear()} {t("smartHome")}.{" "}
+            {t("footerText")}
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}

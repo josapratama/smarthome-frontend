@@ -1,0 +1,242 @@
+"use client";
+
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Bell, CheckCheck, Trash2 } from "lucide-react";
+import { useTranslation } from "@/hooks/use-translation";
+import { PageHeader } from "@/components/ui/page-header";
+import { formatDistanceToNow } from "date-fns";
+import { useNotifications } from "./hooks/use-notifications";
+import type { AlarmDTO } from "@/lib/api/dto/alarm.dto";
+
+function getNotificationIcon(severity: string) {
+  switch (severity) {
+    case "CRITICAL":
+    case "HIGH":
+      return "🔴";
+    case "MEDIUM":
+      return "🟡";
+    default:
+      return "🔵";
+  }
+}
+
+function getNotificationColor(severity: string) {
+  switch (severity) {
+    case "CRITICAL":
+    case "HIGH":
+      return "border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30";
+    case "MEDIUM":
+      return "border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-950/30";
+    default:
+      return "border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30";
+  }
+}
+
+function getTextColor(severity: string) {
+  switch (severity) {
+    case "CRITICAL":
+    case "HIGH":
+      return "text-red-700 dark:text-red-300";
+    case "MEDIUM":
+      return "text-yellow-700 dark:text-yellow-300";
+    default:
+      return "text-blue-700 dark:text-blue-300";
+  }
+}
+
+interface NotificationItemProps {
+  alarm: AlarmDTO;
+  onMarkAsRead: (alarm: AlarmDTO) => void;
+  onDelete: (alarm: AlarmDTO) => void;
+}
+
+function NotificationItem({
+  alarm,
+  onMarkAsRead,
+  onDelete,
+}: NotificationItemProps) {
+  const { t } = useTranslation();
+
+  const getSeverityBadge = (severity: string) => {
+    switch (severity) {
+      case "CRITICAL":
+        return (
+          <Badge variant="destructive">{t("critical") || "Critical"}</Badge>
+        );
+      case "HIGH":
+        return <Badge variant="destructive">{t("high") || "High"}</Badge>;
+      case "MEDIUM":
+        return (
+          <Badge className="bg-yellow-600">{t("medium") || "Medium"}</Badge>
+        );
+      default:
+        return <Badge variant="secondary">{t("low") || "Low"}</Badge>;
+    }
+  };
+
+  return (
+    <Card
+      className={`border-l-4 transition-all hover:shadow-md ${
+        alarm.status === "OPEN" ? getNotificationColor(alarm.severity) : ""
+      }`}
+    >
+      <CardContent className="p-4">
+        <div className="flex gap-4">
+          <div className="text-3xl flex-shrink-0">
+            {getNotificationIcon(alarm.severity)}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between gap-2 mb-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className={`font-semibold ${getTextColor(alarm.severity)}`}>
+                  {alarm.type}
+                </h3>
+                {getSeverityBadge(alarm.severity)}
+                {alarm.status === "OPEN" && (
+                  <Badge variant="default" className="h-5">
+                    {t("new") || "New"}
+                  </Badge>
+                )}
+              </div>
+              <div className="flex gap-1">
+                {alarm.status === "OPEN" && (
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-8 w-8"
+                    onClick={() => onMarkAsRead(alarm)}
+                  >
+                    <CheckCheck className="h-4 w-4" />
+                  </Button>
+                )}
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8 text-destructive"
+                  onClick={() => onDelete(alarm)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <p className="text-sm text-foreground mb-2">{alarm.message}</p>
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1">
+                📱 {t("device") || "Device"} #{alarm.deviceId}
+              </span>
+              <span className="flex items-center gap-1">
+                🏠 {t("home") || "Home"} #{alarm.homeId}
+              </span>
+              <span>
+                {formatDistanceToNow(new Date(alarm.triggeredAt), {
+                  addSuffix: true,
+                })}
+              </span>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+export default function NotificationsContent() {
+  const { t } = useTranslation();
+  const {
+    alarms,
+    filteredAlarms,
+    isLoading,
+    filter,
+    setFilter,
+    unreadCount,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+  } = useNotifications();
+
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        stats={[
+          {
+            label: t("allNotifications") || "All Notifications",
+            value: alarms.length,
+            icon: Bell,
+            color: "text-primary",
+          },
+          {
+            label: t("unreadNotifications") || "Unread",
+            value: unreadCount,
+            icon: Bell,
+            color: "text-red-500",
+          },
+        ]}
+        actions={
+          unreadCount > 0 ? (
+            <Button onClick={markAllAsRead} variant="outline">
+              <CheckCheck className="h-4 w-4 mr-2" />
+              {t("markAllAsRead") || "Mark All as Read"}
+            </Button>
+          ) : undefined
+        }
+      />
+
+      <Tabs
+        value={filter}
+        onValueChange={(v) => setFilter(v as "all" | "unread")}
+        data-filter-section
+        className="transition-all duration-300"
+      >
+        <TabsList>
+          <TabsTrigger value="all">
+            {t("all") || "All"} ({alarms.length})
+          </TabsTrigger>
+          <TabsTrigger value="unread">
+            {t("unread") || "Unread"} ({unreadCount})
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value={filter} className="space-y-4 mt-6">
+          {isLoading ? (
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-24 rounded-lg" />
+              ))}
+            </div>
+          ) : filteredAlarms.length === 0 ? (
+            <Card className="border-dashed">
+              <CardContent className="p-12 text-center">
+                <Bell className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+                <h2 className="text-xl font-semibold mb-2">
+                  {t("noNotifications") || "No Notifications"}
+                </h2>
+                <p className="text-muted-foreground">
+                  {filter === "unread"
+                    ? t("allNotificationsRead") ||
+                      "All notifications have been read!"
+                    : t("notificationsWillAppear") ||
+                      "Notifications will appear here"}
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-3">
+              {filteredAlarms.map((alarm) => (
+                <NotificationItem
+                  key={alarm.id}
+                  alarm={alarm}
+                  onMarkAsRead={markAsRead}
+                  onDelete={deleteNotification}
+                />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}

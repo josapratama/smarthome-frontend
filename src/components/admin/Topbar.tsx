@@ -1,0 +1,114 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { Bell, Menu } from "lucide-react";
+import { useTranslation } from "@/hooks/use-translation";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+
+interface TopbarProps {
+  onMenuClick?: () => void;
+}
+
+export function Topbar({ onMenuClick }: TopbarProps) {
+  const { t } = useTranslation();
+  const router = useRouter();
+  const pathname = usePathname();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    // TODO: Fetch real notification count from API
+    setUnreadCount(0);
+  }, []);
+
+  const handleNotificationClick = () => {
+    router.push("/notifications");
+  };
+
+  const [customTitle, setCustomTitle] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleTitleChange = (event: CustomEvent<string>) => {
+      setCustomTitle(event.detail);
+    };
+
+    window.addEventListener(
+      "topbar-title-change",
+      handleTitleChange as EventListener,
+    );
+    return () => {
+      window.removeEventListener(
+        "topbar-title-change",
+        handleTitleChange as EventListener,
+      );
+    };
+  }, []);
+
+  const getPageInfo = () => {
+    if (customTitle) return { title: customTitle };
+    if (pathname.includes("/dashboard")) return { title: t("dashboard") };
+    if (pathname.includes("/device-management"))
+      return { title: t("deviceManagement") };
+    if (pathname.includes("/location-management"))
+      return { title: t("locationManagement") };
+    if (pathname.includes("/alarms")) return { title: t("alarms") };
+    if (pathname.includes("/energy")) return { title: t("energyManagement") };
+    if (pathname.includes("/ai")) return { title: t("aiModels") };
+    if (pathname.includes("/communications"))
+      return { title: t("communications") };
+    if (pathname.includes("/room-access")) return { title: t("roomAccess") };
+    if (pathname.includes("/security")) return { title: t("security") };
+    if (pathname.includes("/firmware"))
+      return { title: t("firmwareManagement") };
+    if (pathname.includes("/system-tools")) return { title: t("systemTools") };
+    if (pathname.includes("/settings-help"))
+      return { title: t("settingsHelp") };
+    if (pathname.includes("/profile")) return { title: t("profile") };
+    return { title: t("dashboard") };
+  };
+
+  const pageInfo = getPageInfo();
+
+  return (
+    <header className="bg-card border-b border-border px-4 py-3 md:px-6 md:py-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden"
+            onClick={onMenuClick}
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+
+          <div>
+            <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
+              {pageInfo.title}
+            </h1>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative hover:bg-primary/10 transition-colors"
+            onClick={handleNotificationClick}
+          >
+            <Bell className="h-5 w-5" />
+            {unreadCount > 0 && (
+              <Badge
+                variant="destructive"
+                className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs animate-pulse"
+              >
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </Badge>
+            )}
+          </Button>
+        </div>
+      </div>
+    </header>
+  );
+}

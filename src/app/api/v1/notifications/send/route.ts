@@ -1,0 +1,22 @@
+import { NextRequest, NextResponse } from "next/server";
+import { backendFetch } from "@/lib/api/server/backend";
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+
+    const response = await backendFetch("/api/v1/notifications/send", {
+      method: "POST",
+      body: JSON.stringify(body),
+    });
+
+    return NextResponse.json(response);
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || "Failed to send notification" },
+      { status: error.status || 500 },
+    );
+  }
+}
+
+export const dynamic = "force-dynamic";
